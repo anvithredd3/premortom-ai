@@ -7,12 +7,14 @@ preserving identical behaviour.
 """
 from __future__ import annotations
 
+import time
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timezone
-from typing import List
+from typing import Callable, List
 
 from ..models import AgentResult, PreMortemReport, ProcurementInput
 from ..services.debate import build_debate
+from ..services.llm import get_last_call_meta
 from . import (
     contract_agent,
     decision_board,
@@ -45,6 +47,98 @@ def _run_parallel(data: ProcurementInput) -> List[AgentResult]:
             f_historical.result(),
         ]
     return results
+
+
+def _risk_to_status(risk_level_value: str) -> str:
+    if risk_level_value in ("HIGH", "CRITICAL"):
+        return "red"
+    if risk_level_value == "MODERATE":
+        return "amber"
+    return "green"
+
+
+def run_premortem_stream(data: ProcurementInput, send: Callable[[dict], None]) -> None:
+    """Run the full analysis and emit SSE-ready dicts via send() as events arrive."""
+    send({"type": "run_started", "agents": [
+        "contract", "infrastructure", "workforce", "historical", "financial", "decision"
+    ]})
+
+    def run_agent(agent_id: str, fn: Callable, *args) -> AgentResult:
+        send({"type": "agent_started", "id": agent_id})
+        t0 = time.monotonic()
+        result = fn(*args)
+        ms = int((time.monotonic() - t0) * 1000)
+        meta = get_last_call_meta()
+        status = _risk_to_status(result.risk_level.value)
+        send({
+            "type": "agent_finished",
+            "id": agent_id,
+            "status": status,
+            "verdict": result.recommendation,
+            "summary": result.reasoning,
+            "tokens": {"in": meta["tokens_in"], "out": meta["tokens_out"]},
+            "time_ms": ms,
+            "model": meta["model"],
+            "research": [
+                {"title": e, "url": "", "snippet": e} for e in result.evidence[:4]
+            ],
+        })
+        return result
+
+    with ThreadPoolExecutor(max_workers=5) as ex:
+        f_contract = ex.submit(run_agent, "contract", contract_agent.analyze, data)
+        f_infra = ex.submit(run_agent, "infrastructure", infrastructure_agent.analyze, data)
+        f_workforce = ex.submit(run_agent, "workforce", workforce_agent.analyze, data)
+        f_historical = ex.submit(run_agent, "historical", historical_agent.analyze, data)
+
+        infra_result = f_infra.result()
+        predicted_delay = infra_result.metrics.get("predicted_delay_months", 8.0)
+        f_financial = ex.submit(run_agent, "financial", financial_agent.analyze, data, predicted_delay)
+
+        results_list = [
+            f_contract.result(),
+            infra_result,
+            f_workforce.result(),
+            f_financial.result(),
+            f_historical.result(),
+        ]
+
+    send({"type": "agent_started", "id": "decision"})
+    t0 = time.monotonic()
+    consolidated = decision_board.consolidate(data, results_list)
+    ms = int((time.monotonic() - t0) * 1000)
+    meta = get_last_call_meta()
+
+    decision_val = consolidated["recommended_decision"]
+    decision_str = decision_val.value if hasattr(decision_val, "value") else str(decision_val)
+
+    if "NO" in decision_str.upper():
+        dec_status = "red"
+    elif "CONDITION" in decision_str.upper():
+        dec_status = "amber"
+    else:
+        dec_status = "green"
+
+    send({
+        "type": "agent_finished",
+        "id": "decision",
+        "status": dec_status,
+        "verdict": decision_str,
+        "summary": str(consolidated.get("predicted_failure_mode", "")),
+        "tokens": {"in": meta["tokens_in"], "out": meta["tokens_out"]},
+        "time_ms": ms,
+        "model": meta["model"],
+        "research": [],
+    })
+
+    exposure_cr = consolidated.get("projected_financial_loss_cr", 0)
+    send({
+        "type": "run_finished",
+        "decision": decision_str,
+        "score": consolidated.get("overall_risk_score", 0),
+        "conditions": consolidated.get("conditions", []),
+        "exposure_range": f"₹{exposure_cr:.1f} Cr",
+    })
 
 
 def run_premortem(data: ProcurementInput) -> PreMortemReport:

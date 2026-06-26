@@ -10,12 +10,15 @@ GET  /sample                 - the AIIMS MRI demo input
 """
 from __future__ import annotations
 
+import asyncio
+import json
+
 from fastapi import FastAPI, File, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import Response
+from fastapi.responses import Response, StreamingResponse
 
 from .agents import extraction_agent
-from .agents.orchestrator import run_premortem
+from .agents.orchestrator import run_premortem, run_premortem_stream
 from .models import PreMortemReport, ProcurementInput
 from .services import document_parser, report as report_service
 from .services.llm import has_api_key
@@ -54,6 +57,42 @@ def analyze(data: ProcurementInput):
     if data.raw_document_text:
         data, _ = extraction_agent.extract(data.raw_document_text)
     return run_premortem(data)
+
+
+@app.post("/analyze_stream")
+async def analyze_stream(data: ProcurementInput):
+    """SSE endpoint — emits JSON events as each agent finishes."""
+    loop = asyncio.get_running_loop()
+    queue: asyncio.Queue = asyncio.Queue()
+
+    def sync_run() -> None:
+        def send(event: dict) -> None:
+            loop.call_soon_threadsafe(queue.put_nowait, event)
+        try:
+            run_premortem_stream(data, send)
+        except Exception as exc:
+            loop.call_soon_threadsafe(queue.put_nowait, {"type": "error", "message": str(exc)})
+        finally:
+            loop.call_soon_threadsafe(queue.put_nowait, None)  # sentinel
+
+    async def event_generator():
+        fut = loop.run_in_executor(None, sync_run)
+        while True:
+            event = await queue.get()
+            if event is None:
+                break
+            yield f"data: {json.dumps(event)}\n\n"
+        await fut  # surface any unhandled exception
+
+    return StreamingResponse(
+        event_generator(),
+        media_type="text/event-stream",
+        headers={
+            "Cache-Control": "no-cache",
+            "X-Accel-Buffering": "no",
+            "Connection": "keep-alive",
+        },
+    )
 
 
 @app.post("/upload")
