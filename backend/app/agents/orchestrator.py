@@ -74,6 +74,7 @@ def run_premortem_stream(data: ProcurementInput, send: Callable[[dict], None]) -
             "type": "agent_finished",
             "id": agent_id,
             "status": status,
+            "risk_score": round(result.risk_score, 1),
             "verdict": result.recommendation,
             "summary": result.reasoning,
             "tokens": {"in": meta["tokens_in"], "out": meta["tokens_out"]},

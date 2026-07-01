@@ -17,9 +17,15 @@ from fastapi import FastAPI, File, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import Response, StreamingResponse
 
-from .agents import extraction_agent
+from pydantic import BaseModel
+
+from .agents import extraction_agent, profiler_agent
 from .agents.orchestrator import run_premortem, run_premortem_stream
 from .models import PreMortemReport, ProcurementInput
+
+
+class ProfileRequest(BaseModel):
+    text: str
 from .services import document_parser, report as report_service
 from .services.llm import has_api_key
 
@@ -93,6 +99,16 @@ async def analyze_stream(data: ProcurementInput):
             "Connection": "keep-alive",
         },
     )
+
+
+@app.post("/profile")
+def profile(request: ProfileRequest):
+    """Classify text and web-research product norms into ProcurementInput fields.
+
+    Returns {status:"OUT_OF_SCOPE", reason} or
+            {status:"READY", category, proposed_fields, missing_fields, research}.
+    """
+    return profiler_agent.profile(request.text)
 
 
 @app.post("/upload")

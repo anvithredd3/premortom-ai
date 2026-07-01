@@ -72,10 +72,10 @@ export function useAnalysisStream() {
               [id]: { ...prev[id], status: 'running' },
             }))
           } else if (event.type === 'agent_finished') {
-            const { id, status, verdict, summary, tokens, time_ms, model, research } = event
+            const { id, status, risk_score, verdict, summary, tokens, time_ms, model, research } = event
             setAgentStates(prev => ({
               ...prev,
-              [id]: { status, verdict, summary, tokens, time_ms, model, research },
+              [id]: { status, risk_score, verdict, summary, tokens, time_ms, model, research },
             }))
           } else if (event.type === 'run_finished') {
             setRunResult({
