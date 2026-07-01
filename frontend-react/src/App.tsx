@@ -2,8 +2,12 @@ import { CSSProperties, Suspense, lazy, useCallback, useState } from 'react'
 import { GraphCanvas } from './canvas'
 import { IntakeView } from './intake'
 import { useAnalysisStream } from './stream'
-import type { AgentId, AgentState, NodeStatus, ResearchItem } from './types'
+import type { AgentId, AgentState, Bid, NodeStatus, ResearchItem } from './types'
 import type { FocusId } from './analysis'
+import { BidDashboard } from './BidDashboard'
+import { QuoteUpload } from './QuoteUpload'
+import { BidMonitor } from './BidMonitor'
+import { BidResults } from './BidResults'
 
 // Lazy-load the analysis page (+ plotly.js) — only fetched when user opens the view
 const AnalysisPage = lazy(() =>
@@ -136,17 +140,30 @@ function AgentRow({ id, state }: { id: AgentId; state: AgentState }) {
 }
 
 /* ── Root ───────────────────────────────────────────────────────────── */
-type View = 'intake' | 'graph' | 'analysis'
+type Mode = 'premortem' | 'bid'
+type PreMortemView = 'intake' | 'graph' | 'analysis'
+type BidView = 'bid-dashboard' | 'quote-upload' | 'bid-monitor' | 'bid-results'
 
 export default function App() {
   const { agentStates, runResult, isRunning, error, startAnalysis, reset } = useAnalysisStream()
-  const [view, setView]         = useState<View>('intake')
+
+  // Mode: premortem (single procurement) vs bid (multi-quote evaluation)
+  const [mode, setMode] = useState<Mode>('premortem')
+
+  // PreMortem state
+  const [pmView, setPmView]         = useState<PreMortemView>('intake')
   const [confirmedInput, setConfirmedInput] = useState<Record<string, unknown> | null>(null)
   const [intakeResearch,  setIntakeResearch]  = useState<ResearchItem[]>([])
   const [intakeCategory,  setIntakeCategory]  = useState('')
   const [intakeMissingFields, setIntakeMissingFields] = useState<string[]>([])
   const [focusId, setFocusId]   = useState<FocusId>(null)
 
+  // Bid workflow state
+  const [bidView, setBidView]       = useState<BidView>('bid-dashboard')
+  const [selectedBid, setSelectedBid] = useState<Bid | null>(null)
+  const [activeRunId, setActiveRunId] = useState<string | null>(null)
+
+  /* ── PreMortem handlers ─────────────────────────────────────────── */
   const goToGraph = (
     fields: object,
     meta?: { category?: string; research?: ResearchItem[]; missingFields?: string[] },
@@ -157,10 +174,10 @@ export default function App() {
     setIntakeMissingFields(meta?.missingFields ?? [])
     reset()
     startAnalysis(fields)
-    setView('graph')
+    setPmView('graph')
   }
 
-  const goToIntake = () => { reset(); setView('intake') }
+  const goToIntake = () => { reset(); setPmView('intake') }
 
   const handleLoadSample = () => goToGraph(SAMPLE_INPUT)
 
@@ -170,16 +187,60 @@ export default function App() {
     const done = isAgent && !['idle', 'running'].includes(agentStates[agentId].status)
     if (done || nodeId === 'profiler' || nodeId === 'decision') {
       setFocusId(nodeId as FocusId)
-      setView('analysis')
+      setPmView('analysis')
     }
   }, [agentStates])
 
+  /* ── Bid workflow handlers ──────────────────────────────────────── */
+  function handleSelectBid(bid: Bid) {
+    setSelectedBid(bid)
+    setBidView('quote-upload')
+  }
+
+  async function handleStartRun(quoteIds: string[]) {
+    if (!selectedBid) return
+    try {
+      const r = await fetch('/api/bid-runs', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ bid_id: selectedBid.bid_id, quote_ids: quoteIds }),
+      })
+      if (!r.ok) throw new Error(await r.text())
+      const data = await r.json()
+      setActiveRunId(data.run_id)
+      setBidView('bid-monitor')
+    } catch (e) {
+      alert(String(e))
+    }
+  }
+
+  function handleRunComplete(runId: string) {
+    setActiveRunId(runId)
+    setBidView('bid-results')
+  }
+
+  /* ── Mode switch ────────────────────────────────────────────────── */
+  function switchMode(m: Mode) {
+    setMode(m)
+  }
+
   const anyFinished  = Object.values(agentStates).some(s => s.status !== 'idle')
-  const inPostRun    = view !== 'intake'
+  const inPostRun    = pmView !== 'intake'
 
   const ctxName  = confirmedInput?.procurement_name as string | undefined
   const ctxType  = confirmedInput?.equipment_type   as string | undefined
   const ctxValue = confirmedInput?.contract_value_cr as number | undefined
+
+  /* ── Header breadcrumb ──────────────────────────────────────────── */
+  function breadcrumb() {
+    if (mode === 'bid') {
+      if (bidView === 'bid-dashboard') return 'BID DASHBOARD'
+      if (bidView === 'quote-upload') return selectedBid?.procurement_name ?? 'QUOTES'
+      if (bidView === 'bid-monitor') return activeRunId ?? 'MONITOR'
+      if (bidView === 'bid-results') return 'RESULTS'
+    }
+    return pmView === 'intake' ? 'INTAKE' : (ctxName ?? 'ANALYSIS')
+  }
 
   return (
     <div style={{
@@ -192,188 +253,239 @@ export default function App() {
         padding: '0 20px', height: 44, gap: 16,
         borderBottom: `1px solid ${C.border}`, flexShrink: 0,
       }}>
-        {/* Brand + breadcrumb */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginRight: 4 }}>
+        {/* Brand + mode toggle */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <span style={{ fontSize: 10, letterSpacing: '0.22em', color: C.accent, fontWeight: 700 }}>
             PREMORTEM
           </span>
           <span style={{ fontSize: 9, color: '#2e2e2e', letterSpacing: '0.1em' }}>
-            / {view === 'intake' ? 'INTAKE' : (ctxName ?? 'ANALYSIS')}
+            / {breadcrumb()}
           </span>
         </div>
 
-        {/* Graph ↔ Analysis tabs (only in post-run views) */}
-        {inPostRun && (
+        {/* Mode tabs */}
+        <div style={{ display: 'flex', gap: 2, borderLeft: `1px solid ${C.border}`, paddingLeft: 14 }}>
+          <Btn variant="tab" active={mode === 'premortem'} onClick={() => switchMode('premortem')}>
+            PREMORTEM
+          </Btn>
+          <Btn variant="tab" active={mode === 'bid'} onClick={() => switchMode('bid')}>
+            BID EVAL
+          </Btn>
+        </div>
+
+        {/* PreMortem view tabs */}
+        {mode === 'premortem' && inPostRun && (
           <div style={{ display: 'flex', gap: 4, borderLeft: `1px solid ${C.border}`, paddingLeft: 14 }}>
-            <Btn variant="tab" active={view === 'graph'} onClick={() => setView('graph')}>GRAPH</Btn>
-            <Btn variant="tab" active={view === 'analysis'} onClick={() => setView('analysis')}>ANALYSIS</Btn>
+            <Btn variant="tab" active={pmView === 'graph'} onClick={() => setPmView('graph')}>GRAPH</Btn>
+            <Btn variant="tab" active={pmView === 'analysis'} onClick={() => setPmView('analysis')}>ANALYSIS</Btn>
           </div>
         )}
 
         {/* Right-side actions */}
         <div style={{ display: 'flex', gap: 8, marginLeft: 'auto' }}>
-          {inPostRun && (
+          {mode === 'premortem' && inPostRun && (
             <Btn onClick={goToIntake}>NEW ANALYSIS</Btn>
           )}
-          {view === 'graph' && anyFinished && !isRunning && confirmedInput && (
+          {mode === 'premortem' && pmView === 'graph' && anyFinished && !isRunning && confirmedInput && (
             <Btn onClick={() => { reset(); startAnalysis(confirmedInput) }}>RERUN</Btn>
+          )}
+          {mode === 'bid' && bidView !== 'bid-dashboard' && (
+            <Btn onClick={() => setBidView('bid-dashboard')}>ALL BIDS</Btn>
           )}
         </div>
       </header>
 
-      {/* ── Body ── */}
-      {view === 'intake' && (
-        <IntakeView onConfirm={goToGraph} onLoadSample={handleLoadSample} />
-      )}
+      {/* ── PreMortem Body ── */}
+      {mode === 'premortem' && (
+        <>
+          {pmView === 'intake' && (
+            <IntakeView onConfirm={goToGraph} onLoadSample={handleLoadSample} />
+          )}
 
-      {view === 'graph' && (
-        <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
-          {/* Graph canvas */}
-          <div style={{ flex: 1, position: 'relative' }}>
-            <GraphCanvas
-              agentStates={agentStates}
-              intakeResearch={intakeResearch}
-              intakeCategory={intakeCategory}
-              onNodeClick={handleNodeClick}
-            />
-            {isRunning && (
-              <div style={{
-                position: 'absolute', bottom: 16, left: '50%', transform: 'translateX(-50%)',
-                fontSize: 8, color: '#333', letterSpacing: '0.18em', pointerEvents: 'none',
-              }}>
-                AGENTS RUNNING
-              </div>
-            )}
-            {/* Click hint */}
-            {anyFinished && !isRunning && (
-              <div style={{
-                position: 'absolute', bottom: 16, right: 56,
-                fontSize: 8, color: '#2a2a2a', letterSpacing: '0.1em', pointerEvents: 'none',
-                fontFamily: FONT,
-              }}>
-                CLICK NODE FOR ANALYSIS
-              </div>
-            )}
-          </div>
-
-          {/* Side panel */}
-          <aside style={{
-            width: 260, borderLeft: `1px solid ${C.border}`,
-            display: 'flex', flexDirection: 'column',
-            background: C.surface, overflow: 'hidden',
-          }}>
-            {/* Procurement context */}
-            <div style={{ padding: '14px 16px', borderBottom: `1px solid ${C.border}`, flexShrink: 0 }}>
-              <Lbl style={{ display: 'block', marginBottom: 8 }}>PROCUREMENT</Lbl>
-              <div style={{ fontSize: 11, color: '#c0c0c0', lineHeight: 1.5 }}>{ctxName ?? '—'}</div>
-              {(ctxValue != null || ctxType) && (
-                <div style={{ marginTop: 4, fontSize: 9, color: '#3e3e3e', lineHeight: 1.6 }}>
-                  {ctxValue != null ? `₹${ctxValue} Cr` : ''}
-                  {ctxValue != null && ctxType ? ' · ' : ''}
-                  {ctxType ?? ''}
-                </div>
-              )}
-            </div>
-
-            {/* Agent list */}
-            <div style={{ padding: '14px 16px', flex: 1, overflowY: 'auto', borderBottom: `1px solid ${C.border}` }}>
-              <Lbl style={{ display: 'block', marginBottom: 12 }}>AGENTS</Lbl>
-              {(Object.entries(agentStates) as [AgentId, AgentState][]).map(([id, state]) => (
-                <AgentRow key={id} id={id} state={state} />
-              ))}
-            </div>
-
-            {/* Decision */}
-            <div style={{ padding: '14px 16px', flexShrink: 0, overflowY: 'auto' }}>
-              <Lbl style={{ display: 'block', marginBottom: 12 }}>DECISION</Lbl>
-
-              {!runResult && !error && (
-                <div style={{ fontSize: 10, color: '#2e2e2e' }}>—</div>
-              )}
-              {error && (
-                <div style={{
-                  fontSize: 9, color: C.red, background: '#1a0808',
-                  border: '1px solid #3a1010', borderRadius: 2, padding: '8px 10px', lineHeight: 1.5,
-                }}>
-                  ERROR: {error}
-                </div>
-              )}
-              {runResult && (
-                <>
+          {pmView === 'graph' && (
+            <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
+              {/* Graph canvas */}
+              <div style={{ flex: 1, position: 'relative' }}>
+                <GraphCanvas
+                  agentStates={agentStates}
+                  intakeResearch={intakeResearch}
+                  intakeCategory={intakeCategory}
+                  onNodeClick={handleNodeClick}
+                />
+                {isRunning && (
                   <div style={{
-                    fontSize: 11, fontWeight: 700, letterSpacing: '0.05em',
-                    color: decisionColor(runResult.decision), marginBottom: 14, lineHeight: 1.4,
+                    position: 'absolute', bottom: 16, left: '50%', transform: 'translateX(-50%)',
+                    fontSize: 8, color: '#333', letterSpacing: '0.18em', pointerEvents: 'none',
                   }}>
-                    {runResult.decision}
+                    AGENTS RUNNING
                   </div>
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 14 }}>
-                    {[
-                      { l: 'RISK SCORE', v: `${Math.round(runResult.score)}/100`, big: true },
-                      { l: 'EXPOSURE',   v: runResult.exposure_range,             big: false },
-                    ].map(({ l, v, big }) => (
-                      <div key={l} style={{ background: C.bg, border: `1px solid ${C.border}`, borderRadius: 2, padding: '8px 10px' }}>
-                        <Lbl>{l}</Lbl>
-                        <div style={{ fontSize: big ? 16 : 12, fontWeight: big ? 700 : 600, color: C.text, marginTop: 4, letterSpacing: '-0.02em' }}>
-                          {v}
-                        </div>
-                      </div>
-                    ))}
+                )}
+                {anyFinished && !isRunning && (
+                  <div style={{
+                    position: 'absolute', bottom: 16, right: 56,
+                    fontSize: 8, color: '#2a2a2a', letterSpacing: '0.1em', pointerEvents: 'none',
+                    fontFamily: FONT,
+                  }}>
+                    CLICK NODE FOR ANALYSIS
                   </div>
-                  {runResult.conditions.length > 0 && (
+                )}
+              </div>
+
+              {/* Side panel */}
+              <aside style={{
+                width: 260, borderLeft: `1px solid ${C.border}`,
+                display: 'flex', flexDirection: 'column',
+                background: C.surface, overflow: 'hidden',
+              }}>
+                {/* Procurement context */}
+                <div style={{ padding: '14px 16px', borderBottom: `1px solid ${C.border}`, flexShrink: 0 }}>
+                  <Lbl style={{ display: 'block', marginBottom: 8 }}>PROCUREMENT</Lbl>
+                  <div style={{ fontSize: 11, color: '#c0c0c0', lineHeight: 1.5 }}>{ctxName ?? '—'}</div>
+                  {(ctxValue != null || ctxType) && (
+                    <div style={{ marginTop: 4, fontSize: 9, color: '#3e3e3e', lineHeight: 1.6 }}>
+                      {ctxValue != null ? `₹${ctxValue} Cr` : ''}
+                      {ctxValue != null && ctxType ? ' · ' : ''}
+                      {ctxType ?? ''}
+                    </div>
+                  )}
+                </div>
+
+                {/* Agent list */}
+                <div style={{ padding: '14px 16px', flex: 1, overflowY: 'auto', borderBottom: `1px solid ${C.border}` }}>
+                  <Lbl style={{ display: 'block', marginBottom: 12 }}>AGENTS</Lbl>
+                  {(Object.entries(agentStates) as [AgentId, AgentState][]).map(([id, state]) => (
+                    <AgentRow key={id} id={id} state={state} />
+                  ))}
+                </div>
+
+                {/* Decision */}
+                <div style={{ padding: '14px 16px', flexShrink: 0, overflowY: 'auto' }}>
+                  <Lbl style={{ display: 'block', marginBottom: 12 }}>DECISION</Lbl>
+
+                  {!runResult && !error && (
+                    <div style={{ fontSize: 10, color: '#2e2e2e' }}>—</div>
+                  )}
+                  {error && (
+                    <div style={{
+                      fontSize: 9, color: C.red, background: '#1a0808',
+                      border: '1px solid #3a1010', borderRadius: 2, padding: '8px 10px', lineHeight: 1.5,
+                    }}>
+                      ERROR: {error}
+                    </div>
+                  )}
+                  {runResult && (
                     <>
-                      <Lbl style={{ display: 'block', marginBottom: 8 }}>CONDITIONS</Lbl>
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                        {runResult.conditions.slice(0, 4).map((c, i) => (
-                          <div key={i} style={{
-                            fontSize: 9, color: '#888', paddingLeft: 8,
-                            borderLeft: `1px solid ${C.faint}`, lineHeight: 1.55,
-                          }}>
-                            {c}
+                      <div style={{
+                        fontSize: 11, fontWeight: 700, letterSpacing: '0.05em',
+                        color: decisionColor(runResult.decision), marginBottom: 14, lineHeight: 1.4,
+                      }}>
+                        {runResult.decision}
+                      </div>
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 14 }}>
+                        {[
+                          { l: 'RISK SCORE', v: `${Math.round(runResult.score)}/100`, big: true },
+                          { l: 'EXPOSURE',   v: runResult.exposure_range,             big: false },
+                        ].map(({ l, v, big }) => (
+                          <div key={l} style={{ background: C.bg, border: `1px solid ${C.border}`, borderRadius: 2, padding: '8px 10px' }}>
+                            <Lbl>{l}</Lbl>
+                            <div style={{ fontSize: big ? 16 : 12, fontWeight: big ? 700 : 600, color: C.text, marginTop: 4, letterSpacing: '-0.02em' }}>
+                              {v}
+                            </div>
                           </div>
                         ))}
                       </div>
+                      {runResult.conditions.length > 0 && (
+                        <>
+                          <Lbl style={{ display: 'block', marginBottom: 8 }}>CONDITIONS</Lbl>
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                            {runResult.conditions.slice(0, 4).map((c, i) => (
+                              <div key={i} style={{
+                                fontSize: 9, color: '#888', paddingLeft: 8,
+                                borderLeft: `1px solid ${C.faint}`, lineHeight: 1.55,
+                              }}>
+                                {c}
+                              </div>
+                            ))}
+                          </div>
+                        </>
+                      )}
+                      <button
+                        onClick={() => setPmView('analysis')}
+                        style={{
+                          marginTop: 14, background: 'none', border: `1px solid ${C.border}`,
+                          borderRadius: 2, padding: '5px 0', width: '100%',
+                          fontSize: 8, letterSpacing: '0.14em', textTransform: 'uppercase',
+                          color: C.muted, fontFamily: FONT, cursor: 'pointer',
+                        }}
+                      >
+                        FULL ANALYSIS →
+                      </button>
                     </>
                   )}
-                  {/* Quick-link to analysis */}
-                  <button
-                    onClick={() => setView('analysis')}
-                    style={{
-                      marginTop: 14, background: 'none', border: `1px solid ${C.border}`,
-                      borderRadius: 2, padding: '5px 0', width: '100%',
-                      fontSize: 8, letterSpacing: '0.14em', textTransform: 'uppercase',
-                      color: C.muted, fontFamily: FONT, cursor: 'pointer',
-                    }}
-                  >
-                    FULL ANALYSIS →
-                  </button>
-                </>
-              )}
+                </div>
+              </aside>
             </div>
-          </aside>
-        </div>
+          )}
+
+          {pmView === 'analysis' && (
+            <Suspense fallback={
+              <div style={{
+                flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontSize: 8, color: '#2a2a2a', letterSpacing: '0.18em', fontFamily: FONT,
+              }}>
+                LOADING
+              </div>
+            }>
+              <AnalysisPage
+                agentStates={agentStates}
+                runResult={runResult}
+                intakeResearch={intakeResearch}
+                intakeCategory={intakeCategory}
+                intakeMissingFields={intakeMissingFields}
+                confirmedInput={confirmedInput}
+                focusId={focusId}
+                onClearFocus={() => setFocusId(null)}
+                isRunning={isRunning}
+              />
+            </Suspense>
+          )}
+        </>
       )}
 
-      {view === 'analysis' && (
-        <Suspense fallback={
-          <div style={{
-            flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: 8, color: '#2a2a2a', letterSpacing: '0.18em', fontFamily: FONT,
-          }}>
-            LOADING
-          </div>
-        }>
-          <AnalysisPage
-            agentStates={agentStates}
-            runResult={runResult}
-            intakeResearch={intakeResearch}
-            intakeCategory={intakeCategory}
-            intakeMissingFields={intakeMissingFields}
-            confirmedInput={confirmedInput}
-            focusId={focusId}
-            onClearFocus={() => setFocusId(null)}
-            isRunning={isRunning}
-          />
-        </Suspense>
+      {/* ── Bid Workflow Body ── */}
+      {mode === 'bid' && (
+        <>
+          {bidView === 'bid-dashboard' && (
+            <BidDashboard onSelectBid={handleSelectBid} />
+          )}
+
+          {bidView === 'quote-upload' && selectedBid && (
+            <QuoteUpload
+              bid={selectedBid}
+              onBack={() => setBidView('bid-dashboard')}
+              onStartRun={handleStartRun}
+            />
+          )}
+
+          {bidView === 'bid-monitor' && selectedBid && activeRunId && (
+            <BidMonitor
+              bid={selectedBid}
+              runId={activeRunId}
+              onBack={() => setBidView('quote-upload')}
+              onComplete={handleRunComplete}
+            />
+          )}
+
+          {bidView === 'bid-results' && selectedBid && activeRunId && (
+            <BidResults
+              runId={activeRunId}
+              bidId={selectedBid.bid_id}
+              bidName={selectedBid.procurement_name}
+              onBack={() => setBidView('bid-monitor')}
+              onNewBid={() => { setBidView('bid-dashboard'); setSelectedBid(null); setActiveRunId(null) }}
+            />
+          )}
+        </>
       )}
     </div>
   )
