@@ -456,7 +456,7 @@ export default function App() {
       {mode === 'bid' && (
         <>
           {bidView === 'bid-dashboard' && (
-            <BidDashboard onSelectBid={handleSelectBid} />
+            <BidDashboard onSelectBid={handleSelectBid} onUpload={bid => { setSelectedBid(bid); setBidView('quote-upload') }} />
           )}
 
           {bidView === 'quote-upload' && selectedBid && (

@@ -9,6 +9,9 @@ const C = {
 } as const
 const FONT = "'JetBrains Mono', monospace"
 
+/* Folder scanned by the backend — matches SAMPLES_DIR / "bids" */
+const SCAN_FOLDER = 'files/input/samples/bids/'
+
 function Lbl({ children }: { children: string }) {
   return (
     <span style={{
@@ -48,14 +51,15 @@ function statusColor(status: string) {
 
 export interface BidDashboardProps {
   onSelectBid: (bid: Bid) => void
+  onUpload: (bid: Bid) => void
 }
 
-export function BidDashboard({ onSelectBid }: BidDashboardProps) {
+export function BidDashboard({ onSelectBid, onUpload }: BidDashboardProps) {
   const [bids, setBids] = useState<Bid[]>([])
   const [loading, setLoading] = useState(true)
   const [scanning, setScanning] = useState(false)
   const [creating, setCreating] = useState(false)
-  const [scanMsg, setScanMsg] = useState<string | null>(null)
+  const [scanResult, setScanResult] = useState<{ indexed: number; quotes: number; newBids: number; newQuotes: number } | null>(null)
   const [showCreate, setShowCreate] = useState(false)
   const [procName, setProcName] = useState('')
   const [eqType, setEqType] = useState('')
@@ -65,7 +69,13 @@ export function BidDashboard({ onSelectBid }: BidDashboardProps) {
   async function fetchBids() {
     try {
       const r = await fetch('/api/bids')
-      if (!r.ok) throw new Error(await r.text())
+      if (!r.ok) {
+        const body = await r.text()
+        throw new Error(r.status === 404
+          ? 'Backend not reachable — is the server running on :8000?'
+          : body
+        )
+      }
       const data = await r.json()
       setBids(data.bids ?? [])
     } catch (e) {
@@ -79,14 +89,20 @@ export function BidDashboard({ onSelectBid }: BidDashboardProps) {
   useEffect(() => { if (showCreate) nameRef.current?.focus() }, [showCreate])
 
   async function handleScan() {
-    setScanning(true); setScanMsg(null)
+    setScanning(true); setScanResult(null); setError(null)
     try {
       const r = await fetch('/api/input/scan', { method: 'POST' })
+      if (!r.ok) throw new Error(await r.text())
       const data = await r.json()
-      setScanMsg(`+${data.new_bids} bids · +${data.new_quotes} quotes`)
+      setScanResult({
+        indexed: data.bids_indexed ?? 0,
+        quotes: data.quotes_indexed ?? 0,
+        newBids: data.new_bids ?? 0,
+        newQuotes: data.new_quotes ?? 0,
+      })
       await fetchBids()
     } catch (e) {
-      setScanMsg(String(e))
+      setError(String(e))
     } finally {
       setScanning(false)
     }
@@ -102,8 +118,13 @@ export function BidDashboard({ onSelectBid }: BidDashboardProps) {
         body: JSON.stringify({ procurement_name: procName.trim(), equipment_type: eqType.trim() }),
       })
       if (!r.ok) throw new Error(await r.text())
+      const newBid: Bid & { bid_id: string } = await r.json()
       setShowCreate(false); setProcName(''); setEqType('')
       await fetchBids()
+      // Jump straight to quote upload for the newly created bid
+      if (newBid.bid_id) {
+        onUpload({ bid_id: newBid.bid_id, procurement_name: procName.trim(), equipment_type: eqType.trim(), quote_count: 0, status: 'created' })
+      }
     } catch (e) {
       setError(String(e))
     } finally {
@@ -132,32 +153,53 @@ export function BidDashboard({ onSelectBid }: BidDashboardProps) {
       background: C.bg, fontFamily: FONT,
     }}>
       {/* Title row */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 28 }}>
+      <div style={{ display: 'flex', alignItems: 'flex-start', gap: 16, marginBottom: 28 }}>
         <div>
           <div style={{ fontSize: 13, fontWeight: 700, letterSpacing: '0.06em', color: C.text }}>
             BID EVALUATION
           </div>
           <div style={{ fontSize: 9, color: '#3a3a3a', letterSpacing: '0.12em', marginTop: 2 }}>
-            SELECT OR CREATE A BID TO BEGIN EVALUATION
+            SELECT A BID TO UPLOAD QUOTES AND RUN EVALUATION
           </div>
         </div>
-        <div style={{ marginLeft: 'auto', display: 'flex', gap: 8 }}>
-          <Btn onClick={handleScan} disabled={scanning}>
-            {scanning ? 'SCANNING···' : 'SCAN FOLDER'}
-          </Btn>
-          <Btn variant="accent" onClick={() => setShowCreate(v => !v)}>
-            + NEW BID
-          </Btn>
+        <div style={{ marginLeft: 'auto', display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 6 }}>
+          <div style={{ display: 'flex', gap: 8 }}>
+            <Btn onClick={handleScan} disabled={scanning}>
+              {scanning ? 'SCANNING···' : 'SCAN FOLDER'}
+            </Btn>
+            <Btn variant="accent" onClick={() => setShowCreate(v => !v)}>
+              + NEW BID
+            </Btn>
+          </div>
+          {/* Folder path hint */}
+          <div style={{ fontSize: 8, color: '#2a2a2a', letterSpacing: '0.08em', textAlign: 'right' }}>
+            scans: <span style={{ color: '#383838' }}>{SCAN_FOLDER}</span>
+          </div>
         </div>
       </div>
 
-      {scanMsg && (
+      {/* Scan result banner */}
+      {scanResult !== null && (
         <div style={{
-          fontSize: 9, color: C.muted, background: '#0a0a0a',
-          border: `1px solid ${C.border}`, borderRadius: 2,
-          padding: '7px 12px', marginBottom: 16, letterSpacing: '0.1em',
+          fontSize: 9, background: '#0a0a0a', border: `1px solid ${C.border}`,
+          borderRadius: 2, padding: '10px 14px', marginBottom: 16,
+          display: 'grid', gridTemplateColumns: 'repeat(4, auto)', gap: '0 20px',
+          justifyContent: 'start', alignItems: 'center',
         }}>
-          SCAN COMPLETE: {scanMsg}
+          {[
+            { l: 'BIDS INDEXED',  v: scanResult.indexed  },
+            { l: 'QUOTES INDEXED', v: scanResult.quotes   },
+            { l: 'NEW BIDS',      v: `+${scanResult.newBids}`   },
+            { l: 'NEW QUOTES',    v: `+${scanResult.newQuotes}` },
+          ].map(({ l, v }) => (
+            <div key={l}>
+              <div style={{ fontSize: 7, color: '#2e2e2e', letterSpacing: '0.14em', marginBottom: 2 }}>{l}</div>
+              <div style={{ fontSize: 12, fontWeight: 700, color: C.text }}>{v}</div>
+            </div>
+          ))}
+          <div style={{ gridColumn: '1/-1', marginTop: 8, fontSize: 8, color: '#2a2a2a', letterSpacing: '0.1em' }}>
+            folder: {SCAN_FOLDER}
+          </div>
         </div>
       )}
 
@@ -166,14 +208,19 @@ export function BidDashboard({ onSelectBid }: BidDashboardProps) {
           background: C.surface, border: `1px solid ${C.border}`, borderRadius: 2,
           padding: '16px 20px', marginBottom: 20,
         }}>
-          <Lbl>NEW BID</Lbl>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginTop: 10 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
+            <Lbl>NEW BID</Lbl>
+            <span style={{ fontSize: 8, color: '#2a2a2a', letterSpacing: '0.08em' }}>
+              you'll be taken straight to quote upload
+            </span>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
             {inp(procName, setProcName, 'Procurement name...', nameRef)}
             {inp(eqType, setEqType, 'Equipment type (optional)...')}
           </div>
           <div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
             <Btn variant="accent" onClick={handleCreate} disabled={creating || !procName.trim()}>
-              {creating ? 'CREATING···' : 'CREATE'}
+              {creating ? 'CREATING···' : 'CREATE + UPLOAD QUOTES →'}
             </Btn>
             <Btn onClick={() => { setShowCreate(false); setProcName(''); setEqType('') }}>
               CANCEL
@@ -186,7 +233,7 @@ export function BidDashboard({ onSelectBid }: BidDashboardProps) {
         <div style={{
           fontSize: 9, color: C.accent, background: '#1a0808',
           border: '1px solid #3a1010', borderRadius: 2,
-          padding: '8px 12px', marginBottom: 16,
+          padding: '8px 12px', marginBottom: 16, lineHeight: 1.6,
         }}>
           {error}
         </div>
@@ -206,43 +253,76 @@ export function BidDashboard({ onSelectBid }: BidDashboardProps) {
           {bids.map(bid => (
             <div
               key={bid.bid_id}
-              onClick={() => onSelectBid(bid)}
               style={{
                 background: C.surface, border: `1px solid ${C.border}`, borderRadius: 2,
-                padding: '16px 18px', cursor: 'pointer',
-                transition: 'border-color 0.15s',
+                transition: 'border-color 0.15s', overflow: 'hidden',
               }}
               onMouseEnter={e => (e.currentTarget.style.borderColor = '#333')}
               onMouseLeave={e => (e.currentTarget.style.borderColor = C.border)}
             >
-              <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 8 }}>
-                <div style={{ flex: 1 }}>
-                  <div style={{ fontSize: 10, color: C.text, fontWeight: 600, lineHeight: 1.4 }}>
-                    {bid.procurement_name || bid.bid_id}
+              {/* Card body — click to select (goes to quote list) */}
+              <div
+                onClick={() => onSelectBid(bid)}
+                style={{ padding: '16px 18px', cursor: 'pointer' }}
+              >
+                <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 8 }}>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontSize: 10, color: C.text, fontWeight: 600, lineHeight: 1.4 }}>
+                      {bid.procurement_name || bid.bid_id}
+                    </div>
+                    {bid.equipment_type && (
+                      <div style={{ fontSize: 9, color: '#3a3a3a', marginTop: 3 }}>{bid.equipment_type}</div>
+                    )}
                   </div>
-                  {bid.equipment_type && (
-                    <div style={{ fontSize: 9, color: '#3a3a3a', marginTop: 3 }}>{bid.equipment_type}</div>
-                  )}
+                  <span style={{
+                    fontSize: 7, letterSpacing: '0.15em', color: statusColor(bid.status),
+                    border: `1px solid ${statusColor(bid.status)}22`, borderRadius: 2,
+                    padding: '2px 6px', flexShrink: 0, marginTop: 1,
+                  }}>
+                    {bid.status.toUpperCase()}
+                  </span>
                 </div>
-                <span style={{
-                  fontSize: 7, letterSpacing: '0.15em', color: statusColor(bid.status),
-                  border: `1px solid ${statusColor(bid.status)}22`, borderRadius: 2,
-                  padding: '2px 6px', flexShrink: 0, marginTop: 1,
+                <div style={{
+                  display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                  marginTop: 14,
                 }}>
-                  {bid.status.toUpperCase()}
-                </span>
-              </div>
-              <div style={{
-                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                marginTop: 14, paddingTop: 12, borderTop: `1px solid ${C.border}`,
-              }}>
-                <div style={{ fontSize: 9, color: '#2e2e2e' }}>
-                  <span style={{ color: '#4a4a4a' }}>{bid.quote_count}</span>
-                  {' '}QUOTE{bid.quote_count !== 1 ? 'S' : ''}
+                  <div style={{ fontSize: 9, color: '#2e2e2e' }}>
+                    <span style={{ color: '#4a4a4a' }}>{bid.quote_count}</span>
+                    {' '}QUOTE{bid.quote_count !== 1 ? 'S' : ''}
+                  </div>
+                  <span style={{ fontSize: 8, color: '#2e2e2e', letterSpacing: '0.1em' }}>
+                    {bid.bid_id}
+                  </span>
                 </div>
-                <span style={{ fontSize: 8, color: C.accent, letterSpacing: '0.1em' }}>
-                  {bid.bid_id}
-                </span>
+              </div>
+
+              {/* Action footer */}
+              <div style={{
+                borderTop: `1px solid ${C.border}`,
+                display: 'grid', gridTemplateColumns: '1fr 1fr',
+              }}>
+                <button
+                  onClick={() => onSelectBid(bid)}
+                  style={{
+                    background: 'none', border: 'none', borderRight: `1px solid ${C.border}`,
+                    padding: '8px 0', fontSize: 8, letterSpacing: '0.12em',
+                    textTransform: 'uppercase', color: C.muted, fontFamily: FONT,
+                    cursor: 'pointer',
+                  }}
+                >
+                  VIEW QUOTES
+                </button>
+                <button
+                  onClick={e => { e.stopPropagation(); onUpload(bid) }}
+                  style={{
+                    background: 'none', border: 'none',
+                    padding: '8px 0', fontSize: 8, letterSpacing: '0.12em',
+                    textTransform: 'uppercase', color: C.accent, fontFamily: FONT,
+                    cursor: 'pointer',
+                  }}
+                >
+                  UPLOAD PDF ↑
+                </button>
               </div>
             </div>
           ))}
