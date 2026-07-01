@@ -1,0 +1,54 @@
+{
+  "run_id": "RUN-007",
+  "bid_id": "BID-001",
+  "status": "completed",
+  "winner": {
+    "quote_id": "BID-001-Q01",
+    "vendor_name": "",
+    "risk_score": 84.0,
+    "risk_level": "CRITICAL",
+    "findings": [
+      "There is a direct conflict on advance payment: fixed field says 60% advance, while the quote says 50% advance payment.",
+      "Warranty start is materially different across sources: fixed field says 'On Delivery' while the vendor quote says 'On Commissioning'.",
+      "Installation responsibility is assigned to the buyer in both sources, increasing execution risk because the vendor is not contractually taking responsibility for installation/commissioning.",
+      "Training is not included, which is a significant risk for complex medical equipment and may delay acceptance and safe operation.",
+      "The vendor is a new entrant with limited history and only 1 year in operation, which increases delivery and support risk.",
+      "The quote is light on operational detail and appears marketing-heavy, emphasizing brand reputation and patient confidence rather than implementation specifics.",
+      "Critical execution dependencies appear unresolved: construction completion is only 60%, electrical readiness is pending, regulatory approval is pending, and there are zero technicians available against six required.",
+      "Historical delays in similar procurements are substantial (7, 8, and 11 months), which raises concern that the stated delivery timeline may not be reliable.",
+      "Service support is mentioned only as a 12-hour response target, but there is no detailed SLA, uptime commitment, escalation path, or penalty for non-performance.",
+      "No bank guarantee, performance security, acceptance milestone structure, or penalty/liquidated damages clause is provided in the input."
+    ],
+    "recommendation": "Do not award as-is. Require the vendor to resolve the advance-payment conflict, confirm warranty start as commissioning in the final contract, provide a performance bank guarantee or equivalent security, commit to vendor-led installation/commissioning and training, and submit a detailed SLA with penalties, acceptance criteria, and milestone-linked payments before proceeding."
+  },
+  "ranked_quotes": [
+    {
+      "quote_id": "BID-001-Q01",
+      "vendor_name": "",
+      "risk_score": 84.0,
+      "risk_level": "CRITICAL",
+      "findings": [
+        "There is a direct conflict on advance payment: fixed field says 60% advance, while the quote says 50% advance payment.",
+        "Warranty start is materially different across sources: fixed field says 'On Delivery' while the vendor quote says 'On Commissioning'.",
+        "Installation responsibility is assigned to the buyer in both sources, increasing execution risk because the vendor is not contractually taking responsibility for installation/commissioning.",
+        "Training is not included, which is a significant risk for complex medical equipment and may delay acceptance and safe operation.",
+        "The vendor is a new entrant with limited history and only 1 year in operation, which increases delivery and support risk.",
+        "The quote is light on operational detail and appears marketing-heavy, emphasizing brand reputation and patient confidence rather than implementation specifics.",
+        "Critical execution dependencies appear unresolved: construction completion is only 60%, electrical readiness is pending, regulatory approval is pending, and there are zero technicians available against six required.",
+        "Historical delays in similar procurements are substantial (7, 8, and 11 months), which raises concern that the stated delivery timeline may not be reliable.",
+        "Service support is mentioned only as a 12-hour response target, but there is no detailed SLA, uptime commitment, escalation path, or penalty for non-performance.",
+        "No bank guarantee, performance security, acceptance milestone structure, or penalty/liquidated damages clause is provided in the input."
+      ],
+      "recommendation": "Do not award as-is. Require the vendor to resolve the advance-payment conflict, confirm warranty start as commissioning in the final contract, provide a performance bank guarantee or equivalent security, commit to vendor-led installation/commissioning and training, and submit a detailed SLA with penalties, acceptance criteria, and milestone-linked payments before proceeding."
+    }
+  ],
+  "feedback": [
+    "Initial demo ranking uses lower contract risk as better.",
+    "Bid Recommender Agent logic can replace this ranking later."
+  ],
+  "artifact_refs": [
+    "artifact_vendor_proposal",
+    "artifact_bid_recommendation",
+    "artifact_contract_review"
+  ]
+}

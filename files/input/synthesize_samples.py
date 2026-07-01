@@ -454,13 +454,13 @@ def build_coverage_rows(config: Dict[str, Any], bids: List[Dict[str, Any]]) -> L
             increment_coverage(
                 coverage,
                 "quote_length",
-                page_count_bucket(quote["page_count_hint"]),
+                page_count_bucket(quote.get("page_count_hint", 0)),
             )
             increment_coverage(
                 coverage,
                 "compliance_completeness",
                 "complete"
-                if len(quote["compliance_claims"]) >= len(bid["published_bid_criteria"]["compliance_required"])
+                if len(quote.get("compliance_claims", [])) >= len(bid["published_bid_criteria"]["compliance_required"])
                 else "partial",
             )
             for criterion_id, score in quote["criteria_scores"].items():
@@ -562,6 +562,94 @@ def write_manifest(output_dir: Path, bids: List[Dict[str, Any]]) -> None:
                 )
 
 
+def write_dataset(output_dir: Path, bids: List[Dict[str, Any]]) -> None:
+    path = output_dir / "dataset.csv"
+    fieldnames = [
+        "bid_id",
+        "quote_id",
+        "vendor_name",
+        "company_legal_name",
+        "equipment_type",
+        "pdf_path",
+        "pdf_url",
+        "contract_value_cr",
+        "delivery_timeline_months",
+        "advance_payment_pct",
+        "warranty_start",
+        "installation_responsibility",
+        "training_included",
+        "vendor_type",
+        "vendor_type_label",
+        "archetype",
+        "format_variation",
+        "weighted_decision_score",
+        "rank_in_bid",
+        "is_top_1",
+        "is_top_2",
+        "is_top_3",
+        "is_top_5",
+        "ground_truth_label",
+    ]
+    with path.open("w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=fieldnames)
+        writer.writeheader()
+        for bid in bids:
+            ranked = sorted(
+                bid["quotes"],
+                key=lambda quote: quote["weighted_decision_score"],
+                reverse=True,
+            )
+            rank_by_quote = {
+                quote["quote_id"]: rank
+                for rank, quote in enumerate(ranked, start=1)
+            }
+            top_1 = bid["ground_truth"]["top_1"]
+            top_2 = set(bid["ground_truth"]["top_2"])
+            top_3 = set(bid["ground_truth"].get("top_3", []))
+            top_5 = {quote["quote_id"] for quote in ranked[:5]}
+            for quote in bid["quotes"]:
+                quote_id = quote["quote_id"]
+                rank = rank_by_quote[quote_id]
+                if quote_id == top_1:
+                    label = "winner"
+                elif quote_id in top_2:
+                    label = "top_2"
+                elif quote_id in top_3:
+                    label = "top_3"
+                elif quote_id in top_5:
+                    label = "top_5"
+                else:
+                    label = "not_selected"
+                writer.writerow(
+                    {
+                        "bid_id": bid["bid_id"],
+                        "quote_id": quote_id,
+                        "vendor_name": quote["vendor_name"],
+                        "company_legal_name": quote.get("company_legal_name", ""),
+                        "equipment_type": bid["equipment_type"],
+                        "pdf_path": quote["pdf_path"],
+                        "pdf_url": quote.get("pdf_url", ""),
+                        "contract_value_cr": quote.get("contract_value_cr", ""),
+                        "delivery_timeline_months": quote.get("delivery_timeline_months", ""),
+                        "advance_payment_pct": quote.get("advance_payment_pct", ""),
+                        "warranty_start": quote.get("warranty_start", ""),
+                        "installation_responsibility": quote.get("installation_responsibility", ""),
+                        "training_included": quote.get("training_included", ""),
+                        "vendor_type": quote.get("vendor_type", ""),
+                        "vendor_type_label": quote.get("vendor_type_label", ""),
+                        "archetype": quote.get("archetype", ""),
+                        "format_variation": quote.get("format_variation", ""),
+                        "weighted_decision_score": quote["weighted_decision_score"],
+                        "rank_in_bid": rank,
+                        "is_top_1": quote_id == top_1,
+                        "is_top_2": quote_id in top_2,
+                        "is_top_3": quote_id in top_3,
+                        "is_top_5": quote_id in top_5,
+                        "ground_truth_label": label,
+                    }
+                )
+
+
 def total_requested_samples(args: argparse.Namespace, experiment: Dict[str, Any]) -> int:
     if args.num_samples:
         return args.num_samples
@@ -582,9 +670,24 @@ def main() -> None:
         action="store_true",
         help="Prefer values that are under-covered in the existing output metadata.",
     )
+    parser.add_argument(
+        "--from-metadata",
+        action="store_true",
+        help="Rebuild manifest.csv, dataset.csv, and coverage.csv from existing metadata.json.",
+    )
     args = parser.parse_args()
 
     config = load_json(args.criteria)
+    if args.from_metadata:
+        existing_bids = load_existing_bids(args.output / "metadata.json")
+        if not existing_bids:
+            raise SystemExit(f"No bids found in {args.output / 'metadata.json'}")
+        write_manifest(args.output, existing_bids)
+        write_dataset(args.output, existing_bids)
+        write_coverage(args.output, config, existing_bids)
+        print(f"Rebuilt manifest.csv, dataset.csv, and coverage.csv in {args.output}")
+        return
+
     experiment = config["experiment"]
     rng = random.Random(experiment.get("random_seed", 42))
     args.output.mkdir(parents=True, exist_ok=True)
@@ -636,11 +739,13 @@ def main() -> None:
     }
     write_json(args.output / "metadata.json", metadata)
     write_manifest(args.output, bids)
+    write_dataset(args.output, bids)
     write_coverage(args.output, config, bids)
 
     total_quotes = sum(len(bid["quotes"]) for bid in bids)
     print(f"Generated {len(new_bids)} new bids and {sum(len(bid['quotes']) for bid in new_bids)} new quote PDFs in {args.output}")
     print(f"Dataset now has {len(bids)} bids and {total_quotes} quote PDFs")
+    print(f"Wrote dataset file to {args.output / 'dataset.csv'}")
     print(f"Wrote coverage report to {args.output / 'coverage.csv'}")
 
 

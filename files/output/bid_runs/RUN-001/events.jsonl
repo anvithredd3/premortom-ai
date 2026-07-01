@@ -1,0 +1,20 @@
+{"id": 1, "timestamp": "2026-06-28T05:33:42.097000+00:00", "type": "run_queued", "bid_id": "BID-001"}
+{"id": 2, "timestamp": "2026-06-28T05:33:42.100963+00:00", "type": "run_started", "bid_id": "BID-001"}
+{"id": 3, "timestamp": "2026-06-28T05:33:42.102378+00:00", "type": "agent_status", "agent": "bid_recommender", "status": "running"}
+{"id": 4, "timestamp": "2026-06-28T05:33:42.104120+00:00", "type": "quote_running", "quote_id": "BID-001-Q01"}
+{"id": 5, "timestamp": "2026-06-28T05:33:42.105433+00:00", "type": "agent_status", "agent": "contract_review", "status": "running"}
+{"id": 6, "timestamp": "2026-06-28T05:33:47.706992+00:00", "type": "quote_completed", "quote_id": "BID-001-Q01", "vendor_name": "", "risk_score": 88.0}
+{"id": 7, "timestamp": "2026-06-28T05:33:47.707564+00:00", "type": "quote_running", "quote_id": "BID-001-Q02"}
+{"id": 8, "timestamp": "2026-06-28T05:33:47.707973+00:00", "type": "agent_status", "agent": "contract_review", "status": "running"}
+{"id": 9, "timestamp": "2026-06-28T05:33:51.995919+00:00", "type": "quote_completed", "quote_id": "BID-001-Q02", "vendor_name": "", "risk_score": 85.0}
+{"id": 10, "timestamp": "2026-06-28T05:33:51.996608+00:00", "type": "quote_running", "quote_id": "BID-001-Q03"}
+{"id": 11, "timestamp": "2026-06-28T05:33:51.997035+00:00", "type": "agent_status", "agent": "contract_review", "status": "running"}
+{"id": 12, "timestamp": "2026-06-28T05:33:55.387324+00:00", "type": "quote_completed", "quote_id": "BID-001-Q03", "vendor_name": "", "risk_score": 78.0}
+{"id": 13, "timestamp": "2026-06-28T05:33:55.387910+00:00", "type": "quote_running", "quote_id": "BID-001-Q04"}
+{"id": 14, "timestamp": "2026-06-28T05:33:55.388531+00:00", "type": "agent_status", "agent": "contract_review", "status": "running"}
+{"id": 15, "timestamp": "2026-06-28T05:34:00.083875+00:00", "type": "quote_completed", "quote_id": "BID-001-Q04", "vendor_name": "", "risk_score": 78.0}
+{"id": 16, "timestamp": "2026-06-28T05:34:00.084550+00:00", "type": "quote_running", "quote_id": "BID-001-Q05"}
+{"id": 17, "timestamp": "2026-06-28T05:34:00.084931+00:00", "type": "agent_status", "agent": "contract_review", "status": "running"}
+{"id": 18, "timestamp": "2026-06-28T05:34:04.051254+00:00", "type": "quote_completed", "quote_id": "BID-001-Q05", "vendor_name": "", "risk_score": 78.0}
+{"id": 19, "timestamp": "2026-06-28T05:34:04.051704+00:00", "type": "agent_status", "agent": "decision_logic", "status": "running"}
+{"id": 20, "timestamp": "2026-06-28T05:34:04.052479+00:00", "type": "run_completed", "winner": {"quote_id": "BID-001-Q03", "vendor_name": "", "risk_score": 78.0, "risk_level": "HIGH", "findings": ["Warranty starts on delivery rather than after commissioning, so the buyer bears risk during installation and setup.", "Advance payment is very high at 60% of contract value, and the input does not show any bank guarantee or advance security.", "Installation responsibility is assigned to the buyer, while site readiness is incomplete and no vendor installation penalty is stated.", "Training is not included in the procurement input, increasing operational and commissioning risk.", "The site is not ready for installation: electrical readiness and regulatory approval are both pending, and no technicians are available against a requirement of six."], "recommendation": "Require the vendor to revise the contract before award: move warranty commencement to successful commissioning/acceptance, reduce advance payment or secure it with an unconditional bank guarantee, assign installation and commissioning responsibility to the vendor with clear delay penalties, and include mandatory training and handover support. Do not release the advance until site readiness and regulatory approvals are confirmed."}}

@@ -1,0 +1,46 @@
+{
+  "run_id": "RUN-005",
+  "bid_id": "BID-001",
+  "status": "completed",
+  "winner": {
+    "quote_id": "BID-001-Q01",
+    "vendor_name": "",
+    "risk_score": 78.0,
+    "risk_level": "HIGH",
+    "findings": [
+      "Advance payment is very high at 60% of contract value, and the document does not mention any bank guarantee or other advance-security mechanism.",
+      "Warranty is stated to begin on delivery, which exposes the buyer to a warranty period running before commissioning and operational acceptance.",
+      "Installation responsibility is placed on the buyer, while the vendor quote does not provide a vendor-side installation penalty or performance-linked remedy.",
+      "Training is explicitly not included, increasing the risk of delayed commissioning and improper operation for complex medical equipment.",
+      "The procurement context shows weak readiness: construction is only 60% complete, electrical readiness and regulatory approval are pending, and no technicians are available against six required.",
+      "The vendor is a new entrant with limited history, which increases execution and support risk for a high-value medical equipment purchase."
+    ],
+    "recommendation": "Do not release the 60% advance as drafted. Require a reduced advance with an unconditional bank guarantee, shift warranty commencement to commissioning/acceptance, make vendor installation and commissioning mandatory with liquidated damages for delay, and add mandatory operator training before acceptance. Also require proof of site readiness, regulatory clearance, and a detailed implementation schedule before award or payment."
+  },
+  "ranked_quotes": [
+    {
+      "quote_id": "BID-001-Q01",
+      "vendor_name": "",
+      "risk_score": 78.0,
+      "risk_level": "HIGH",
+      "findings": [
+        "Advance payment is very high at 60% of contract value, and the document does not mention any bank guarantee or other advance-security mechanism.",
+        "Warranty is stated to begin on delivery, which exposes the buyer to a warranty period running before commissioning and operational acceptance.",
+        "Installation responsibility is placed on the buyer, while the vendor quote does not provide a vendor-side installation penalty or performance-linked remedy.",
+        "Training is explicitly not included, increasing the risk of delayed commissioning and improper operation for complex medical equipment.",
+        "The procurement context shows weak readiness: construction is only 60% complete, electrical readiness and regulatory approval are pending, and no technicians are available against six required.",
+        "The vendor is a new entrant with limited history, which increases execution and support risk for a high-value medical equipment purchase."
+      ],
+      "recommendation": "Do not release the 60% advance as drafted. Require a reduced advance with an unconditional bank guarantee, shift warranty commencement to commissioning/acceptance, make vendor installation and commissioning mandatory with liquidated damages for delay, and add mandatory operator training before acceptance. Also require proof of site readiness, regulatory clearance, and a detailed implementation schedule before award or payment."
+    }
+  ],
+  "feedback": [
+    "Initial demo ranking uses lower contract risk as better.",
+    "Bid Recommender Agent logic can replace this ranking later."
+  ],
+  "artifact_refs": [
+    "artifact_vendor_proposal",
+    "artifact_bid_recommendation",
+    "artifact_contract_review"
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "run_id": "RUN-002",
+  "bid_id": "BID-001",
+  "status": "completed",
+  "winner": {
+    "quote_id": "BID-001-Q01",
+    "vendor_name": "",
+    "risk_score": 82.0,
+    "risk_level": "CRITICAL",
+    "findings": [
+      "Warranty risk is high because the stated warranty begins on delivery, not on commissioning or acceptance, exposing the buyer to warranty time running while the system may still be uninstalled or non-operational.",
+      "Advance payment is very high at 60% of contract value and the input does not mention any bank guarantee or advance security, creating significant exposure if the vendor delays or defaults.",
+      "Installation responsibility is assigned to the buyer, while the vendor quote indicates installation responsibility is vendor-side; this mismatch creates execution ambiguity and likely disputes over who must complete commissioning.",
+      "Training is not included in the procurement input, which increases the risk of poor handover, user error, and delayed operational readiness for complex medical equipment.",
+      "The project context shows readiness constraints: construction is only 60% complete, electrical readiness is pending, regulatory approval is pending, and no technicians are available against six required, making timely installation and commissioning unlikely."
+    ],
+    "recommendation": "Do not release the 60% advance as drafted. Amend the contract so warranty starts only on commissioning/acceptance, require an advance bank guarantee or equivalent security, shift installation and commissioning responsibility to the vendor, include mandatory user training, and make payment milestones contingent on site readiness, regulatory approval, and successful acceptance testing."
+  },
+  "ranked_quotes": [
+    {
+      "quote_id": "BID-001-Q01",
+      "vendor_name": "",
+      "risk_score": 82.0,
+      "risk_level": "CRITICAL",
+      "findings": [
+        "Warranty risk is high because the stated warranty begins on delivery, not on commissioning or acceptance, exposing the buyer to warranty time running while the system may still be uninstalled or non-operational.",
+        "Advance payment is very high at 60% of contract value and the input does not mention any bank guarantee or advance security, creating significant exposure if the vendor delays or defaults.",
+        "Installation responsibility is assigned to the buyer, while the vendor quote indicates installation responsibility is vendor-side; this mismatch creates execution ambiguity and likely disputes over who must complete commissioning.",
+        "Training is not included in the procurement input, which increases the risk of poor handover, user error, and delayed operational readiness for complex medical equipment.",
+        "The project context shows readiness constraints: construction is only 60% complete, electrical readiness is pending, regulatory approval is pending, and no technicians are available against six required, making timely installation and commissioning unlikely."
+      ],
+      "recommendation": "Do not release the 60% advance as drafted. Amend the contract so warranty starts only on commissioning/acceptance, require an advance bank guarantee or equivalent security, shift installation and commissioning responsibility to the vendor, include mandatory user training, and make payment milestones contingent on site readiness, regulatory approval, and successful acceptance testing."
+    }
+  ],
+  "feedback": [
+    "Initial demo ranking uses lower contract risk as better.",
+    "Bid Recommender Agent logic can replace this ranking later."
+  ]
+}

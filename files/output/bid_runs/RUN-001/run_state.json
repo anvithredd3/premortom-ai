@@ -1,0 +1,105 @@
+{
+  "run_id": "RUN-001",
+  "bid_id": "BID-001",
+  "status": "completed",
+  "current_step": "completed",
+  "agents": {
+    "bid_recommender": {
+      "status": "completed",
+      "message": "Preparing quote review plan"
+    },
+    "contract_review": {
+      "status": "completed",
+      "message": "Reviewing BID-001-Q05"
+    },
+    "decision_logic": {
+      "status": "completed",
+      "message": "Ranking reviewed quotes"
+    }
+  },
+  "quotes": [
+    {
+      "quote_id": "BID-001-Q01",
+      "status": "completed",
+      "vendor_name": "",
+      "risk_score": 88.0
+    },
+    {
+      "quote_id": "BID-001-Q02",
+      "status": "completed",
+      "vendor_name": "",
+      "risk_score": 85.0
+    },
+    {
+      "quote_id": "BID-001-Q03",
+      "status": "completed",
+      "vendor_name": "",
+      "risk_score": 78.0
+    },
+    {
+      "quote_id": "BID-001-Q04",
+      "status": "completed",
+      "vendor_name": "",
+      "risk_score": 78.0
+    },
+    {
+      "quote_id": "BID-001-Q05",
+      "status": "completed",
+      "vendor_name": "",
+      "risk_score": 78.0
+    }
+  ],
+  "graph": {
+    "nodes": [
+      {
+        "id": "bid_recommender",
+        "label": "Bid Recommender",
+        "status": "running"
+      },
+      {
+        "id": "contract_review",
+        "label": "Contract Review",
+        "status": "running"
+      },
+      {
+        "id": "decision_logic",
+        "label": "Decision Logic",
+        "status": "running"
+      }
+    ],
+    "edges": [
+      {
+        "source": "bid_recommender",
+        "target": "contract_review",
+        "status": "waiting"
+      },
+      {
+        "source": "contract_review",
+        "target": "bid_recommender",
+        "status": "waiting"
+      },
+      {
+        "source": "bid_recommender",
+        "target": "decision_logic",
+        "status": "waiting"
+      }
+    ]
+  },
+  "external_connections": [
+    {
+      "id": "document_store",
+      "label": "Local PDF Store",
+      "status": "ok"
+    },
+    {
+      "id": "llm_provider",
+      "label": "LLM Provider",
+      "status": "pending"
+    }
+  ],
+  "telemetry": {
+    "elapsed_ms": 0,
+    "llm_calls": 0,
+    "errors": 0
+  }
+}

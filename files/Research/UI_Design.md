@@ -2,6 +2,324 @@
 
 The current UI is strong for demonstrating a single procurement PreMortem. The following comments are not replacements for the existing design, but proposed extensions for batch quote comparison, management decision criteria, pipeline evaluation, and agent observability.
 
+## Backend And UI Interface Changes
+
+The frontend should treat FastAPI as the source of truth for bid inputs, uploaded quote PDFs, run state, and final outputs. Streamlit remains the UI server, while FastAPI owns the backend workflow.
+
+```text
+Browser
+  -> Streamlit UI
+    -> FastAPI backend
+      -> bid input registry
+      -> orchestrator
+      -> agents
+      -> output store
+```
+
+The detailed backend API and storage design is documented in `Backend_Design.md`. The UI should use those APIs through `frontend/api_client.py` instead of writing files directly.
+
+### Initial Bid Workflow
+
+The first UI implementation should add a bid-level workflow above the existing individual procurement analysis screens.
+
+Recommended first navigation:
+
+1. Bid Intake
+2. Quote Uploads
+3. Bid Analysis Monitor
+4. Bid Results
+5. Quote Detail
+
+The current individual quote/procurement analysis implementation remains useful. The new UI should add higher-level bid and quote-batch screens, then allow the user to drill down into an individual quote using the existing analysis style.
+
+High-level flow:
+
+```text
+Create or select bid
+  -> upload/list quote PDFs
+  -> start bid evaluation
+  -> poll run state every second
+  -> display agent graph, connections, telemetry, and quote progress
+  -> display winner and ranked quote results
+  -> select quote for individual analysis detail
+```
+
+### Bid Creation Screen
+
+The UI should add a bid creation and selection flow before quote analysis.
+
+User actions:
+
+- Enter procurement name.
+- Enter equipment type.
+- Create a bid/RFQ container.
+- Select an existing bid.
+- Optionally scan the generated sample input folder.
+
+Frontend API call:
+
+```text
+POST /bids
+GET /bids
+POST /input/scan
+```
+
+Expected UI state after success:
+
+- Store `bid_id` in `st.session_state`.
+- Show the bid ID and storage status.
+- Enable quote upload for that bid.
+
+### Quote Upload Screen
+
+The UI should support manual vendor quote PDF uploads and quote listing for a selected bid.
+
+User actions:
+
+- Select or create a bid.
+- Enter vendor name.
+- Upload one or more PDF quote files.
+- Submit uploads to FastAPI.
+- View all registered quotes for the bid.
+- Select one quote for individual analysis detail.
+
+Frontend API call:
+
+```text
+POST /bids/{bid_id}/quotes
+GET /bids/{bid_id}/quotes
+```
+
+The Streamlit app should not save PDFs directly to the filesystem. FastAPI should save PDFs under:
+
+```text
+files/input/samples/bids/{bid_id}/{quote_id}.pdf
+```
+
+After each upload, the UI should refresh:
+
+```text
+GET /bids/{bid_id}/quotes
+```
+
+and show the registered quotes.
+
+### Generated Input Scan
+
+Because the synthetic input script can create quote PDFs directly under `files/input/samples/bids/`, the UI should provide a simple admin/demo action:
+
+```text
+Scan sample input folder
+```
+
+Frontend API call:
+
+```text
+POST /input/scan
+```
+
+The UI should show:
+
+- Number of bids indexed.
+- Number of quotes indexed.
+- Number of new bids discovered.
+- Number of new quotes discovered.
+
+This keeps the manually uploaded data path and generated data path aligned through the same `bids_database.csv` registry.
+
+### Bid Run Screen
+
+For a selected bid, the UI should allow the user to start a bid evaluation run.
+
+User actions:
+
+- Select a bid.
+- Select all quotes or a subset of quotes.
+- Click `Run Bid Evaluation`.
+
+Frontend API call:
+
+```text
+POST /bid-runs
+```
+
+Expected response:
+
+```json
+{
+  "run_id": "RUN-001",
+  "bid_id": "BID-101",
+  "status": "queued"
+}
+```
+
+The UI should store `run_id` and begin polling run state.
+
+### Bid Analysis Monitor
+
+The Bid Analysis Monitor should provide the realtime-style view of the running bid evaluation. For the first implementation, the UI should use REST polling rather than WebSocket.
+
+Frontend API calls:
+
+```text
+GET /bid-runs/{run_id}/state
+GET /bid-runs/{run_id}/graph
+GET /bid-runs/{run_id}/events?since=N
+GET /bid-runs/{run_id}/artifacts
+```
+
+Polling interval:
+
+```text
+0.5-1 second for demo mode
+```
+
+The UI should render:
+
+- Overall run status.
+- Current step.
+- Agent status cards.
+- Agent workflow graph.
+- Agent connection status.
+- External connection status.
+- Quote-by-quote progress.
+- Runtime telemetry where available.
+- Errors or failed quote reviews.
+
+This gives a realtime-style experience without adding WebSocket complexity during the demo phase.
+
+The UI should treat the run as a graph:
+
+```json
+{
+  "run_id": "RUN-001",
+  "nodes": [
+    {
+      "id": "bid_recommender",
+      "type": "agent",
+      "label": "Bid Recommender Agent",
+      "status": "running"
+    },
+    {
+      "id": "contract_review",
+      "type": "agent",
+      "label": "Contract Review Agent",
+      "status": "completed"
+    },
+    {
+      "id": "llm_provider",
+      "type": "external_connection",
+      "label": "LLM Provider",
+      "status": "ok"
+    }
+  ],
+  "edges": [
+    {
+      "source": "bid_recommender",
+      "target": "contract_review",
+      "type": "delegates_to",
+      "status": "completed"
+    },
+    {
+      "source": "contract_review",
+      "target": "llm_provider",
+      "type": "uses_external_service",
+      "status": "completed"
+    }
+  ]
+}
+```
+
+The UI should treat agent outputs as artifacts:
+
+```json
+{
+  "run_id": "RUN-001",
+  "artifacts": [
+    {
+      "artifact_id": "artifact_contract_review",
+      "node_id": "contract_review",
+      "artifact_type": "quote_reviews",
+      "name": "Contract Review Results",
+      "status": "ready"
+    },
+    {
+      "artifact_id": "artifact_bid_recommendation",
+      "node_id": "bid_recommender",
+      "artifact_type": "decision_result",
+      "name": "Bid Recommendation",
+      "status": "ready"
+    }
+  ]
+}
+```
+
+For the first version, the graph can be a fixed workflow with dynamic statuses. The orchestrator should update node, edge, event, and artifact status before and after each agent step.
+
+### Final Decision View
+
+When the run state becomes `completed`, the UI should fetch the final result.
+
+Frontend API calls:
+
+```text
+GET /bid-runs/{run_id}/result
+GET /bid-runs/{run_id}/artifacts
+GET /bid-runs/{run_id}/artifacts/{artifact_id}
+```
+
+The final decision screen should show:
+
+- Winning quote.
+- Ranked quote list.
+- Vendor feedback.
+- Reasons for selecting the winner.
+- Reasons for rejecting or downgrading other quotes.
+- Links or references to graph artifacts.
+
+The final decision should use `/result` for the business summary and `/artifacts` for detailed agent outputs. The UI should not read files from:
+
+```text
+files/output/bid_runs/{run_id}/
+```
+
+directly.
+
+Recommended artifact use:
+
+```text
+artifact_bid_recommendation
+  -> final ranking and recommender rationale
+
+artifact_contract_review
+  -> quote-by-quote contract review findings
+
+artifact_telemetry
+  -> model, token, latency, and cost details when implemented
+```
+
+### Quote Detail View
+
+The Quote Detail view should preserve the useful parts of the existing individual procurement analysis UI.
+
+User actions:
+
+- Select a quote from the selected bid.
+- Open individual quote analysis.
+- Review the quote's extracted details, risks, findings, debate, and report-style output.
+
+This screen can reuse the current single procurement analysis concepts:
+
+- Contract risk.
+- Infrastructure readiness.
+- Workforce readiness.
+- Historical intelligence.
+- Financial exposure.
+- Debate.
+- Report/export.
+
+The quote detail screen should be a drilldown from the bid result or quote list, not the only entry point into the workflow.
+
 ## Review Comments On The Existing App
 
 The existing UI allows users to enter various parameters and also upload an input file. This is a good design for defining different combinations of inputs, and it helps explain what combinations the system supports and how complete the system is.
@@ -123,50 +441,6 @@ The agent names and roles could also become more generic so they map better to b
 - Historical procurement outcomes.
 
 This would make the decision more useful for real business procurement, where the goal is often not only to detect risk, but also to rank or shortlist the best available options.
-
-## Pipeline Evaluation And Ground Truth
-
-All inputs, debate outputs, decision board comments, overrides, and final decisions should be saved for the full process. These records can later be used to analyze pipeline performance against ground truth.
-
-For example:
-
-- One bidding process may have a batch of 20 input quotes.
-- Ground truth may identify the top 1, top 3, or top 5 quotes that should have been chosen.
-- The system may have 1,000 such bidding processes for evaluation.
-
-The pipeline can then be evaluated by checking how often its selected or shortlisted quotes match the ground truth. These results can be used to fine-tune agents, improve prompts, adjust criteria weights, and support agent observability.
-
-This also creates a path toward measuring the quality of the full agentic workflow, not just whether one demo decision looks reasonable.
-
-## Pipeline Evaluation Method
-
-The evaluation method should be clearly designed as a repeatable offline test process.
-
-1. Collect historical bidding datasets.
-   Each dataset should represent one bidding process and include all submitted vendor quotes, procurement requirements, management criteria, and the actual final selected vendor or final ranked shortlist.
-
-2. Define ground truth.
-   Ground truth can be represented as top 1, top 3, or top 5 quotes that should be selected according to the known historical outcome or expert-reviewed decision.
-
-3. Run the agentic pipeline on each bidding batch.
-   For every bidding process, the system should process all vendor quotes, run the specialist agents, run market or internet research where available, generate debate, apply decision board reasoning, and produce a ranked shortlist.
-
-4. Compare pipeline output with ground truth.
-   The system should measure whether the quote selected by the pipeline matches the ground-truth top 1, or whether it appears within the ground-truth top 3 or top 5.
-
-5. Measure ranking and shortlist quality.
-   Useful metrics may include top-1 accuracy, top-3 recall, top-5 recall, precision of shortlisted vendors, false rejection rate, and false acceptance rate.
-
-6. Analyze agent-level contribution.
-   Store each agent's risk scores, evidence, recommendations, debate statements, and final decision influence. This helps identify which agents are improving or hurting the final decision.
-
-7. Fine-tune prompts, criteria, and weights.
-   Based on evaluation results, adjust agent prompts, decision criteria, management weights, and research strategy. Re-run the evaluation to compare performance before and after changes.
-
-8. Track observability over time.
-   Maintain experiment runs so the team can compare different versions of agents, prompts, models, and criteria. This supports agent observability and makes the system easier to improve scientifically.
-
-The goal is to evaluate the complete decision pipeline, not only individual agent answers. The key question is: given a real batch of quotes, does the system select or shortlist the same vendors that expert decision makers would choose?
 
 ## Executive Dashboard
 

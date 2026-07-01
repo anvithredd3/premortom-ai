@@ -1,4 +1,4 @@
-# High-Level Agent Architecture v2: PreMortem AI
+# High-Level Agent Architecture v3: PreMortem AI
 
 ## 1. Goal
 
@@ -90,6 +90,8 @@ The weekend implementation will focus on a subset of these components while pres
 ```text
 Business Request
       ↓
+UI Guidance Agent / Intake Assistant
+      ↓
 Customer / Requirement Intake Agent
       ↓
 Orchestrator / Manager Agent
@@ -106,6 +108,8 @@ UI Dashboard / Human Review
 ```
 
 The orchestrator owns the workflow. The parallel execution layer is an implementation mechanism that helps scale agent calls and prevent blocking.
+
+RAG opportunity: CSV/JSON files and run artifacts are sufficient for the demo, while future RAG can improve retrieval of prior decisions, vendor history, policy knowledge, reviewer feedback, and chatbot guidance.
 
 For production-style robustness, the execution layer can later support:
 
@@ -145,7 +149,36 @@ The input layer should eventually support:
 
 ---
 
-### 5.2 Customer / Requirement Intake Agent
+### 5.2 UI Guidance Agent
+
+The UI Guidance Agent is an optional agent-assisted UI layer. It should help the user move through the workflow, but it should not own core storage, orchestration, or final decision logic.
+
+This agent is different from the Streamlit UI itself. The UI remains a deterministic application surface, while the UI Guidance Agent helps users understand what to do next.
+
+Responsibilities:
+
+- Explain the current screen and next action.
+- Help the user create a bid or request-for-quote.
+- Suggest missing bid details or quote-upload requirements.
+- Recommend decision criteria templates.
+- Summarize agent status and run progress in plain business language.
+- Explain bid results and why a quote won or lost.
+- Help the user drill down from bid-level results into quote-level analysis.
+- Ask clarifying questions when the input is incomplete.
+
+The UI Guidance Agent should not:
+
+- Save files directly.
+- Modify `bids_database.csv` or output artifacts directly.
+- Bypass the orchestrator.
+- Make final procurement decisions independently.
+- Dynamically generate arbitrary UI code.
+
+For the first implementation, this can remain a future component. The practical UI should still use deterministic screens for bid intake, quote uploads, run monitoring, results, and quote detail.
+
+---
+
+### 5.3 Customer / Requirement Intake Agent
 
 This agent captures and clarifies the business requirement.
 
@@ -161,7 +194,7 @@ For the weekend demo, this can remain simple or partially mocked.
 
 ---
 
-### 5.3 Orchestrator / Manager Agent
+### 5.4 Orchestrator / Manager Agent
 
 The orchestrator is the central controller of the workflow.
 
@@ -183,7 +216,7 @@ For the next implementation step, the orchestrator can be a lightweight controll
 
 ---
 
-### 5.4 Parallel Execution Layer
+### 5.5 Parallel Execution Layer
 
 This is not a business agent. It is a system layer used by the orchestrator.
 
@@ -200,7 +233,7 @@ This layer helps justify the use of Agentic AI because the system is not just a 
 
 ---
 
-### 5.5 Specialist Agents
+### 5.6 Specialist Agents
 
 Specialist agents should be generic enough to support multiple business workflows, while still allowing domain-specific adapters.
 
@@ -219,6 +252,28 @@ Responsibilities:
 - Payment milestone review
 - Installation responsibility review
 - Commercial risk assessment
+- Contract-submission quality review
+- Identification of missing, vague, conflicting, extra, or unusual contract terms
+- Assessment of whether contract and commercial claims are evidence-backed
+- Detection of proposal language that is mostly marketing rather than operationally specific
+- Identification of vendor differentiators that affect contract execution risk
+- Follow-up questions needed before award or negotiation
+
+The Contract Review Agent should analyze the vendor submission, not only fixed procurement fields. When raw quote text is available, it should treat the raw document text as the primary source and use fixed fields only as context or fallback.
+
+Contract Review Agent should explicitly capture:
+
+- What the vendor emphasizes in the contract/commercial submission.
+- What the vendor avoids saying or leaves unclear.
+- How specific the implementation, installation, warranty, service, and training commitments are.
+- Whether important claims are supported by evidence in the document.
+- Whether the quote is substance-heavy, marketing-heavy, or mixed.
+- Unusual conditions, exceptions, exclusions, or commercial terms.
+- Differentiators that reduce or increase contract execution risk.
+- Whether the proposal appears mature, vague, incomplete, or risky.
+- Follow-up questions required before a final procurement decision.
+
+If fixed fields conflict with raw quote text, the agent should report the conflict instead of silently choosing one source.
 
 
 ##### 2. Cost / Benchmark Agent
@@ -246,9 +301,53 @@ For MRI procurement, this includes:
 
 This agent can also support checklist generation and procedure updates.
 
-##### 4. Vendor / External Risk Agent
+##### 4. Vendor / Proposal Understanding and External Risk Agent
 
-Checks:
+This agent owns vendor and proposal understanding. It should extract information from the vendor quote document and produce a reusable schema that can be passed to Contract Review, Cost Benchmark, Compliance, Vendor Risk, Bid Recommendation, and Evaluator agents.
+
+The agent should not only parse fixed fields. It should preserve proposal-level intelligence that a human reviewer would use when judging vendor submissions.
+
+Document extraction responsibilities:
+
+- Read raw extracted text from vendor quote PDFs.
+- Extract core comparable fields where possible.
+- Capture vendor profile information, references, certifications, service claims, and differentiators.
+- Capture what the vendor emphasizes.
+- Capture what the vendor omits, avoids, or leaves vague.
+- Identify extra information that may be useful for evaluation.
+- Identify unusual claims, unusual terms, exceptions, or conditions.
+- Assess evidence quality and specificity.
+- Separate explicitly stated facts from inferred or unclear information.
+- Attach evidence snippets to extracted fields and observations.
+- Produce follow-up questions for missing or ambiguous proposal information.
+
+The first implementation should use a deterministic document parser before the Vendor / Proposal Understanding Agent:
+
+```text
+PDF bytes
+  -> deterministic parser extracts text
+  -> Vendor / Proposal Understanding Agent interprets the extracted text
+```
+
+This is preferred for the demo because it is faster, cheaper, easier to debug, and produces auditable text that can be reused by multiple agents. The Vendor Agent should focus on interpretation and proposal intelligence, not low-level PDF byte parsing.
+
+If deterministic extraction quality is poor, the system can later fall back to a document-capable LLM, OCR, or vision-based extraction path. This may improve accuracy for scanned PDFs, complex tables, multi-column layouts, stamps, signatures, or image-heavy quote documents.
+
+The proposal artifact should therefore track extraction metadata such as:
+
+- extraction method
+- text character count
+- text preview
+- extraction quality
+- whether OCR or vision fallback is needed
+
+Current implementation status:
+
+- Deterministic PDF text extraction exists.
+- Vendor / Proposal Understanding Agent is designed but not implemented yet.
+- Until the Vendor Agent is implemented, the Contract Review Agent reads `raw_document_text` directly.
+
+External/vendor-risk responsibilities:
 
 - Vendor performance
 - Delivery history
@@ -257,6 +356,13 @@ Checks:
 - External risk signals
 
 This is related to competitor/vendor research, but should be framed more broadly as external risk intelligence.
+
+Output should include both:
+
+1. Comparable structured fields for fair quote comparison.
+2. Open proposal observations that preserve vendor-specific richness.
+
+The Vendor / Proposal Understanding and External Risk Agent should not make the final quote recommendation. It prepares structured, evidence-backed inputs for downstream specialist agents and the Bid Recommendation Agent.
 
 ##### 5. Compliance / Policy Agent
 
@@ -270,9 +376,50 @@ Checks:
 
 This may be important for government, restricted-domain, or enterprise procurement use cases.
 
+##### 6. Bid Recommendation Agent
+
+The Bid Recommendation Agent is the decision integrator for a bidding process. It compares multiple vendor quotes within one bid and recommends the best quote or shortlist.
+
+This agent should not perform every analysis itself. It should consume structured outputs from specialist agents and external-signal agents, then synthesize a final ranking.
+
+Current demo inputs:
+
+- Quote PDFs and extracted quote text.
+- Vendor / Proposal Understanding and External Risk Agent outputs when available.
+- Contract Review Agent outputs.
+- Dataset metadata such as weighted decision score, rank, and ground-truth labels for evaluation.
+- Management criteria and weights where available.
+
+Future inputs:
+
+- Cost / Benchmark Agent outputs.
+- Compliance / Policy Agent outputs.
+- Vendor / External Risk Agent outputs.
+- Internet / Market Research Agent outputs.
+- Historical procurement examples.
+- Human reviewer comments or overrides.
+
+Expected output:
+
+- Winning quote.
+- Ranked quote list.
+- Top 2 / top 3 / top 5 shortlist.
+- Selection rationale.
+- Rejection or downgrade reasons for weaker quotes.
+- Negotiation points.
+- Risks that require human review.
+- Confidence score.
+
+The Bid Recommendation Agent is different from the Decision Summary Agent:
+
+- Bid Recommendation Agent decides which quote is best within a bid.
+- Decision Summary Agent converts evaluator-approved results into a business-friendly report and approval package.
+
+The first implementation can use a simple ranking strategy based on Contract Review Agent outputs and dataset metadata. Later, the same agent input schema can accept internet, vendor, benchmark, compliance, and historical signals without changing the UI or graph API contract.
+
 ---
 
-### 5.6 Evaluator Agent
+### 5.7 Evaluator Agent
 
 The evaluator reviews the overall quality of the workflow.
 
@@ -291,7 +438,7 @@ This is important because the system should not only generate content; it should
 
 ---
 
-### 5.7 Decision Summary Agent
+### 5.8 Decision Summary Agent
 
 The Decision Summary Agent converts the evaluator-approved outputs into a business-friendly decision package.
 
@@ -310,7 +457,7 @@ Final output should include:
 
 ---
 
-### 5.8 UI Dashboard
+### 5.9 UI Dashboard
 
 The UI should show the agentic workflow, not just the final answer.
 
@@ -327,6 +474,8 @@ Suggested UI sections:
 - Recommended actions
 - Future workflow placeholders
 
+The UI Guidance Agent can sit alongside this dashboard later as an assistant that explains what the dashboard means and recommends the next user action. The dashboard itself should remain deterministic and backed by orchestrator state and output artifacts.
+
 Even if not all workflows are implemented, the UI can show the intended expandable architecture.
 
 ---
@@ -336,8 +485,11 @@ Even if not all workflows are implemented, the UI can show the intended expandab
 The architecture can later include:
 
 - Customer Requirements Interface Agent
+- UI Guidance Agent
 - Internet / External Data Collection Agent
+- Internet / Market Research Agent
 - Competitor Research Agent
+- Bid Recommendation Agent
 - Compliance Enforcement Agent
 - Privacy Management Agent
 - Email / Communication Analysis Agent

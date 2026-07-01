@@ -1,0 +1,97 @@
+{
+  "run_id": "RUN-001",
+  "bid_id": "BID-001",
+  "status": "completed",
+  "winner": {
+    "quote_id": "BID-001-Q03",
+    "vendor_name": "",
+    "risk_score": 78.0,
+    "risk_level": "HIGH",
+    "findings": [
+      "Warranty starts on delivery rather than after commissioning, so the buyer bears risk during installation and setup.",
+      "Advance payment is very high at 60% of contract value, and the input does not show any bank guarantee or advance security.",
+      "Installation responsibility is assigned to the buyer, while site readiness is incomplete and no vendor installation penalty is stated.",
+      "Training is not included in the procurement input, increasing operational and commissioning risk.",
+      "The site is not ready for installation: electrical readiness and regulatory approval are both pending, and no technicians are available against a requirement of six."
+    ],
+    "recommendation": "Require the vendor to revise the contract before award: move warranty commencement to successful commissioning/acceptance, reduce advance payment or secure it with an unconditional bank guarantee, assign installation and commissioning responsibility to the vendor with clear delay penalties, and include mandatory training and handover support. Do not release the advance until site readiness and regulatory approvals are confirmed."
+  },
+  "ranked_quotes": [
+    {
+      "quote_id": "BID-001-Q03",
+      "vendor_name": "",
+      "risk_score": 78.0,
+      "risk_level": "HIGH",
+      "findings": [
+        "Warranty starts on delivery rather than after commissioning, so the buyer bears risk during installation and setup.",
+        "Advance payment is very high at 60% of contract value, and the input does not show any bank guarantee or advance security.",
+        "Installation responsibility is assigned to the buyer, while site readiness is incomplete and no vendor installation penalty is stated.",
+        "Training is not included in the procurement input, increasing operational and commissioning risk.",
+        "The site is not ready for installation: electrical readiness and regulatory approval are both pending, and no technicians are available against a requirement of six."
+      ],
+      "recommendation": "Require the vendor to revise the contract before award: move warranty commencement to successful commissioning/acceptance, reduce advance payment or secure it with an unconditional bank guarantee, assign installation and commissioning responsibility to the vendor with clear delay penalties, and include mandatory training and handover support. Do not release the advance until site readiness and regulatory approvals are confirmed."
+    },
+    {
+      "quote_id": "BID-001-Q04",
+      "vendor_name": "",
+      "risk_score": 78.0,
+      "risk_level": "HIGH",
+      "findings": [
+        "Warranty is stated to begin on delivery, which exposes the buyer to coverage starting before installation and commissioning are complete.",
+        "Advance payment is very high at 60% of contract value, and no bank guarantee or other advance-security mechanism is mentioned.",
+        "Installation responsibility is assigned to the buyer, while the equipment is complex medical equipment and site readiness is still incomplete.",
+        "Training is not included in the procurement data provided, increasing operational and commissioning risk.",
+        "The site is not ready for installation: electrical readiness and regulatory approval are both pending, and only 60% of construction is complete.",
+        "The vendor is a new entrant with limited history, which increases execution and warranty-claim risk."
+      ],
+      "recommendation": "Do not release the 60% advance as drafted. Amend the contract so warranty starts only after installation and commissioning, require a bank guarantee or equivalent advance-security instrument, shift installation/commissioning responsibility to the vendor, make payment milestone-based, and add mandatory training plus site-readiness preconditions before delivery or acceptance."
+    },
+    {
+      "quote_id": "BID-001-Q05",
+      "vendor_name": "",
+      "risk_score": 78.0,
+      "risk_level": "HIGH",
+      "findings": [
+        "Warranty begins on delivery, not on commissioning or acceptance, so the buyer bears risk during installation and readiness delays.",
+        "Advance payment is high at 60% of contract value, and the input does not show any bank guarantee or advance security.",
+        "Installation responsibility is assigned to the buyer even though electrical readiness and regulatory approval are still pending, increasing the chance of delay and dispute.",
+        "Training is stated as included in the raw quote, but the structured input says training_included is false; this inconsistency creates implementation risk and should be clarified before award.",
+        "No vendor-side penalty or performance-linked remedy is visible for delayed installation, commissioning, or readiness dependencies.",
+        "The site is not ready: construction is only 60% complete, electrical readiness is pending, and regulatory approval is pending, making timely deployment unlikely."
+      ],
+      "recommendation": "Require contract revisions before award: move warranty start to commissioning/acceptance, reduce advance substantially or secure it with an unconditional bank guarantee, make vendor responsible for installation and commissioning, add liquidated damages or milestone-based penalties for delay, and confirm training obligations in a binding clause with named deliverables and dates."
+    },
+    {
+      "quote_id": "BID-001-Q02",
+      "vendor_name": "",
+      "risk_score": 85.0,
+      "risk_level": "CRITICAL",
+      "findings": [
+        "Advance payment is very high at 60% of contract value and the input does not show any bank guarantee or other advance-security mechanism.",
+        "Warranty is stated to begin on delivery, which exposes the buyer to a warranty period running before commissioning and operational use.",
+        "Installation responsibility is assigned to the buyer even though electrical readiness and regulatory approval are still pending, creating a high risk of delay and dispute.",
+        "No training is included, increasing the likelihood of improper setup, delayed commissioning, and dependence on the vendor for post-delivery support.",
+        "The procurement context shows weak readiness indicators: construction is only 60% complete, electrical readiness is pending, regulatory approval is pending, and no technicians are available against 6 required."
+      ],
+      "recommendation": "Do not release the advance until the vendor provides a performance/advance bank guarantee and the contract is amended so warranty starts only after successful installation and commissioning. Make vendor installation and training mandatory, tie payment milestones to site readiness and acceptance testing, and obtain written confirmation of regulatory and electrical readiness before delivery."
+    },
+    {
+      "quote_id": "BID-001-Q01",
+      "vendor_name": "",
+      "risk_score": 88.0,
+      "risk_level": "CRITICAL",
+      "findings": [
+        "Warranty appears to start on delivery rather than commissioning, exposing the buyer to a warranty period running before the equipment is operational.",
+        "Advance payment is very high at 60% of contract value and the input does not mention any bank guarantee or other advance-security mechanism.",
+        "Installation responsibility is assigned to the buyer, while readiness indicators show the site is not ready, creating a high risk of delay and disputes.",
+        "Training is not included, increasing the likelihood of poor handover and delayed clinical use.",
+        "The vendor is described as a new entrant with limited history, which increases execution and support risk."
+      ],
+      "recommendation": "Require contract revisions before award: change warranty start to commissioning or acceptance, reduce advance to a lower percentage and secure it with an unconditional bank guarantee, shift installation/commissioning responsibility to the vendor with liquidated damages for delay, and make training mandatory as part of delivery. Do not release the advance until site readiness and regulatory prerequisites are verified."
+    }
+  ],
+  "feedback": [
+    "Initial demo ranking uses lower contract risk as better.",
+    "Bid Recommender Agent logic can replace this ranking later."
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "run_id": "RUN-004",
+  "quote_reviews": [
+    {
+      "quote_id": "BID-001-Q01",
+      "vendor_name": "",
+      "risk_score": 78.0,
+      "risk_level": "HIGH",
+      "findings": [
+        "Advance payment is very high at 60% and the document does not mention any bank guarantee or other advance-security mechanism.",
+        "Warranty is stated to start on delivery in the structured data, which is earlier than commissioning and exposes the buyer to pre-installation risk.",
+        "Installation responsibility is assigned to the buyer, while the site is not ready: construction is only 60% complete, electrical readiness is pending, and regulatory approval is pending.",
+        "No training is included, despite the equipment being medical equipment that typically requires operator and maintenance training.",
+        "The vendor is a new entrant with limited history, which increases execution and after-sales risk in combination with the above commercial terms."
+      ],
+      "recommendation": "Require the vendor to revise the contract before award: reduce advance to a much lower level or make it conditional on a full advance bank guarantee, change warranty commencement to commissioning/acceptance, shift installation and commissioning responsibility to the vendor with milestone-linked penalties, and include mandatory operator and maintenance training before acceptance. Do not release the current advance until site readiness and regulatory prerequisites are confirmed."
+    }
+  ]
+}

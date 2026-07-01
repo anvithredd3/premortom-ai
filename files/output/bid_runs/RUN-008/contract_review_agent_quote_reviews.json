@@ -1,0 +1,23 @@
+{
+  "run_id": "RUN-008",
+  "quote_reviews": [
+    {
+      "quote_id": "BID-001-Q01",
+      "vendor_name": "",
+      "risk_score": 78.0,
+      "risk_level": "HIGH",
+      "findings": [
+        "There is a direct conflict between the fixed fields and the raw quote on advance payment: fixed fields say 60% advance, while the vendor quote states 50% advance payment.",
+        "There is a direct conflict on warranty start: fixed fields say warranty starts on delivery, while the vendor quote says warranty starts on commissioning.",
+        "Installation responsibility is assigned to the buyer in both the fixed fields and the vendor quote, increasing execution risk because the vendor is not contractually taking responsibility for installation.",
+        "Training is not included in both sources, which creates a gap for a complex medical equipment deployment.",
+        "The vendor is a new entrant with limited history and only 1 year in operation, so evidence of execution capability is limited.",
+        "The quote is operationally thin and marketing-heavy, emphasizing brand reputation and patient confidence rather than detailed implementation, acceptance, or service obligations.",
+        "Critical contract terms are missing or unclear, including bank guarantee/security for advance, acceptance criteria, penalty/liquidated damages, commissioning milestones, payment schedule, and detailed service SLA/parts support.",
+        "The raw quote claims local service support and a 12-hour response target, but the commitment is not backed by detailed SLA terms, escalation, uptime, or remedy language.",
+        "The procurement context suggests elevated delivery risk: construction completion is only 60%, electrical readiness is pending, regulatory approval is pending, and there are zero technicians available against six required."
+      ],
+      "recommendation": "Do not award until the vendor resolves the advance-payment conflict, confirms warranty starts only on commissioning/acceptance in the final contract, provides an advance-payment bank guarantee or equivalent security, accepts clearer installation/commissioning responsibilities, and supplies a detailed SLA, training plan, acceptance criteria, and penalty/liquidated damages terms. Require documentary proof of regulatory approvals, local service capability, and reference checks before proceeding."
+    }
+  ]
+}

@@ -13,27 +13,36 @@ from __future__ import annotations
 import asyncio
 import json
 
-from fastapi import FastAPI, File, UploadFile
+from pydantic import BaseModel
+from fastapi import BackgroundTasks, FastAPI, File, Form, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import Response, StreamingResponse
 
-from pydantic import BaseModel
-
 from .agents import extraction_agent, profiler_agent
-from .agents.orchestrator import run_premortem, run_premortem_stream
+from .agents.orchestrator import run_bid_evaluation, run_premortem, run_premortem_stream
 from .models import PreMortemReport, ProcurementInput
+from .services import bid_outputs, document_parser, input_bids, report as report_service
+from .services.llm import has_api_key
 
 
 class ProfileRequest(BaseModel):
     text: str
-from .services import document_parser, report as report_service
-from .services.llm import has_api_key
 
 app = FastAPI(
     title="PreMortem AI",
     description="Agentic Procurement Failure Prediction Platform",
     version="1.0.0",
 )
+
+
+class BidCreateRequest(BaseModel):
+    procurement_name: str
+    equipment_type: str = ""
+
+
+class BidRunRequest(BaseModel):
+    bid_id: str
+    quote_ids: list[str] = []
 
 app.add_middleware(
     CORSMiddleware,
@@ -162,3 +171,139 @@ def export_report(fmt: str, report: PreMortemReport):
         media_type="application/json",
         status_code=400,
     )
+
+
+@app.post("/bids")
+def create_bid(payload: BidCreateRequest):
+    return input_bids.create_bid(payload.procurement_name, payload.equipment_type)
+
+
+@app.get("/bids")
+def list_bids():
+    return input_bids.list_bids()
+
+
+@app.post("/input/scan")
+def scan_input_folder():
+    return input_bids.scan_inputs()
+
+
+@app.post("/bids/{bid_id}/quotes")
+async def upload_quote(
+    bid_id: str,
+    vendor_name: str = Form(""),
+    file: UploadFile = File(...),
+):
+    try:
+        return input_bids.save_quote(
+            bid_id,
+            vendor_name,
+            file.filename or "quote.pdf",
+            file.file,
+        )
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+
+@app.get("/bids/{bid_id}/quotes")
+def list_quotes(bid_id: str):
+    return input_bids.list_quotes(bid_id)
+
+
+@app.post("/bid-runs")
+def start_bid_run(payload: BidRunRequest, background_tasks: BackgroundTasks):
+    quote_ids = payload.quote_ids or [
+        quote["quote_id"] for quote in input_bids.list_quotes(payload.bid_id)["quotes"]
+    ]
+    if not quote_ids:
+        raise HTTPException(status_code=400, detail="No quotes found for this bid")
+    run = bid_outputs.create_run(payload.bid_id, quote_ids)
+    background_tasks.add_task(
+        run_bid_evaluation,
+        run["run_id"],
+        payload.bid_id,
+        quote_ids,
+    )
+    return run
+
+
+@app.get("/bid-runs/{run_id}/state")
+def get_bid_run_state(run_id: str):
+    return bid_outputs.get_state(run_id)
+
+
+@app.get("/bid-runs/{run_id}/events")
+def get_bid_run_events(run_id: str, since: int = 0):
+    return bid_outputs.get_events(run_id, since)
+
+
+@app.get("/bid-runs/{run_id}/graph")
+def get_bid_run_graph(run_id: str):
+    return bid_outputs.get_graph(run_id)
+
+
+@app.get("/bid-runs/{run_id}/artifacts")
+def list_bid_run_artifacts(run_id: str):
+    return bid_outputs.list_artifacts(run_id)
+
+
+@app.get("/bid-runs/{run_id}/artifacts/{artifact_id}")
+def get_bid_run_artifact(run_id: str, artifact_id: str):
+    try:
+        return bid_outputs.get_artifact(run_id, artifact_id)
+    except KeyError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+
+
+@app.get("/bid-runs/{run_id}/result")
+def get_bid_run_result(run_id: str):
+    return bid_outputs.get_result(run_id)
+
+
+@app.get("/bids/{bid_id}/runs")
+def list_bid_runs(bid_id: str):
+    return bid_outputs.list_runs_for_bid(bid_id)
+
+
+@app.get("/bids/{bid_id}/latest-run")
+def get_latest_bid_run(bid_id: str):
+    try:
+        return bid_outputs.get_latest_run_for_bid(bid_id)
+    except KeyError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+
+
+@app.get("/bids/{bid_id}/latest-state")
+def get_latest_bid_run_state(bid_id: str):
+    try:
+        run = bid_outputs.get_latest_run_for_bid(bid_id)
+        return bid_outputs.get_state(run["run_id"])
+    except KeyError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+
+
+@app.get("/bids/{bid_id}/latest-graph")
+def get_latest_bid_run_graph(bid_id: str):
+    try:
+        run = bid_outputs.get_latest_run_for_bid(bid_id)
+        return bid_outputs.get_graph(run["run_id"])
+    except KeyError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+
+
+@app.get("/bids/{bid_id}/latest-artifacts")
+def list_latest_bid_run_artifacts(bid_id: str):
+    try:
+        run = bid_outputs.get_latest_run_for_bid(bid_id)
+        return bid_outputs.list_artifacts(run["run_id"])
+    except KeyError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+
+
+@app.get("/bids/{bid_id}/latest-result")
+def get_latest_bid_run_result(bid_id: str):
+    try:
+        run = bid_outputs.get_latest_run_for_bid(bid_id)
+        return bid_outputs.get_result(run["run_id"])
+    except KeyError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc

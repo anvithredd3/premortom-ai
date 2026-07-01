@@ -167,6 +167,42 @@ Recommended metrics:
 - Runtime per bid.
 - Token usage and cost per bid.
 
+## Safe Demo Evaluation Limits
+
+The full experiment target is 100 bids x 20 quotes, but the default backend test runner should not execute the full dataset. This protects demo runs from accidentally consuming too many LLM tokens or taking too long.
+
+Default backend evaluation test limits:
+
+- Maximum 2 bids.
+- Maximum 5 quotes per bid.
+- Offline/fallback agent behavior for local safety unless intentionally configured otherwise.
+
+Run the capped backend evaluation test:
+
+```bash
+RUN_BID_EVAL_TESTS=1 python -m unittest backend.tests.test_bid_evaluation
+```
+
+Run one bid only:
+
+```bash
+RUN_BID_EVAL_TESTS=1 BID_ID=BID-001 python -m unittest backend.tests.test_bid_evaluation
+```
+
+or:
+
+```bash
+RUN_BID_EVAL_TESTS=1 BID_NUMBER=1 python -m unittest backend.tests.test_bid_evaluation
+```
+
+When the team is ready to run a larger evaluation using the HCL enterprise account, explicitly override the limits:
+
+```bash
+MAX_BIDS=10 MAX_QUOTES_PER_BID=20 RUN_BID_EVAL_TESTS=1 python -m unittest backend.tests.test_bid_evaluation
+```
+
+The large run should be treated as a deliberate experiment execution, not as a default local test.
+
 ## Agentic Workflow Evaluation Criteria
 
 The experiment should evaluate not only whether the system picked the right quote, but also whether the agentic workflow is reliable, explainable, and useful for procurement decisions.

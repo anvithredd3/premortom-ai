@@ -1,0 +1,20 @@
+{
+  "run_id": "RUN-003",
+  "quote_reviews": [
+    {
+      "quote_id": "BID-001-Q01",
+      "vendor_name": "",
+      "risk_score": 78.0,
+      "risk_level": "HIGH",
+      "findings": [
+        "The structured procurement data indicates a very high advance payment of 60% without any stated bank guarantee or advance security, which materially increases buyer exposure.",
+        "Warranty is stated to start 'On Delivery', which shifts warranty risk to the buyer before installation, commissioning, and operational acceptance are complete.",
+        "Installation responsibility is assigned to the buyer, while the buyer-side readiness indicators are weak: construction is only 60% complete, electrical readiness is pending, regulatory approval is pending, and no technicians are available against 6 required.",
+        "Training is not included, creating an operational readiness gap for a complex medical equipment procurement.",
+        "The vendor is described as a new entrant with limited history, which increases execution and after-sales risk.",
+        "The raw quote contains more favorable terms than the structured data (40% advance, warranty on commissioning, vendor installation, training included), creating a material inconsistency that must be resolved before award."
+      ],
+      "recommendation": "Do not award on the current terms. Require a corrected and internally consistent contract package that (1) reduces advance to a safer level or secures a full advance bank guarantee, (2) changes warranty commencement to commissioning or acceptance, (3) shifts installation and commissioning responsibility to the vendor with clear milestone-based penalties for delay, and (4) includes mandatory training and handover support. Also verify which commercial terms are binding, because the structured data and vendor quote conflict materially."
+    }
+  ]
+}
