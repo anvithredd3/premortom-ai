@@ -99,12 +99,13 @@ Current flow:
 1. Contract Risk Agent
 2. Infrastructure Readiness Agent
 3. Workforce Readiness Agent
-4. Historical Intelligence Agent
+4. Historical Intelligence Agent (real tool use: `screen_vendor` against the debarment list)
 5. Financial Exposure Agent, using infrastructure delay prediction
 6. Decision Board consolidation
 7. Debate generation
 8. Scenario simulation
-9. Final `PreMortemReport`
+9. Evaluator Agent quality gate (deterministic; optional LLM summary)
+10. Final `PreMortemReport` (includes `evaluation`)
 
 ## Environment Variables
 

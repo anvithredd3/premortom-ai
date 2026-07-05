@@ -49,6 +49,10 @@ class ProcurementInput(BaseModel):
     historical_delays_months: List[float] = Field(
         default_factory=lambda: [8.0, 11.0, 7.0]
     )
+    vendor_name: str = Field(
+        default="",
+        description="Vendor/supplier name; enables live debarment/blacklist screening",
+    )
     raw_document_text: Optional[str] = Field(
         default=None, description="Optional parsed text from an uploaded document"
     )
@@ -96,6 +100,32 @@ class Decision(str, Enum):
     NO_GO = "NO-GO"
 
 
+# --------------------------------------------------------------------------- #
+# Evaluator (quality gate)
+# --------------------------------------------------------------------------- #
+class ReadinessStatus(str, Enum):
+    READY = "READY FOR HUMAN REVIEW"
+    NEEDS_REVISION = "NEEDS REVISION"
+    INSUFFICIENT = "INSUFFICIENT EVIDENCE"
+
+
+class EvaluationCheck(BaseModel):
+    name: str
+    status: str  # "pass" | "warn" | "fail"
+    detail: str = ""
+
+
+class EvaluationResult(BaseModel):
+    """Output of the Evaluator Agent — a quality gate over the whole run."""
+
+    readiness_status: ReadinessStatus
+    quality_score: float = Field(ge=0, le=100)
+    checks: List[EvaluationCheck] = Field(default_factory=list)
+    quality_flags: List[str] = Field(default_factory=list)
+    recommended_actions: List[str] = Field(default_factory=list)
+    summary: str = ""
+
+
 class PreMortemReport(BaseModel):
     procurement_name: str
     equipment_type: str
@@ -116,5 +146,6 @@ class PreMortemReport(BaseModel):
     agent_results: List[AgentResult]
     debate: List[DebateTurn]
     scenarios: List[ScenarioOutcome]
+    evaluation: Optional[EvaluationResult] = None
 
     generated_at: str

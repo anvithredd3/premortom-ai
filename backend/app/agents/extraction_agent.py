@@ -18,6 +18,7 @@ Return a JSON object with exactly these fields (null for anything you cannot det
 {
   "procurement_name": "short descriptive name",
   "equipment_type": "what is being procured (equipment/software/service/works)",
+  "vendor_name": "the bidding vendor/supplier company name if stated, else null",
   "contract_value_cr": <INR Crore; convert from Lakhs/USD/other if needed>,
   "advance_payment_pct": <0-100>,
   "delivery_timeline_months": <number>,
@@ -60,6 +61,7 @@ def extract(raw_text: str) -> Tuple[ProcurementInput, List[str]]:
     scalar_fields = {
         "procurement_name": str,
         "equipment_type": str,
+        "vendor_name": str,
         "contract_value_cr": float,
         "advance_payment_pct": float,
         "delivery_timeline_months": float,

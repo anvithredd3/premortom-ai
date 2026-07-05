@@ -18,6 +18,7 @@ from . import (
     bid_recommender_agent,
     contract_agent,
     decision_board,
+    evaluator_agent,
     financial_agent,
     historical_agent,
     infrastructure_agent,
@@ -59,6 +60,8 @@ def run_premortem(data: ProcurementInput) -> PreMortemReport:
         consolidated["predicted_delay_months"],
         consolidated["failure_probability_pct"],
     )
+    # Quality gate: evaluate the run before it reaches a human reviewer.
+    evaluation = evaluator_agent.evaluate(results, consolidated)
 
     return PreMortemReport(
         procurement_name=data.procurement_name,
@@ -77,6 +80,7 @@ def run_premortem(data: ProcurementInput) -> PreMortemReport:
         agent_results=results,
         debate=debate,
         scenarios=scenarios,
+        evaluation=evaluation,
         generated_at=datetime.now(timezone.utc).isoformat(),
     )
 

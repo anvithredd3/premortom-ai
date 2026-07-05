@@ -143,6 +143,11 @@ def screen_input():
             with c1:
                 procurement_name = st.text_input("Procurement Name", f["procurement_name"])
                 equipment_type = st.text_input("Equipment Type", f["equipment_type"])
+                vendor_name = st.text_input(
+                    "Vendor / Supplier Name",
+                    f.get("vendor_name", ""),
+                    help="Enables live debarment / blacklist screening.",
+                )
                 contract_value_cr = st.number_input(
                     "Contract Value (₹ Cr)", value=float(f["contract_value_cr"]), step=0.5
                 )
@@ -224,6 +229,7 @@ def screen_input():
             payload = {
                 "procurement_name": procurement_name,
                 "equipment_type": equipment_type,
+                "vendor_name": vendor_name,
                 "contract_value_cr": contract_value_cr,
                 "advance_payment_pct": advance_payment_pct,
                 "delivery_timeline_months": delivery_timeline_months,
@@ -259,6 +265,7 @@ def _default_form():
         return {
             "procurement_name": "MRI System",
             "equipment_type": "MRI Machine",
+            "vendor_name": "",
             "contract_value_cr": 18.0,
             "advance_payment_pct": 60.0,
             "delivery_timeline_months": 4.0,
@@ -289,6 +296,42 @@ def _decision_banner(rep: dict):
         """,
         unsafe_allow_html=True,
     )
+
+
+_STATUS_ICON = {"pass": "✅", "warn": "⚠️", "fail": "❌"}
+_READINESS_COLOR = {
+    "READY FOR HUMAN REVIEW": "#16a34a",
+    "NEEDS REVISION": "#d97706",
+    "INSUFFICIENT EVIDENCE": "#dc2626",
+}
+
+
+def _evaluator_panel(rep: dict):
+    ev = rep.get("evaluation")
+    if not ev:
+        return
+    color = _READINESS_COLOR.get(ev["readiness_status"], "#64748b")
+    st.markdown("### 🧪 Evaluator — Quality Gate")
+    st.markdown(
+        f'{badge(ev["readiness_status"], color)} &nbsp; '
+        f'**Quality {ev["quality_score"]:.0f}/100**',
+        unsafe_allow_html=True,
+    )
+    st.caption(ev.get("summary", ""))
+    c1, c2 = st.columns(2)
+    with c1:
+        st.markdown("**Checks**")
+        for chk in ev.get("checks", []):
+            icon = _STATUS_ICON.get(chk["status"], "•")
+            st.markdown(f"{icon} **{chk['name']}** — {chk['detail']}")
+    with c2:
+        if ev.get("quality_flags"):
+            st.markdown("**Quality flags**")
+            for fl in ev["quality_flags"]:
+                st.markdown(f"- {fl}")
+        st.markdown("**Recommended actions**")
+        for ac in ev.get("recommended_actions", []):
+            st.markdown(f"- {ac}")
 
 
 # --------------------------------------------------------------------------- #
@@ -403,6 +446,9 @@ def screen_dashboard():
 
     st.plotly_chart(charts.scenario_timeline(rep["scenarios"]), use_container_width=True)
 
+    st.divider()
+    _evaluator_panel(rep)
+
 
 # --------------------------------------------------------------------------- #
 # Screen 5 - PreMortem Report
@@ -431,6 +477,9 @@ def screen_report():
     st.markdown(f"**{rep['recommended_decision']}** — approve only after:")
     for c in rep["conditions"]:
         st.markdown(f"- {c}")
+
+    st.divider()
+    _evaluator_panel(rep)
 
     st.divider()
     st.markdown("### Export")

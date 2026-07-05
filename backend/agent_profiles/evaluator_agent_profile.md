@@ -43,4 +43,8 @@ Agent outputs need a quality gate before they influence procurement decisions.
 
 ## Status
 
-Designed; not implemented yet.
+Implemented in `backend/app/agents/evaluator_agent.py`. Runs as a deterministic
+quality gate after Decision Board consolidation (works offline), with optional
+LLM enrichment of the readiness summary when an API key is configured. Output is
+attached to `PreMortemReport.evaluation` and surfaced on the Executive Dashboard
+and Report screens.
