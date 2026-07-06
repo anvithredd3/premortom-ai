@@ -389,19 +389,23 @@ def screen_debate():
         st.info("Run a PreMortem on Screen 1 first.")
         return
 
-    st.caption("Simulated debate among the specialist agents.")
+    st.caption("Two-round reactive debate: opening positions, then peer responses.")
     if st.button("▶ Play debate"):
         ph = st.container()
         for turn in rep["debate"]:
+            phase = turn.get("phase", "opening")
+            phase_label = "Opening" if phase == "opening" else "Response to peers"
             with ph.chat_message("assistant"):
-                st.markdown(f"**{turn['agent']}**")
+                st.markdown(f"**{turn['agent']}** · _{phase_label}_")
                 for s in turn["statements"]:
                     st.markdown(f"- {s}")
             time.sleep(0.7)
     else:
         for turn in rep["debate"]:
+            phase = turn.get("phase", "opening")
+            phase_label = "Opening" if phase == "opening" else "Response to peers"
             with st.chat_message("assistant"):
-                st.markdown(f"**{turn['agent']}**")
+                st.markdown(f"**{turn['agent']}** · _{phase_label}_")
                 for s in turn["statements"]:
                     st.markdown(f"- {s}")
 

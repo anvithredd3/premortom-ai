@@ -84,6 +84,7 @@ class AgentResult(BaseModel):
 class DebateTurn(BaseModel):
     agent: str
     statements: List[str]
+    phase: str = "opening"  # "opening" | "response" (Tier-2 reactive debate)
 
 
 class ScenarioOutcome(BaseModel):

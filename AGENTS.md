@@ -94,7 +94,7 @@ Specialist agents should:
 
 The orchestrator should remain responsible for cross-agent sequencing and consolidation.
 
-Current flow:
+Current flow (Tier-1 + Tier-2):
 
 1. Contract Risk Agent
 2. Infrastructure Readiness Agent
@@ -102,10 +102,19 @@ Current flow:
 4. Historical Intelligence Agent (real tool use: `screen_vendor` against the debarment list)
 5. Financial Exposure Agent, using infrastructure delay prediction
 6. Decision Board consolidation
-7. Debate generation
+7. Reactive debate (opening + peer response rounds; optional LLM enrichment)
 8. Scenario simulation
 9. Evaluator Agent quality gate (deterministic; optional LLM summary)
 10. Final `PreMortemReport` (includes `evaluation`)
+
+Orchestration (Tier-2):
+
+- When `langgraph` is installed and `USE_LANGGRAPH=1`, the pipeline runs as a
+  LangGraph state machine (`backend/app/agents/premortem_graph.py`).
+- Each specialist call uses timeout/retry resilience via
+  `backend/app/services/agent_runner.py` (`AGENT_TIMEOUT_SECONDS`,
+  `AGENT_MAX_RETRIES`). Failed agents return `status="failed"` partial results
+  instead of aborting the run.
 
 ## Environment Variables
 
@@ -220,7 +229,10 @@ Current notable dependencies:
 - python-docx
 - ReportLab
 
-Although `langgraph` and `openai-agents` are listed in `backend/requirements.txt`, the current app does not actively use them. Do not claim the app uses those frameworks unless the implementation is updated.
+Although `langgraph` and `openai-agents` are listed in `backend/requirements.txt`,
+the PreMortem pipeline uses **LangGraph** when installed (`premortem_graph.py`).
+`openai-agents` is not wired yet. Set `USE_LANGGRAPH=0` to force the legacy
+sequential path.
 
 ## Documentation Expectations
 
