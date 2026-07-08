@@ -1,0 +1,85 @@
+{
+  "run_id": "RUN-012",
+  "bid_id": "BID-001",
+  "status": "completed",
+  "agent": "Bid Recommender Agent",
+  "winner": {
+    "quote_id": "BID-001-Q01",
+    "vendor_name": "",
+    "risk_score": 78.0,
+    "risk_level": "HIGH",
+    "findings": [
+      "There is a direct conflict on warranty start: the fixed fields say \"On Delivery\" while the vendor quote says \"Warranty starts On Commissioning.\" This ambiguity matters because the warranty-burn risk changes materially depending on which term controls.",
+      "Advance payment exposure is high: the fixed fields show 60% advance on an INR 18.0 Cr contract, which is INR 10.8 Cr, and the quote does not mention any bank guarantee, retention, or other buyer security.",
+      "Installation responsibility is assigned to the buyer in both sources, while site readiness is not complete: construction is only 60% complete, electrical readiness is pending, regulatory approval is pending, and there are 0 technicians available against 6 required. This creates a strong delivery-before-readiness and undefined-handover risk.",
+      "Training is not included according to both the fixed fields and the quote, which increases handover and operational readiness risk for medical equipment.",
+      "Service support is only partially specified: the quote gives a \"Service response target: 12 hours\" and says \"Local service team: True,\" but it does not state resolution time, spare parts commitment, preventive maintenance, uptime, or remedies for missed service levels.",
+      "The proposal is only partly operationally specific. It includes some concrete commercial and support data, but it also relies on marketing-style claims such as \"brand reputation, patient confidence, and market differentiation\" and includes a caution that \"Some claims may require verification during technical evaluation.\"",
+      "Vendor execution risk is elevated because the vendor is a new entrant with limited history: \"1 years in operation\" and only \"4 similar hospital references.\" That does not disqualify the bid, but it weakens confidence in delivery and service performance for a complex medical equipment contract.",
+      "The delivery timeline is inconsistent across sources: the fixed fields show 4.0 months, while the quote says \"Delivery in 5.6 months.\" This should be resolved before award because it affects schedule, liquidated damages, and site readiness planning."
+    ],
+    "recommendation": "Do not award until the vendor resolves the warranty-start and delivery-timeline conflicts in writing, provides a performance security or bank guarantee, adds acceptance-linked milestone payments with retention, commits to vendor-led installation/commissioning support, and supplies a detailed training and service SLA covering response, resolution, spare parts, and remedies."
+  },
+  "ranked_quotes": [
+    {
+      "quote_id": "BID-001-Q01",
+      "vendor_name": "",
+      "risk_score": 78.0,
+      "risk_level": "HIGH",
+      "findings": [
+        "There is a direct conflict on warranty start: the fixed fields say \"On Delivery\" while the vendor quote says \"Warranty starts On Commissioning.\" This ambiguity matters because the warranty-burn risk changes materially depending on which term controls.",
+        "Advance payment exposure is high: the fixed fields show 60% advance on an INR 18.0 Cr contract, which is INR 10.8 Cr, and the quote does not mention any bank guarantee, retention, or other buyer security.",
+        "Installation responsibility is assigned to the buyer in both sources, while site readiness is not complete: construction is only 60% complete, electrical readiness is pending, regulatory approval is pending, and there are 0 technicians available against 6 required. This creates a strong delivery-before-readiness and undefined-handover risk.",
+        "Training is not included according to both the fixed fields and the quote, which increases handover and operational readiness risk for medical equipment.",
+        "Service support is only partially specified: the quote gives a \"Service response target: 12 hours\" and says \"Local service team: True,\" but it does not state resolution time, spare parts commitment, preventive maintenance, uptime, or remedies for missed service levels.",
+        "The proposal is only partly operationally specific. It includes some concrete commercial and support data, but it also relies on marketing-style claims such as \"brand reputation, patient confidence, and market differentiation\" and includes a caution that \"Some claims may require verification during technical evaluation.\"",
+        "Vendor execution risk is elevated because the vendor is a new entrant with limited history: \"1 years in operation\" and only \"4 similar hospital references.\" That does not disqualify the bid, but it weakens confidence in delivery and service performance for a complex medical equipment contract.",
+        "The delivery timeline is inconsistent across sources: the fixed fields show 4.0 months, while the quote says \"Delivery in 5.6 months.\" This should be resolved before award because it affects schedule, liquidated damages, and site readiness planning."
+      ],
+      "recommendation": "Do not award until the vendor resolves the warranty-start and delivery-timeline conflicts in writing, provides a performance security or bank guarantee, adds acceptance-linked milestone payments with retention, commits to vendor-led installation/commissioning support, and supplies a detailed training and service SLA covering response, resolution, spare parts, and remedies."
+    }
+  ],
+  "shortlist": [
+    {
+      "quote_id": "BID-001-Q01",
+      "vendor_name": "",
+      "risk_score": 78.0,
+      "risk_level": "HIGH",
+      "findings": [
+        "There is a direct conflict on warranty start: the fixed fields say \"On Delivery\" while the vendor quote says \"Warranty starts On Commissioning.\" This ambiguity matters because the warranty-burn risk changes materially depending on which term controls.",
+        "Advance payment exposure is high: the fixed fields show 60% advance on an INR 18.0 Cr contract, which is INR 10.8 Cr, and the quote does not mention any bank guarantee, retention, or other buyer security.",
+        "Installation responsibility is assigned to the buyer in both sources, while site readiness is not complete: construction is only 60% complete, electrical readiness is pending, regulatory approval is pending, and there are 0 technicians available against 6 required. This creates a strong delivery-before-readiness and undefined-handover risk.",
+        "Training is not included according to both the fixed fields and the quote, which increases handover and operational readiness risk for medical equipment.",
+        "Service support is only partially specified: the quote gives a \"Service response target: 12 hours\" and says \"Local service team: True,\" but it does not state resolution time, spare parts commitment, preventive maintenance, uptime, or remedies for missed service levels.",
+        "The proposal is only partly operationally specific. It includes some concrete commercial and support data, but it also relies on marketing-style claims such as \"brand reputation, patient confidence, and market differentiation\" and includes a caution that \"Some claims may require verification during technical evaluation.\"",
+        "Vendor execution risk is elevated because the vendor is a new entrant with limited history: \"1 years in operation\" and only \"4 similar hospital references.\" That does not disqualify the bid, but it weakens confidence in delivery and service performance for a complex medical equipment contract.",
+        "The delivery timeline is inconsistent across sources: the fixed fields show 4.0 months, while the quote says \"Delivery in 5.6 months.\" This should be resolved before award because it affects schedule, liquidated damages, and site readiness planning."
+      ],
+      "recommendation": "Do not award until the vendor resolves the warranty-start and delivery-timeline conflicts in writing, provides a performance security or bank guarantee, adds acceptance-linked milestone payments with retention, commits to vendor-led installation/commissioning support, and supplies a detailed training and service SLA covering response, resolution, spare parts, and remedies."
+    }
+  ],
+  "rationale": "BID-001-Q01 is the only quote provided and carries HIGH risk. The review findings show unresolved conflicts on warranty start and delivery timeline, high advance-payment exposure without stated buyer security, incomplete site readiness with buyer-led installation, no training included, and only partial service support. The vendor also appears to be a new entrant with limited references, which increases execution risk. Based on the provided findings, this quote should not be recommended for award until the listed issues are resolved in writing.",
+  "feedback": [
+    "Warranty start is inconsistent between fixed fields and the quote; this must be clarified before award.",
+    "The 60% advance payment is high for an INR 18.0 Cr contract and no bank guarantee or retention is stated.",
+    "Buyer-led installation is risky because site readiness is incomplete and no technicians are available.",
+    "Training is not included, which is a material gap for medical equipment handover.",
+    "Service terms are incomplete: response time is stated, but resolution time, spare parts, preventive maintenance, uptime, and remedies are missing.",
+    "Delivery timing conflicts between sources and should be aligned before commitment.",
+    "Vendor history and reference base are limited, increasing delivery and support risk."
+  ],
+  "negotiation_points": [
+    "Confirm in writing whether warranty starts on delivery or commissioning, and make the contract wording consistent.",
+    "Replace or reduce the 60% advance with acceptance-linked milestone payments and retention.",
+    "Provide a performance security or bank guarantee.",
+    "Commit to vendor-led installation and commissioning support, with clear handover responsibilities.",
+    "Include onsite training for users and maintenance staff.",
+    "Provide a detailed service SLA covering response time, resolution time, spare parts availability, preventive maintenance, uptime, and penalties/remedies.",
+    "Resolve the delivery timeline conflict and align it with site readiness and regulatory approval milestones."
+  ],
+  "artifact_refs": [
+    "artifact_vendor_proposal",
+    "artifact_bid_recommendation",
+    "artifact_contract_review"
+  ]
+}

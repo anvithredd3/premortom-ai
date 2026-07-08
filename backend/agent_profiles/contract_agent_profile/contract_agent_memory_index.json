@@ -1,0 +1,72 @@
+[
+  {
+    "agent_id": "contract_agent",
+    "source_path": "index.md",
+    "memory_type": "index",
+    "tags": [],
+    "content": "# Contract Agent Memory Index\n\nThis folder stores durable memory for the contract review agent. It is meant to improve consistency across reviews without changing the agent response schema.\n\n## Read Order\n\n1. Read `profile.md` for the agent's standing review policy.\n2. Select relevant pages from `policies/` based on the current contract terms.\n3. Select relevant pages from `patterns/` based on observed risks and evidence quality.\n4. Retrieve similar prior examples from `cases/` when available.\n5. Use `references/contract-review-guidance.md` for general review guidance.\n\n## Memory Boundaries\n\n- Keep current procurement facts in short-term prompt input.\n- Keep stable review rules, patterns, and reusable examples in this folder.\n- Cite memory pages when their guidance shapes a finding.\n- Do not treat memory as contract evidence; evidence must come from the current contract, proposal, or procurement record."
+  },
+  {
+    "agent_id": "contract_agent",
+    "source_path": "profile.md",
+    "memory_type": "profile",
+    "tags": [],
+    "content": "# Contract Review Agent Profile\n\n## Objective\n\nIdentify contract and commercial risks that could cause procurement failure after award.\n\n## Standing Instructions\n\n- Separate contract evidence from inference.\n- Cite the current source text for each major finding when available.\n- Flag missing, ambiguous, or conflicting terms instead of inventing them.\n- Prefer demo-safe, structured findings that map to the existing `AgentResult` schema.\n- Use this memory as durable context, not as a replacement for current contract text.\n\n## Memory To Load\n\n- Warranty guidance when delivery, commissioning, uptime, or service start dates appear.\n- Advance payment guidance when upfront payment, milestone payment, or retention terms appear.\n- Installation guidance when site readiness, commissioning, civil works, utilities, or dependencies appear.\n- Training guidance when operator readiness, handover, or staffing obligations appear.\n- Service-level guidance when uptime, response time, spare parts, maintenance, or support terms appear.\n- Bounded decision history when provided by the backend: recent global decisions, same-vendor decisions, same-category decisions, and vector-similar risk-pattern chunks.\n\n## Decision History Use\n\n- Treat prior decisions as context for consistency and pattern spotting.\n- Do not copy prior risk scores into the current review.\n- Do not treat prior history as proof that the current quote has the same risk.\n- Use current quote text and current procurement fields as the primary evidence.\n- Use vector-similar history to notice recurring issues, missing questions, and negotiation patterns.\n\n## Write-Back Policy\n\nAfter a review, add a case note only when the case teaches a reusable lesson. Update policy or pattern pages only when the new evidence clarifies a stable rule."
+  },
+  {
+    "agent_id": "contract_agent",
+    "source_path": "policies/advance-payments.md",
+    "memory_type": "policy",
+    "tags": [],
+    "content": "# Advance Payment Review Guidance\n\n## Rule\n\nPayment should be tied to verifiable delivery, installation, acceptance, and performance milestones. High advance payments increase exposure when obligations remain incomplete.\n\n## Risk Signals\n\n- Large upfront payment before delivery or acceptance.\n- Weak retention, bank guarantee, or recovery language.\n- Final payment due before installation, commissioning, or training.\n- Milestones based on vendor invoices rather than buyer acceptance.\n\n## Follow-Up Questions\n\n- What payment is due before delivery, installation, and acceptance?\n- What security protects the buyer if the vendor fails to perform?\n- Is there retention until successful commissioning and handover?"
+  },
+  {
+    "agent_id": "contract_agent",
+    "source_path": "policies/installation.md",
+    "memory_type": "policy",
+    "tags": [],
+    "content": "# Installation Review Guidance\n\n## Rule\n\nContracts should clearly assign responsibility for installation dependencies, site readiness, utilities, permits, commissioning, and acceptance testing.\n\n## Risk Signals\n\n- Equipment delivery is scheduled before site readiness is confirmed.\n- Civil works, utilities, permits, or shielding requirements are outside the vendor scope but not tracked as approval conditions.\n- Commissioning responsibility is ambiguous.\n- Acceptance criteria are missing or subjective.\n\n## Follow-Up Questions\n\n- Who owns each installation dependency?\n- What proof is required before shipment or delivery?\n- What happens if site readiness delays installation?"
+  },
+  {
+    "agent_id": "contract_agent",
+    "source_path": "policies/service-levels.md",
+    "memory_type": "policy",
+    "tags": [],
+    "content": "# Service-Level Review Guidance\n\n## Rule\n\nService obligations should define uptime targets, response and resolution times, spare parts availability, escalation, exclusions, and remedies.\n\n## Risk Signals\n\n- Support terms promise availability without measurable response or resolution time.\n- Spare parts, preventive maintenance, or consumables are unclear.\n- Remedies for downtime are missing.\n- Service coverage excludes local constraints likely to affect operations.\n\n## Follow-Up Questions\n\n- What response and resolution times apply?\n- Are spare parts and preventive maintenance included?\n- What remedy applies if uptime or service levels are missed?"
+  },
+  {
+    "agent_id": "contract_agent",
+    "source_path": "policies/training.md",
+    "memory_type": "policy",
+    "tags": [],
+    "content": "# Training Review Guidance\n\n## Rule\n\nTraining obligations should identify audience, timing, materials, minimum competency, completion evidence, and retraining terms.\n\n## Risk Signals\n\n- Training is mentioned without schedule, audience, duration, or acceptance criteria.\n- Training occurs before staff are hired or assigned.\n- No obligation exists for repeat training after delayed commissioning.\n- Handover is not linked to operator readiness.\n\n## Follow-Up Questions\n\n- Who must be trained before handover?\n- What evidence confirms training completion?\n- Is refresher or delayed-start training included?"
+  },
+  {
+    "agent_id": "contract_agent",
+    "source_path": "policies/warranty.md",
+    "memory_type": "policy",
+    "tags": [],
+    "content": "# Warranty Review Guidance\n\n## Rule\n\nWarranty should normally begin at commissioning, acceptance, or operational handover, not merely at delivery, when buyer-side readiness can delay use.\n\n## Risk Signals\n\n- Warranty starts on delivery while installation or site readiness remains buyer-dependent.\n- Warranty duration is short relative to expected commissioning delays.\n- Warranty exclusions are broad or unclear.\n- Acceptance testing is missing or disconnected from warranty start.\n\n## Follow-Up Questions\n\n- When does warranty start: delivery, installation, commissioning, acceptance, or first clinical/operational use?\n- Who absorbs warranty time lost due to site-readiness delays?\n- Are replacement parts, preventive maintenance, and labor included?"
+  },
+  {
+    "agent_id": "contract_agent",
+    "source_path": "patterns/clause-conflicts.md",
+    "memory_type": "pattern",
+    "tags": [],
+    "content": "# Clause Conflict Patterns\n\n## Conflict Types\n\n- Different documents assign the same responsibility to different parties.\n- A proposal promises a service that the contract excludes.\n- Payment milestones conflict with acceptance or commissioning milestones.\n- Warranty dates conflict across purchase order, vendor offer, and service agreement.\n\n## Review Guidance\n\nWhen conflicts appear, report them as contract ambiguity and explain why the ambiguity could cause delay, dispute, or financial exposure."
+  },
+  {
+    "agent_id": "contract_agent",
+    "source_path": "patterns/common-risk-patterns.md",
+    "memory_type": "pattern",
+    "tags": [],
+    "content": "# Common Contract Risk Patterns\n\n## Patterns\n\n- Delivery-before-readiness: goods can arrive before site, approvals, staff, or utilities are ready.\n- Payment-before-control: buyer pays before acceptance, commissioning, or performance proof.\n- Warranty-burn: warranty period starts before the buyer can use the asset.\n- Undefined-handover: handover lacks acceptance tests, training evidence, or commissioning criteria.\n- Service-vagueness: support is promised without measurable service levels or remedies.\n\n## Use In Findings\n\nName the pattern only after citing current contract evidence. If the evidence is weak, mark the finding as a question or missing-term risk."
+  },
+  {
+    "agent_id": "contract_agent",
+    "source_path": "patterns/evidence-quality.md",
+    "memory_type": "pattern",
+    "tags": [],
+    "content": "# Evidence Quality Guidance\n\n## Strong Evidence\n\n- Direct clause text with clear responsibility, date, payment trigger, warranty term, or service obligation.\n- Explicit acceptance, commissioning, training, or support requirement.\n\n## Medium Evidence\n\n- A clause implies responsibility but leaves timing or acceptance unclear.\n- Procurement fields and proposal text agree, but clause text is incomplete.\n\n## Weak Evidence\n\n- Missing terms, indirect references, summaries, or inferred obligations.\n- Conflicting fields without a source hierarchy.\n\n## Output Guidance\n\nUse strong evidence for findings. Use medium or weak evidence to frame follow-up questions and missing-term risks."
+  }
+]

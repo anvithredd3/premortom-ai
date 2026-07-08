@@ -1,0 +1,84 @@
+{
+  "run_id": "RUN-014",
+  "bid_id": "BID-001",
+  "status": "completed",
+  "agent": "Bid Recommender Agent",
+  "winner": {
+    "quote_id": "BID-001-Q01",
+    "vendor_name": "",
+    "risk_score": 78.0,
+    "risk_level": "HIGH",
+    "findings": [
+      "There is a direct conflict on warranty start: the fixed field says \"On Delivery,\" while the vendor quote says \"Warranty starts On Commissioning.\" This is a material ambiguity because warranty burn risk changes depending on whether site readiness delays commissioning.",
+      "There is a direct conflict on advance payment: the fixed field says 60% advance on an INR 18.0 Cr contract, while the quote says \"INR 15.84 Cr with 50% advance payment.\" Either way, the advance is very high and the quote does not mention any bank guarantee, retention, or other buyer security.",
+      "Installation responsibility is assigned to the buyer in both sources, but the buyer-side readiness indicators are weak: construction completion is only 60%, electrical readiness is pending, regulatory approval is pending, and no technicians are available against 6 required. This creates a high risk of delivery-before-readiness and delayed commissioning.",
+      "Training is not included in the quote, and there is no alternative handover or operator-readiness plan. For medical equipment, this increases the risk that acceptance and operational use will be delayed even if delivery occurs.",
+      "Service support is only partially specified: the quote mentions a \"Service response target: 12 hours\" and \"Local service team: True,\" but it does not define resolution time, spare parts availability, preventive maintenance, exclusions, escalation, or remedies for missed service levels.",
+      "The proposal is mixed but leans marketing-heavy: it includes brand and reputation language, while operational details remain limited or partly unsupported. This reduces evidence quality for claims such as compliance and service capability.",
+      "The vendor is a new entrant with limited history, which increases execution risk because the quote itself says \"1 years in operation\" and only \"4 similar hospital references.\"",
+      "Several commercial and compliance claims are not fully evidence-backed in the submission, including \"IEC 60601, ISO 13485, local regulatory approval\" and \"references where available,\" which should be verified before award."
+    ],
+    "recommendation": "Do not award until the vendor resolves the warranty-start conflict, provides a revised payment schedule tied to delivery/installation/acceptance, and submits bank guarantee or equivalent security for any advance. Require a detailed installation, commissioning, training, and service SLA package, plus documentary proof of compliance claims and references."
+  },
+  "ranked_quotes": [
+    {
+      "quote_id": "BID-001-Q01",
+      "vendor_name": "",
+      "risk_score": 78.0,
+      "risk_level": "HIGH",
+      "findings": [
+        "There is a direct conflict on warranty start: the fixed field says \"On Delivery,\" while the vendor quote says \"Warranty starts On Commissioning.\" This is a material ambiguity because warranty burn risk changes depending on whether site readiness delays commissioning.",
+        "There is a direct conflict on advance payment: the fixed field says 60% advance on an INR 18.0 Cr contract, while the quote says \"INR 15.84 Cr with 50% advance payment.\" Either way, the advance is very high and the quote does not mention any bank guarantee, retention, or other buyer security.",
+        "Installation responsibility is assigned to the buyer in both sources, but the buyer-side readiness indicators are weak: construction completion is only 60%, electrical readiness is pending, regulatory approval is pending, and no technicians are available against 6 required. This creates a high risk of delivery-before-readiness and delayed commissioning.",
+        "Training is not included in the quote, and there is no alternative handover or operator-readiness plan. For medical equipment, this increases the risk that acceptance and operational use will be delayed even if delivery occurs.",
+        "Service support is only partially specified: the quote mentions a \"Service response target: 12 hours\" and \"Local service team: True,\" but it does not define resolution time, spare parts availability, preventive maintenance, exclusions, escalation, or remedies for missed service levels.",
+        "The proposal is mixed but leans marketing-heavy: it includes brand and reputation language, while operational details remain limited or partly unsupported. This reduces evidence quality for claims such as compliance and service capability.",
+        "The vendor is a new entrant with limited history, which increases execution risk because the quote itself says \"1 years in operation\" and only \"4 similar hospital references.\"",
+        "Several commercial and compliance claims are not fully evidence-backed in the submission, including \"IEC 60601, ISO 13485, local regulatory approval\" and \"references where available,\" which should be verified before award."
+      ],
+      "recommendation": "Do not award until the vendor resolves the warranty-start conflict, provides a revised payment schedule tied to delivery/installation/acceptance, and submits bank guarantee or equivalent security for any advance. Require a detailed installation, commissioning, training, and service SLA package, plus documentary proof of compliance claims and references."
+    }
+  ],
+  "shortlist": [
+    {
+      "quote_id": "BID-001-Q01",
+      "vendor_name": "",
+      "risk_score": 78.0,
+      "risk_level": "HIGH",
+      "findings": [
+        "There is a direct conflict on warranty start: the fixed field says \"On Delivery,\" while the vendor quote says \"Warranty starts On Commissioning.\" This is a material ambiguity because warranty burn risk changes depending on whether site readiness delays commissioning.",
+        "There is a direct conflict on advance payment: the fixed field says 60% advance on an INR 18.0 Cr contract, while the quote says \"INR 15.84 Cr with 50% advance payment.\" Either way, the advance is very high and the quote does not mention any bank guarantee, retention, or other buyer security.",
+        "Installation responsibility is assigned to the buyer in both sources, but the buyer-side readiness indicators are weak: construction completion is only 60%, electrical readiness is pending, regulatory approval is pending, and no technicians are available against 6 required. This creates a high risk of delivery-before-readiness and delayed commissioning.",
+        "Training is not included in the quote, and there is no alternative handover or operator-readiness plan. For medical equipment, this increases the risk that acceptance and operational use will be delayed even if delivery occurs.",
+        "Service support is only partially specified: the quote mentions a \"Service response target: 12 hours\" and \"Local service team: True,\" but it does not define resolution time, spare parts availability, preventive maintenance, exclusions, escalation, or remedies for missed service levels.",
+        "The proposal is mixed but leans marketing-heavy: it includes brand and reputation language, while operational details remain limited or partly unsupported. This reduces evidence quality for claims such as compliance and service capability.",
+        "The vendor is a new entrant with limited history, which increases execution risk because the quote itself says \"1 years in operation\" and only \"4 similar hospital references.\"",
+        "Several commercial and compliance claims are not fully evidence-backed in the submission, including \"IEC 60601, ISO 13485, local regulatory approval\" and \"references where available,\" which should be verified before award."
+      ],
+      "recommendation": "Do not award until the vendor resolves the warranty-start conflict, provides a revised payment schedule tied to delivery/installation/acceptance, and submits bank guarantee or equivalent security for any advance. Require a detailed installation, commissioning, training, and service SLA package, plus documentary proof of compliance claims and references."
+    }
+  ],
+  "rationale": "Only one quote is provided, so there is no cross-quote comparison to support a competitive award decision. The available quote is high risk (78/HIGH) and contains material ambiguities and gaps: warranty start conflicts with the fixed field, advance payment is very high with no buyer security, buyer readiness is weak for installation/commissioning, training is missing, service terms are incomplete, and compliance/reference claims are not fully evidenced. Based on the review findings, the quote is not award-ready.",
+  "feedback": [
+    "Resolve the warranty-start conflict in writing: delivery vs commissioning.",
+    "Revise the payment terms to reduce advance exposure and tie payments to delivery, installation, and acceptance.",
+    "Provide bank guarantee, retention, or equivalent security for any advance payment.",
+    "Submit a detailed installation, commissioning, and training plan, including operator handover.",
+    "Provide a complete service SLA covering resolution time, spare parts, escalation, exclusions, and remedies.",
+    "Provide documentary proof for compliance claims and references before award.",
+    "Confirm site readiness dependencies, since construction, electrical readiness, and regulatory approval are still pending."
+  ],
+  "negotiation_points": [
+    "Move from upfront advance to milestone-based payments linked to delivery/commissioning/acceptance.",
+    "Add advance-payment security such as a bank guarantee or retention.",
+    "Clarify warranty commencement and ensure it is not triggered before the buyer is ready for commissioning.",
+    "Include training and handover at no extra cost or with clear scope.",
+    "Commit to a fuller service SLA with measurable response and resolution obligations.",
+    "Provide verifiable compliance documents and reference details as award conditions."
+  ],
+  "artifact_refs": [
+    "artifact_vendor_proposal",
+    "artifact_bid_recommendation",
+    "artifact_contract_review"
+  ]
+}

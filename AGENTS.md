@@ -231,6 +231,46 @@ If changing setup, provider behavior, or demo flow, update relevant documentatio
 
 Keep docs accurate about what is actually implemented.
 
+Before adding or changing agents, memory, database behavior, Docker behavior, or
+frontend/backend workflows, check and keep these in sync:
+
+- `README.md`: setup, Docker, local run, test, and demo commands.
+- `files/Research/High_level_Agent_architecture_v3.md`: architecture, agent
+  responsibilities, memory/database design, and future TODOs.
+- `backend/agent_profiles/*.md` and `backend/agent_profiles/*/`: agent
+  profiles, policies, patterns, guardrails, and memory assumptions.
+- `.env.example` and `docker-compose.yml`: environment variables and runtime
+  wiring.
+
+When implementation differs from the design, update the design or clearly mark
+the gap as a TODO/current implementation note. Do not leave code, README,
+architecture, and agent profiles saying different things about the same agent or
+workflow.
+
+## Project Learnings To Preserve
+
+- Keep OKF/profile memory, run-level decision history, and agent-level history
+  conceptually separate. `agent_memory_chunks` is for stable agent memory;
+  `decision_history` is for whole-run audit history; future `agent_history`
+  tables should store per-agent history and chunks.
+- Good pgvector retrieval depends on good application-level chunking and
+  metadata. Postgres/pgvector makes filtered similarity search efficient, but it
+  does not automatically create useful chunks.
+- Direct test helpers such as `test_vendor_proposal_agent.py` and
+  `test_ui_guidance_agent.py` print agent output only. They do not create
+  `RUN-XXX` folders unless they call the bid orchestrator/artifact store.
+- Orchestrated bid tests such as `test_bid_evaluation.py` create run artifacts
+  under `files/output/bid_runs/RUN-XXX` and may update local output CSVs.
+- Docker images copy `backend/app`, `backend/tests`, `backend/agent_profiles`,
+  and sample inputs at build time. Rebuild the backend image after changing code,
+  tests, profiles, or copied sample inputs.
+- Prefer implementing new agents in this order: finalize profile/design, add
+  small backend agent with offline fallback, add a direct test helper, wire into
+  the orchestrator only when the artifact contract is clear, then update UI.
+- When one agent depends on another, pass structured artifacts where possible.
+  For example, the UI Guidance Agent should consume Vendor Proposal Agent
+  intelligence instead of reparsing only raw PDF text.
+
 ## Safety And Secrets
 
 Never commit:

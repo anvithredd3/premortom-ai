@@ -1,0 +1,21 @@
+{
+  "run_id": "RUN-020",
+  "quote_reviews": [
+    {
+      "quote_id": "BID-001-Q01",
+      "vendor_name": "",
+      "risk_score": 74.0,
+      "risk_level": "HIGH",
+      "findings": [
+        "There is a direct conflict on warranty start: the fixed field says \"On Delivery\" while the vendor quote says \"Warranty starts On Commissioning.\" This must be reconciled before award because delivery-based warranty would burn warranty time during site-readiness delays, while commissioning-based warranty is materially safer.",
+        "Advance payment exposure is high: the fixed field shows 60% advance on an INR 18.0 Cr contract, and the quote also states \"50% advance payment.\" No bank guarantee, retention, or other advance security is mentioned in the quote.",
+        "Installation responsibility is assigned to the buyer in both the fixed field and the quote, while site readiness is not in place: construction is only 60% complete, electrical readiness is pending, regulatory approval is pending, and no technicians are available against 6 required. This creates a strong delivery-before-readiness risk.",
+        "Training is explicitly excluded: the quote states \"Training included: False,\" which increases handover and operational readiness risk for a complex medical equipment installation.",
+        "Service support is only partially specified. The quote gives a \"Service response target: 12 hours\" and says \"Local service team: True,\" but it does not state resolution time, spare parts availability, preventive maintenance, escalation, exclusions, or remedies for missed service levels.",
+        "Commercial evidence is inconsistent between fixed fields and the quote: contract value is INR 18.0 Cr in the fixed fields, but the vendor quote says \"INR 15.84 Cr with 50% advance payment.\" Advance percentage also conflicts (60% vs 50%). These discrepancies need clarification before award.",
+        "The submission is operationally mixed rather than fully specific: it includes some concrete terms, but the quote also says it emphasizes \"brand reputation, patient confidence, and market differentiation more than operational details,\" which weakens confidence in execution planning."
+      ],
+      "recommendation": "Do not award until the vendor issues a revised, internally consistent offer confirming: warranty starts at commissioning/acceptance, advance is reduced or fully secured by bank guarantee/retention, installation and commissioning responsibilities are clearly allocated with site-readiness conditions, training is included with named audience and schedule, and service terms include response, resolution, spare parts, and remedies. Resolve the price and advance conflicts between the fixed fields and the quote before proceeding."
+    }
+  ]
+}

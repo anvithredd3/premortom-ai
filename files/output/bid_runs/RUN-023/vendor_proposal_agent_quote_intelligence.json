@@ -1,0 +1,326 @@
+{
+  "run_id": "RUN-023",
+  "quotes": [
+    {
+      "quote_id": "BID-001-Q01",
+      "fixed_features": {
+        "vendor_name": {
+          "value": "StartCare Devices 01",
+          "status": "found",
+          "confidence": 0.99,
+          "evidence": "proposal_text"
+        },
+        "legal_entity_name": {
+          "value": "StartCare Devices 01 Private Limited",
+          "status": "found",
+          "confidence": 0.99,
+          "evidence": "proposal_text"
+        },
+        "registered_address": {
+          "value": "836, Industrial Estate, Bengaluru, India",
+          "status": "found",
+          "confidence": 0.99,
+          "evidence": "proposal_text"
+        },
+        "contact_details": {
+          "value": "sales69@startcaredevices01.example, +91-74090-59615",
+          "status": "found",
+          "confidence": 0.99,
+          "evidence": "proposal_text"
+        },
+        "equipment_type": {
+          "value": "MRI Machine",
+          "status": "found",
+          "confidence": 0.99,
+          "evidence": "proposal_text"
+        },
+        "procurement_name": {
+          "value": "MRI Machine Procurement - MRI Machine",
+          "status": "found",
+          "confidence": 0.99,
+          "evidence": "proposal_text"
+        },
+        "quoted_price_cr": {
+          "value": 15.84,
+          "status": "found",
+          "confidence": 0.9,
+          "evidence": "proposal_text"
+        },
+        "currency": {
+          "value": "INR",
+          "status": "found",
+          "confidence": 0.99,
+          "evidence": "proposal_text"
+        },
+        "advance_payment_pct": {
+          "value": 50.0,
+          "status": "found",
+          "confidence": 0.9,
+          "evidence": "proposal_text"
+        },
+        "delivery_timeline_months": {
+          "value": 5.6,
+          "status": "found",
+          "confidence": 0.9,
+          "evidence": "proposal_text"
+        },
+        "warranty_start_trigger": {
+          "value": "On Commissioning",
+          "status": "found",
+          "confidence": 0.99,
+          "evidence": "proposal_text"
+        },
+        "installation_responsibility": {
+          "value": "Buyer",
+          "status": "found",
+          "confidence": 0.99,
+          "evidence": "proposal_text"
+        },
+        "training_included": {
+          "value": false,
+          "status": "found",
+          "confidence": 0.99,
+          "evidence": "proposal_text"
+        },
+        "service_response_target": {
+          "value": "12 hours",
+          "status": "found",
+          "confidence": 0.99,
+          "evidence": "proposal_text"
+        },
+        "local_service_team_available": {
+          "value": true,
+          "status": "found",
+          "confidence": 0.9,
+          "evidence": "proposal_text"
+        },
+        "compliance_claims": {
+          "value": [
+            "IEC 60601",
+            "ISO 13485",
+            "local regulatory approval"
+          ],
+          "status": "found",
+          "confidence": 0.9,
+          "evidence": "proposal_text"
+        },
+        "hospital_references_count": {
+          "value": 4,
+          "status": "found",
+          "confidence": 0.9,
+          "evidence": "proposal_text"
+        },
+        "years_in_operation": {
+          "value": 1,
+          "status": "found",
+          "confidence": 0.9,
+          "evidence": "proposal_text"
+        },
+        "contact_person": {
+          "value": "Sameer Khan",
+          "status": "found",
+          "confidence": 0.99,
+          "evidence": "proposal_text"
+        },
+        "quoted_price": {
+          "value": "INR 15.84 Cr",
+          "status": "found",
+          "confidence": 0.99,
+          "evidence": "proposal_text"
+        },
+        "advance_payment_percentage": {
+          "value": "50%",
+          "status": "found",
+          "confidence": 0.99,
+          "evidence": "proposal_text"
+        },
+        "delivery_timeline": {
+          "value": "5.6 months",
+          "status": "found",
+          "confidence": 0.99,
+          "evidence": "proposal_text"
+        },
+        "warranty_duration": {
+          "value": "missing",
+          "status": "missing",
+          "confidence": 0.0,
+          "evidence": "proposal_text"
+        },
+        "commissioning_responsibility": {
+          "value": "missing",
+          "status": "missing",
+          "confidence": 0.0,
+          "evidence": "proposal_text"
+        },
+        "local_service_team_availability": {
+          "value": true,
+          "status": "found",
+          "confidence": 0.99,
+          "evidence": "proposal_text"
+        },
+        "certifications_or_compliance_claims": {
+          "value": [
+            "IEC 60601",
+            "ISO 13485",
+            "local regulatory approval"
+          ],
+          "status": "found",
+          "confidence": 0.99,
+          "evidence": "proposal_text"
+        },
+        "references_or_prior_hospital_installations": {
+          "value": "4 similar hospital references",
+          "status": "found",
+          "confidence": 0.99,
+          "evidence": "proposal_text"
+        }
+      },
+      "proposal_text": {
+        "raw_text": "BID-001-Q01 Vendor Quote\nVendor Quote: BID-001-Q01\nVendor: StartCare Devices 01 (New entrant with limited history)\nLegal Entity: StartCare Devices 01 Private Limited\nRegistered Address: 836, Industrial Estate, Bengaluru, India\nContact: Sameer Khan, sales69@startcaredevices01.example, +91-74090-59615\nCompany Profile: 1 years in operation, 4 similar hospital references, estimated quote length 14\npages.\nProcurement: MRI Machine Procurement - MRI Machine\nCommercial Offer: INR 15.84 Cr with 50% advance payment.\nDelivery and Warranty: Delivery in 5.6 months. Warranty starts On Commissioning. Installation\nresponsibility: Buyer.\nTraining and Service: Training included: False. Service response target: 12 hours. Local service\nteam: True.\nCompliance Claims: IEC 60601, ISO 13485, local regulatory approval.\nThe quote emphasizes brand reputation, patient confidence, and market differentiation more than\noperational details.\nCompany Details: The vendor states experience with hospital equipment procurement and provides\nreferences where available. Some claims may require verification during technical evaluation.\n",
+        "text_preview": "BID-001-Q01 Vendor Quote\nVendor Quote: BID-001-Q01\nVendor: StartCare Devices 01 (New entrant with limited history)\nLegal Entity: StartCare Devices 01 Private Limited\nRegistered Address: 836, Industrial Estate, Bengaluru, India\nContact: Sameer Khan, sales69@startcaredevices01.example, +91-74090-59615\nCompany Profile: 1 years in operation, 4 similar hospital references, estimated quote length 14\npages.\nProcurement: MRI Machine Procurement - MRI Machine\nCommercial Offer: INR 15.84 Cr with 50% advance payment.\nDelivery and Warranty: Delivery in 5.6 months. Warranty starts On Commissioning. Installation\nresponsibility: Buyer.\nTraining and Service: Training included: False. Service response target: 12 hours. Local service\nteam: True.\nCompliance Claims: IEC 60601, ISO 13485, local regulatory approval.\nThe quote emphasizes brand reputation, patient confidence, and market differentiation more than\noperational details.\nCompany Details: The vendor states experience with hospital equipment procurement and provides\nreferences where available. Some claims may require verification during technical evaluation.\n",
+        "char_count": 1112,
+        "source_pdf_path": "/files/input/samples/bids/BID-001/BID-001-Q01.pdf",
+        "extraction_quality": "high",
+        "needs_ocr_or_vision_fallback": false
+      },
+      "proposal_intelligence": {
+        "vendor_profile": {
+          "summary": "New entrant with limited history; states 1 year in operation and 4 similar hospital references.",
+          "evidence": "Company Profile: 1 years in operation, 4 similar hospital references, estimated quote length 14 pages."
+        },
+        "commercial_terms": {
+          "price": "INR 15.84 Cr",
+          "advance_payment": "50%",
+          "payment_structure_observation": "Advance payment is substantial and no buyer-acceptance linkage is stated.",
+          "evidence": "Commercial Offer: INR 15.84 Cr with 50% advance payment."
+        },
+        "delivery_and_installation": {
+          "delivery_timeline": "5.6 months",
+          "installation_responsibility": "Buyer",
+          "commissioning_responsibility": "missing",
+          "operational_specificity": "Moderately specific on delivery and installation responsibility, but commissioning ownership is not stated.",
+          "evidence": "Delivery and Warranty: Delivery in 5.6 months. Warranty starts On Commissioning. Installation responsibility: Buyer."
+        },
+        "warranty_and_service": {
+          "warranty_start_trigger": "On Commissioning",
+          "warranty_duration": "missing",
+          "service_response_target": "12 hours",
+          "local_service_team": true,
+          "enforceability_observation": "Service response target is stated, but warranty duration is absent, limiting enforceability assessment.",
+          "evidence": "Delivery and Warranty: Delivery in 5.6 months. Warranty starts On Commissioning. Training and Service: Training included: False. Service response target: 12 hours. Local service team: True."
+        },
+        "training_and_handover": {
+          "training_included": false,
+          "handover_specificity": "Training is explicitly excluded; no handover plan is described.",
+          "evidence": "Training and Service: Training included: False."
+        },
+        "compliance_claims": [
+          {
+            "claim": "IEC 60601",
+            "status": "asserted",
+            "evidence": "Compliance Claims: IEC 60601, ISO 13485, local regulatory approval."
+          },
+          {
+            "claim": "ISO 13485",
+            "status": "asserted",
+            "evidence": "Compliance Claims: IEC 60601, ISO 13485, local regulatory approval."
+          },
+          {
+            "claim": "local regulatory approval",
+            "status": "asserted",
+            "evidence": "Compliance Claims: IEC 60601, ISO 13485, local regulatory approval."
+          }
+        ],
+        "differentiators": [
+          {
+            "item": "brand reputation",
+            "type": "marketing emphasis",
+            "evidence": "The quote emphasizes brand reputation, patient confidence, and market differentiation more than operational details."
+          },
+          {
+            "item": "patient confidence",
+            "type": "marketing emphasis",
+            "evidence": "The quote emphasizes brand reputation, patient confidence, and market differentiation more than operational details."
+          },
+          {
+            "item": "market differentiation",
+            "type": "marketing emphasis",
+            "evidence": "The quote emphasizes brand reputation, patient confidence, and market differentiation more than operational details."
+          }
+        ],
+        "omissions_or_ambiguities": [
+          {
+            "item": "warranty duration",
+            "issue": "missing",
+            "evidence": "Warranty starts On Commissioning."
+          },
+          {
+            "item": "commissioning responsibility",
+            "issue": "missing",
+            "evidence": "Warranty starts On Commissioning. Installation responsibility: Buyer."
+          },
+          {
+            "item": "training plan",
+            "issue": "missing",
+            "evidence": "Training included: False."
+          },
+          {
+            "item": "buyer-acceptance payment linkage",
+            "issue": "not stated",
+            "evidence": "Commercial Offer: INR 15.84 Cr with 50% advance payment."
+          },
+          {
+            "item": "operational implementation detail",
+            "issue": "limited",
+            "evidence": "The quote emphasizes brand reputation, patient confidence, and market differentiation more than operational details."
+          }
+        ],
+        "unusual_terms": [
+          {
+            "item": "50% advance payment",
+            "reason": "High upfront payment requirement relative to typical procurement structures; no acceptance milestone stated.",
+            "evidence": "Commercial Offer: INR 15.84 Cr with 50% advance payment."
+          },
+          {
+            "item": "training included: False",
+            "reason": "Training is explicitly excluded.",
+            "evidence": "Training and Service: Training included: False."
+          }
+        ],
+        "proposal_quality": {
+          "assessment": "Mixed",
+          "strengths": [
+            "States price, delivery timeline, warranty start trigger, service response target, and local service team availability.",
+            "Provides legal entity, address, and contact details."
+          ],
+          "weaknesses": [
+            "Missing warranty duration and commissioning responsibility.",
+            "Training is not included.",
+            "Heavy emphasis on marketing language over operational detail."
+          ],
+          "evidence": "The quote emphasizes brand reputation, patient confidence, and market differentiation more than operational details."
+        },
+        "follow_up_questions": [
+          "What is the warranty duration and what exactly is covered?",
+          "Who is responsible for commissioning the MRI machine?",
+          "Does the 50% advance payment tie to any delivery, installation, or acceptance milestone?",
+          "If training is excluded, what training options are available and at what cost?",
+          "Can you provide evidence for IEC 60601, ISO 13485, and local regulatory approval claims?",
+          "Can you provide details of the 4 similar hospital references?"
+        ],
+        "evidence_snippets": [
+          "Vendor: StartCare Devices 01 (New entrant with limited history)",
+          "Company Profile: 1 years in operation, 4 similar hospital references, estimated quote length 14",
+          "Commercial Offer: INR 15.84 Cr with 50% advance payment.",
+          "Delivery and Warranty: Delivery in 5.6 months. Warranty starts On Commissioning. Installation",
+          "Training and Service: Training included: False. Service response target: 12 hours. Local service",
+          "Compliance Claims: IEC 60601, ISO 13485, local regulatory approval."
+        ]
+      },
+      "raw_text_reference": {
+        "pdf_path": "bids/BID-001/BID-001-Q01.pdf",
+        "full_text_available": true
+      }
+    }
+  ]
+}

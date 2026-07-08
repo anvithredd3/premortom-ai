@@ -1,0 +1,14 @@
+{"id": 1, "timestamp": "2026-07-08T14:54:17.674263+00:00", "type": "run_queued", "bid_id": "BID-001"}
+{"id": 2, "timestamp": "2026-07-08T14:54:17.675277+00:00", "type": "run_started", "bid_id": "BID-001"}
+{"id": 3, "timestamp": "2026-07-08T14:54:17.675779+00:00", "type": "agent_status", "agent": "bid_recommender", "status": "running"}
+{"id": 4, "timestamp": "2026-07-08T14:54:17.676403+00:00", "type": "quote_running", "quote_id": "BID-001-Q01"}
+{"id": 5, "timestamp": "2026-07-08T14:54:17.676914+00:00", "type": "agent_status", "agent": "vendor_proposal", "status": "running"}
+{"id": 6, "timestamp": "2026-07-08T14:54:17.677366+00:00", "type": "agent_status", "agent": "contract_review", "status": "running"}
+{"id": 7, "timestamp": "2026-07-08T14:54:30.470250+00:00", "type": "agent_status", "agent": "vendor_proposal", "status": "completed"}
+{"id": 8, "timestamp": "2026-07-08T14:54:30.471121+00:00", "type": "quote_completed", "quote_id": "BID-001-Q01", "vendor_name": "", "risk_score": 50.0}
+{"id": 9, "timestamp": "2026-07-08T14:54:30.471662+00:00", "type": "agent_status", "agent": "bid_recommender", "status": "running"}
+{"id": 10, "timestamp": "2026-07-08T14:54:53.678904+00:00", "type": "agent_status", "agent": "market_research", "status": "completed"}
+{"id": 11, "timestamp": "2026-07-08T14:54:53.679457+00:00", "type": "agent_status", "agent": "bid_recommender", "status": "running"}
+{"id": 12, "timestamp": "2026-07-08T14:54:56.126123+00:00", "type": "agent_status", "agent": "decision_logic", "status": "completed"}
+{"id": 13, "timestamp": "2026-07-08T14:54:56.127478+00:00", "type": "run_completed", "winner": {"quote_id": "BID-001-Q01", "vendor_name": "", "risk_score": 50.0, "risk_level": "MODERATE", "findings": ["Offline mode \u2014 no API key set. Add OPENAI_API_KEY or ANTHROPIC_API_KEY to enable analysis."], "recommendation": "Configure an API key to enable agentic analysis."}}
+{"id": 14, "timestamp": "2026-07-08T14:54:56.141239+00:00", "type": "decision_history_stored", "table": "decision_history"}

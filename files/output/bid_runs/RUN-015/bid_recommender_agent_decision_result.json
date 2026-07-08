@@ -1,0 +1,80 @@
+{
+  "run_id": "RUN-015",
+  "bid_id": "BID-001",
+  "status": "completed",
+  "agent": "Bid Recommender Agent",
+  "winner": {
+    "quote_id": "BID-001-Q01",
+    "vendor_name": "",
+    "risk_score": 78.0,
+    "risk_level": "HIGH",
+    "findings": [
+      "The raw quote and fixed fields conflict on advance payment: the fixed field says 60% advance, while the vendor quote says 50% advance. Either way, the advance is large and there is no bank guarantee or retention language provided.",
+      "The raw quote is more favorable on warranty than the fixed field: the fixed field says warranty starts 'On Delivery,' but the vendor quote says 'Warranty starts On Commissioning.' This conflict must be resolved before award because delivery can occur before the equipment is usable.",
+      "Installation responsibility is assigned to the buyer, while site readiness is not complete: construction is only 60% complete, electrical readiness is pending, regulatory approval is pending, and there are zero technicians available versus six required. This creates a high risk of delivery-before-readiness and delayed commissioning.",
+      "Training is not included, which increases handover and operational-readiness risk for a medical equipment installation.",
+      "Service support is mentioned only as 'Service response target: 12 hours' with no resolution time, uptime commitment, spare parts commitment, escalation path, or remedy for missed service levels.",
+      "The vendor is a new entrant with limited history, which increases execution risk, and the quote itself says some claims may require verification during technical evaluation.",
+      "The submission is mixed but leans marketing-heavy: it includes compliance and reputation claims, but limited operational detail on acceptance criteria, commissioning responsibilities, milestone payments, or security for advance payment."
+    ],
+    "recommendation": "Do not award until the vendor confirms in writing: warranty start at commissioning/acceptance, a reduced advance with bank guarantee or equivalent security, vendor responsibility for installation/commissioning support, included training, and a complete service SLA with response, resolution, spare parts, and remedies. Also require proof of site readiness and regulatory approval before shipment."
+  },
+  "ranked_quotes": [
+    {
+      "quote_id": "BID-001-Q01",
+      "vendor_name": "",
+      "risk_score": 78.0,
+      "risk_level": "HIGH",
+      "findings": [
+        "The raw quote and fixed fields conflict on advance payment: the fixed field says 60% advance, while the vendor quote says 50% advance. Either way, the advance is large and there is no bank guarantee or retention language provided.",
+        "The raw quote is more favorable on warranty than the fixed field: the fixed field says warranty starts 'On Delivery,' but the vendor quote says 'Warranty starts On Commissioning.' This conflict must be resolved before award because delivery can occur before the equipment is usable.",
+        "Installation responsibility is assigned to the buyer, while site readiness is not complete: construction is only 60% complete, electrical readiness is pending, regulatory approval is pending, and there are zero technicians available versus six required. This creates a high risk of delivery-before-readiness and delayed commissioning.",
+        "Training is not included, which increases handover and operational-readiness risk for a medical equipment installation.",
+        "Service support is mentioned only as 'Service response target: 12 hours' with no resolution time, uptime commitment, spare parts commitment, escalation path, or remedy for missed service levels.",
+        "The vendor is a new entrant with limited history, which increases execution risk, and the quote itself says some claims may require verification during technical evaluation.",
+        "The submission is mixed but leans marketing-heavy: it includes compliance and reputation claims, but limited operational detail on acceptance criteria, commissioning responsibilities, milestone payments, or security for advance payment."
+      ],
+      "recommendation": "Do not award until the vendor confirms in writing: warranty start at commissioning/acceptance, a reduced advance with bank guarantee or equivalent security, vendor responsibility for installation/commissioning support, included training, and a complete service SLA with response, resolution, spare parts, and remedies. Also require proof of site readiness and regulatory approval before shipment."
+    }
+  ],
+  "shortlist": [
+    {
+      "quote_id": "BID-001-Q01",
+      "vendor_name": "",
+      "risk_score": 78.0,
+      "risk_level": "HIGH",
+      "findings": [
+        "The raw quote and fixed fields conflict on advance payment: the fixed field says 60% advance, while the vendor quote says 50% advance. Either way, the advance is large and there is no bank guarantee or retention language provided.",
+        "The raw quote is more favorable on warranty than the fixed field: the fixed field says warranty starts 'On Delivery,' but the vendor quote says 'Warranty starts On Commissioning.' This conflict must be resolved before award because delivery can occur before the equipment is usable.",
+        "Installation responsibility is assigned to the buyer, while site readiness is not complete: construction is only 60% complete, electrical readiness is pending, regulatory approval is pending, and there are zero technicians available versus six required. This creates a high risk of delivery-before-readiness and delayed commissioning.",
+        "Training is not included, which increases handover and operational-readiness risk for a medical equipment installation.",
+        "Service support is mentioned only as 'Service response target: 12 hours' with no resolution time, uptime commitment, spare parts commitment, escalation path, or remedy for missed service levels.",
+        "The vendor is a new entrant with limited history, which increases execution risk, and the quote itself says some claims may require verification during technical evaluation.",
+        "The submission is mixed but leans marketing-heavy: it includes compliance and reputation claims, but limited operational detail on acceptance criteria, commissioning responsibilities, milestone payments, or security for advance payment."
+      ],
+      "recommendation": "Do not award until the vendor confirms in writing: warranty start at commissioning/acceptance, a reduced advance with bank guarantee or equivalent security, vendor responsibility for installation/commissioning support, included training, and a complete service SLA with response, resolution, spare parts, and remedies. Also require proof of site readiness and regulatory approval before shipment."
+    }
+  ],
+  "rationale": "Only one quote is provided, so there is no basis for comparative ranking across vendors. Based on the contract review findings, the quote presents high execution and commercial risk: advance payment is large and inconsistent between fields, warranty start is conflicting, installation is assigned to the buyer despite incomplete site readiness, training is excluded, and the service commitment is incomplete. The findings support a do-not-award position until the vendor clarifies and strengthens the offer in writing.",
+  "feedback": [
+    "Resolve the advance payment conflict (60% fixed field vs 50% quote) and require a reduced advance with bank guarantee or equivalent security.",
+    "Confirm warranty start at commissioning or acceptance, not delivery.",
+    "Shift installation/commissioning support to the vendor or clearly define buyer responsibilities only after site readiness is complete.",
+    "Include training in the scope before award.",
+    "Provide a complete service SLA covering response time, resolution time, spare parts, escalation, and remedies for missed service levels.",
+    "Do not proceed until site readiness and regulatory approval are confirmed."
+  ],
+  "negotiation_points": [
+    "Reduce advance payment and add bank guarantee or retention security.",
+    "Align warranty commencement to commissioning/acceptance.",
+    "Include vendor-led installation and commissioning support.",
+    "Add end-user training at no extra ambiguity.",
+    "Expand service terms into a measurable SLA with penalties/remedies.",
+    "Require proof of site readiness and regulatory approval before shipment."
+  ],
+  "artifact_refs": [
+    "artifact_vendor_proposal",
+    "artifact_bid_recommendation",
+    "artifact_contract_review"
+  ]
+}

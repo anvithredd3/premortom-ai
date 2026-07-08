@@ -1,0 +1,33 @@
+{
+  "run_id": "RUN-015",
+  "quotes": [
+    {
+      "quote_id": "BID-001-Q01",
+      "fixed_features": {
+        "vendor_name": {
+          "value": "",
+          "status": "missing",
+          "confidence": 0.0,
+          "evidence": "bids_database.csv"
+        },
+        "equipment_type": {
+          "value": "",
+          "status": "missing",
+          "confidence": 0.0,
+          "evidence": "bids_database.csv"
+        }
+      },
+      "proposal_text": {
+        "raw_text": "BID-001-Q01 Vendor Quote\nVendor Quote: BID-001-Q01\nVendor: StartCare Devices 01 (New entrant with limited history)\nLegal Entity: StartCare Devices 01 Private Limited\nRegistered Address: 836, Industrial Estate, Bengaluru, India\nContact: Sameer Khan, sales69@startcaredevices01.example, +91-74090-59615\nCompany Profile: 1 years in operation, 4 similar hospital references, estimated quote length 14\npages.\nProcurement: MRI Machine Procurement - MRI Machine\nCommercial Offer: INR 15.84 Cr with 50% advance payment.\nDelivery and Warranty: Delivery in 5.6 months. Warranty starts On Commissioning. Installation\nresponsibility: Buyer.\nTraining and Service: Training included: False. Service response target: 12 hours. Local service\nteam: True.\nCompliance Claims: IEC 60601, ISO 13485, local regulatory approval.\nThe quote emphasizes brand reputation, patient confidence, and market differentiation more than\noperational details.\nCompany Details: The vendor states experience with hospital equipment procurement and provides\nreferences where available. Some claims may require verification during technical evaluation.\n",
+        "text_preview": "BID-001-Q01 Vendor Quote\nVendor Quote: BID-001-Q01\nVendor: StartCare Devices 01 (New entrant with limited history)\nLegal Entity: StartCare Devices 01 Private Limited\nRegistered Address: 836, Industrial Estate, Bengaluru, India\nContact: Sameer Khan, sales69@startcaredevices01.example, +91-74090-59615\nCompany Profile: 1 years in operation, 4 similar hospital references, estimated quote length 14\npages.\nProcurement: MRI Machine Procurement - MRI Machine\nCommercial Offer: INR 15.84 Cr with 50% advance payment.\nDelivery and Warranty: Delivery in 5.6 months. Warranty starts On Commissioning. Installation\nresponsibility: Buyer.\nTraining and Service: Training included: False. Service response target: 12 hours. Local service\nteam: True.\nCompliance Claims: IEC 60601, ISO 13485, local regulatory approval.\nThe quote emphasizes brand reputation, patient confidence, and market differentiation more than\noperational details.\nCompany Details: The vendor states experience with hospital equipment procurement and provides\nreferences where available. Some claims may require verification during technical evaluation.\n",
+        "char_count": 1112,
+        "source_pdf_path": "/home/chinmaey/Documents/Backup/AI/AgenticAI/Hackathon/premortom-ai/files/input/samples/bids/BID-001/BID-001-Q01.pdf"
+      },
+      "proposal_intelligence": {},
+      "raw_text_reference": {
+        "pdf_path": "bids/BID-001/BID-001-Q01.pdf",
+        "full_text_available": true
+      }
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "run_id": "RUN-009",
+  "quote_reviews": [
+    {
+      "quote_id": "BID-001-Q01",
+      "vendor_name": "",
+      "risk_score": 78.0,
+      "risk_level": "HIGH",
+      "findings": [
+        "There is a direct conflict on advance payment: fixed field says 60% advance, while the raw quote says 50% advance payment.",
+        "Warranty start is materially different across sources: fixed field says warranty starts on delivery, while the raw quote says warranty starts on commissioning.",
+        "Installation responsibility is assigned to the buyer in both sources, increasing execution risk because the vendor does not appear to own installation/commissioning outcomes.",
+        "Training is not included, which is a significant gap for medical equipment deployment and handover.",
+        "The vendor is a new entrant with limited history, which increases delivery and support risk for a high-value medical equipment contract.",
+        "The quote is light on operational detail and heavy on marketing language, so several commercial claims are not strongly evidence-backed.",
+        "Critical project-readiness inputs are unfavorable: construction completion is only 60%, electrical readiness is pending, regulatory approval is pending, and no technicians are available against 6 required."
+      ],
+      "recommendation": "Do not award on the current wording. Require a revised commercial and technical offer that confirms warranty starts only after successful commissioning and acceptance, reduces or secures the advance with an unconditional bank guarantee, assigns installation/commissioning responsibilities clearly, includes training, and provides a detailed SLA with penalties, acceptance criteria, and support commitments. Also verify the vendor's references, regulatory approvals, and ability to mobilize technicians before signing."
+    }
+  ]
+}

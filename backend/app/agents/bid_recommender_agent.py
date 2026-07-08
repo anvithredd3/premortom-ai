@@ -10,6 +10,7 @@ import json
 from typing import Dict, List
 
 from ..services.llm import has_api_key, run_agent_llm
+from ..services.okf_memory import select_okf_memory
 
 NAME = "Bid Recommender Agent"
 
@@ -33,6 +34,7 @@ def recommend(
     run_id: str,
     bid_id: str,
     reviews: List[Dict[str, object]],
+    market_research: Dict[str, object] | None = None,
 ) -> Dict[str, object]:
     """Return the bid recommendation artifact payload."""
     ranked = sorted(reviews, key=_ranking_key)
@@ -52,12 +54,16 @@ def recommend(
         "negotiation_points": _default_negotiation_points(winner),
         "artifact_refs": [
             "artifact_vendor_proposal",
+            "artifact_market_research",
             "artifact_bid_recommendation",
             "artifact_contract_review",
         ],
     }
 
-    llm_result = _llm_enrichment(bid_id, ranked, winner)
+    if market_research:
+        result["market_research_summary"] = _market_research_summary(market_research)
+
+    llm_result = _llm_enrichment(bid_id, ranked, winner, market_research or {})
     if llm_result:
         for key in ("rationale", "feedback", "negotiation_points"):
             value = llm_result.get(key)
@@ -138,6 +144,7 @@ def _llm_enrichment(
     bid_id: str,
     ranked: List[Dict[str, object]],
     winner: Dict[str, object],
+    market_research: Dict[str, object],
 ) -> Dict[str, object]:
     if not has_api_key() or not ranked:
         return {}
@@ -146,11 +153,36 @@ def _llm_enrichment(
         "bid_id": bid_id,
         "winner": winner,
         "ranked_quotes": ranked,
+        "market_research": market_research,
     }
+    memory = select_okf_memory(
+        json.dumps(payload),
+        agent_id="bid_recommender_agent",
+        max_chunks=8,
+    )
+    instructions = INSTRUCTIONS
+    if memory:
+        instructions = (
+            f"{INSTRUCTIONS}\n\n"
+            "# Bid Recommender OKF memory selected for this explanation\n"
+            f"{memory}\n"
+        )
     result = run_agent_llm(
         name=NAME,
-        instructions=INSTRUCTIONS,
+        instructions=instructions,
         user_payload=json.dumps(payload),
         temperature=0.1,
     )
     return result or {}
+
+
+def _market_research_summary(market_research: Dict[str, object]) -> Dict[str, object]:
+    return {
+        "provider": market_research.get("provider", ""),
+        "status": market_research.get("status", "completed"),
+        "retrieved_at": market_research.get("retrieved_at", ""),
+        "market_price_range": market_research.get("market_price_range", {}),
+        "typical_terms": market_research.get("typical_terms", {}),
+        "red_flags": market_research.get("red_flags", []),
+        "limitations": market_research.get("limitations", []),
+    }

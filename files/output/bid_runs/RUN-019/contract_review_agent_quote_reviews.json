@@ -1,0 +1,22 @@
+{
+  "run_id": "RUN-019",
+  "quote_reviews": [
+    {
+      "quote_id": "BID-001-Q01",
+      "vendor_name": "",
+      "risk_score": 78.0,
+      "risk_level": "HIGH",
+      "findings": [
+        "There is a direct conflict on warranty start: the fixed field says \"On Delivery\" while the vendor quote says \"Warranty starts On Commissioning.\" This must be reconciled before award because delivery-based warranty would burn warranty time during site-readiness delays, while commissioning-based warranty is materially safer.",
+        "Advance payment exposure is high: the fixed field shows 60% advance on an INR 18.0 Cr contract, and the quote confirms \"50% advance payment\" on an INR 15.84 Cr offer. No bank guarantee, retention, or other security is stated in the source text, so the buyer appears exposed before delivery and acceptance.",
+        "Installation responsibility is assigned to the buyer in both the fixed field and the quote, but the procurement context shows site readiness is not complete: construction is only 60% complete, electrical readiness is pending, regulatory approval is pending, and technicians available are 0 versus 6 required. This creates a delivery-before-readiness risk with no vendor-side remedy stated.",
+        "Training is not included according to both the fixed field and the quote. For medical equipment, lack of training increases commissioning and handover risk, especially when no minimum competency, audience, schedule, or retraining terms are provided.",
+        "Service support is only partially specified. The quote gives a \"Service response target: 12 hours\" and says \"Local service team: True,\" but it does not define resolution time, uptime, spare parts availability, preventive maintenance, escalation, exclusions, or remedies for missed service levels.",
+        "The proposal is operationally mixed rather than fully specific: it includes some concrete commercial terms, but also marketing-oriented claims such as \"brand reputation, patient confidence, and market differentiation\" and compliance claims that are not substantiated in the text.",
+        "Compliance claims are asserted but not evidenced in the quote: \"IEC 60601, ISO 13485, local regulatory approval.\" These may be valid, but the document does not provide certificates, approval numbers, or scope details, so they should be verified before award.",
+        "The vendor is a new entrant with limited history: \"1 years in operation\" and \"Some claims may require verification during technical evaluation.\" That increases execution risk, especially given the high advance and buyer-side installation burden."
+      ],
+      "recommendation": "Do not award until the vendor confirms in writing: warranty start at commissioning/acceptance, advance payment security via bank guarantee or equivalent, vendor responsibilities for installation dependencies and commissioning support, a training plan with named audience and completion evidence, and a full service SLA including response, resolution, spare parts, and remedies. Also verify compliance certificates and regulatory approvals, and require a site-readiness/acceptance checklist before shipment."
+    }
+  ]
+}

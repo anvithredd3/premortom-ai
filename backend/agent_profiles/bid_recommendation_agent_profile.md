@@ -17,7 +17,8 @@ and practical negotiation points.
 
 - Short-term: current bid id, reviewed quote records, risk scores, findings, and contract-review recommendations.
 - Run artifacts: vendor proposal extraction and contract review artifacts are available for the bid run.
-- Demo memory: local run artifacts under `files/output/bid_runs/` are sufficient.
+- OKF long-term memory: `backend/agent_profiles/bid_recommender_agent_profile/` contains ranking, guardrail, external-signal, and tie-breaker guidance.
+- Demo memory: local run artifacts under `files/output/bid_runs/` preserve bid history.
 - Future memory: historical decision outcomes, reviewer preferences, and similar bid outcomes could improve recommendations.
 - RAG opportunity: useful later for retrieving past decisions, company preferences, reviewer feedback, and similar bid outcomes.
 
@@ -63,6 +64,7 @@ Current behavior:
 - Returns up to three quotes in `shortlist`.
 - Produces fallback `rationale`, `feedback`, and `negotiation_points` without requiring an API key.
 - If an OpenAI or Anthropic key is configured, calls `run_agent_llm(...)` to enrich the explanation fields only.
+- Optional LLM explanation receives selected Bid Recommender OKF memory; deterministic ranking remains unchanged.
 - Keeps provider-specific logic centralized in `backend/app/services/llm.py`.
 
 ## Why This Agent Is Justified

@@ -11,12 +11,42 @@ Identify contract and commercial risks that could cause procurement failure afte
 - Warranty, payment, installation, training, and service-term analysis
 - Follow-up question generation
 
-## Memory
+## Memory And Retrieval
 
-- Short-term: quote text, fixed procurement fields, vendor proposal artifact when available
-- Long-term: historical contract failure patterns and organization contract preferences, future
-- Demo memory: current run artifacts and raw quote text are sufficient.
-- RAG opportunity: improves retrieval of standard clauses, policy rules, and historical contract failure examples.
+### Current - OKF Memory And pgvector Decision History
+
+- Store contract review outputs, run state, events, and final decisions as JSON/JSONL/CSV artifacts for audit and demo replay.
+- Store completed bid decisions in PostgreSQL tables `decision_history` and `decision_history_chunks`.
+- Keep stable review guidance in OKF-style Markdown memory under this profile folder.
+- Keep decision history separate from OKF memory: history is evidence about prior cases, not a standing policy rule.
+
+### Bounded Decision-History Prompt Context
+
+When enabled, the Contract Review Agent receives a bounded prior-decision block:
+
+- Last 10 completed decisions globally.
+- Last 5 decisions for the same vendor, when the vendor is known.
+- Last 5 decisions for the same equipment or procurement category.
+- Top 5 vector-similar `decision_history_chunks` for the current quote/context.
+
+The character limit on each memory item is only a prompt-size guard after
+retrieval. It is not the selection mechanism. Important factors should be
+selected by metadata filters and pgvector similarity.
+
+### Retrieval Guardrails
+
+- Use prior history for consistency and pattern spotting.
+- Do not copy prior risk scores into the current review.
+- Do not treat prior decisions as proof that the current quote has the same risk.
+- Current quote text and current procurement fields remain the primary evidence.
+- If database retrieval fails, continue with OKF memory and current-case analysis.
+
+### Current Memory Scope
+
+- Short-term: quote text, fixed procurement fields, vendor proposal artifact when available.
+- Long-term OKF memory: warranty, advance payment, installation, training, service-level, evidence-quality, and clause-conflict guidance.
+- Decision history memory: bounded hybrid retrieval from `decision_history` and `decision_history_chunks`.
+- RAG opportunity: improve retrieval quality with stronger semantic embeddings and richer vendor/category metadata.
 
 ## Connectors
 

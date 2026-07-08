@@ -33,6 +33,7 @@ EVENTS_FILE = "events.jsonl"
 VENDOR_PROPOSAL_FILE = "vendor_proposal_agent_quote_intelligence.json"
 CONTRACT_REVIEW_FILE = "contract_review_agent_quote_reviews.json"
 BID_RECOMMENDER_RESULT_FILE = "bid_recommender_agent_decision_result.json"
+MARKET_RESEARCH_FILE = "internet_market_research_agent_benchmarks.json"
 
 ARTIFACTS = {
     "artifact_run_state": {
@@ -64,6 +65,12 @@ ARTIFACTS = {
         "artifact_type": "decision_result",
         "name": "Bid Recommendation",
         "filename": BID_RECOMMENDER_RESULT_FILE,
+    },
+    "artifact_market_research": {
+        "node_id": "market_research",
+        "artifact_type": "market_benchmarks",
+        "name": "Market Research Benchmarks",
+        "filename": MARKET_RESEARCH_FILE,
     },
 }
 
@@ -123,6 +130,23 @@ def complete_run(run_id: str, result: Dict[str, object]) -> None:
         completed_at=_now(),
     )
     append_event(run_id, "run_completed", {"winner": winner})
+    try:
+        from .decision_history_pgvector import store_bid_run_history
+
+        stored = store_bid_run_history(
+            run_id=run_id,
+            state=state,
+            result=result,
+            run_dir=BID_RUNS_DIR / run_id,
+        )
+        if stored:
+            append_event(run_id, "decision_history_stored", {"table": "decision_history"})
+    except Exception as exc:
+        append_event(
+            run_id,
+            "decision_history_skipped",
+            {"message": str(exc)},
+        )
 
 
 def fail_run(run_id: str, message: str) -> None:
@@ -143,6 +167,11 @@ def write_contract_reviews(run_id: str, reviews: List[Dict[str, object]]) -> Non
 def write_vendor_proposals(run_id: str, proposals: List[Dict[str, object]]) -> None:
     path = BID_RUNS_DIR / run_id / VENDOR_PROPOSAL_FILE
     write_json(path, {"run_id": run_id, "quotes": proposals})
+
+
+def write_market_research(run_id: str, result: Dict[str, object]) -> None:
+    path = BID_RUNS_DIR / run_id / MARKET_RESEARCH_FILE
+    write_json(path, {"run_id": run_id, "market_research": result})
 
 
 def update_quote(run_id: str, quote_id: str, status: str, **values: object) -> None:
@@ -316,9 +345,11 @@ def read_json(path: Path) -> Dict[str, object]:
 
 def write_json(path: Path, data: Dict[str, object]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    with path.open("w", encoding="utf-8") as f:
+    tmp_path = path.with_name(f".{path.name}.tmp")
+    with tmp_path.open("w", encoding="utf-8") as f:
         json.dump(data, f, indent=2)
         f.write("\n")
+    tmp_path.replace(path)
 
 
 def _initial_state(run_id: str, bid_id: str, quote_ids: List[str]) -> Dict[str, object]:
@@ -331,6 +362,7 @@ def _initial_state(run_id: str, bid_id: str, quote_ids: List[str]) -> Dict[str, 
             "bid_recommender": {"status": "waiting", "message": "Waiting to start"},
             "contract_review": {"status": "waiting", "message": "Waiting for quotes"},
             "decision_logic": {"status": "waiting", "message": "Waiting for reviews"},
+            "market_research": {"status": "waiting", "message": "Waiting for quote summaries"},
         },
         "quotes": [{"quote_id": quote_id, "status": "pending"} for quote_id in quote_ids],
         "graph": {
@@ -338,6 +370,7 @@ def _initial_state(run_id: str, bid_id: str, quote_ids: List[str]) -> Dict[str, 
                 {"id": "vendor_proposal", "type": "agent", "label": "Vendor Proposal", "status": "waiting"},
                 {"id": "bid_recommender", "type": "agent", "label": "Bid Recommender", "status": "waiting"},
                 {"id": "contract_review", "type": "agent", "label": "Contract Review", "status": "waiting"},
+                {"id": "market_research", "type": "agent", "label": "Market Research", "status": "waiting"},
                 {"id": "decision_logic", "type": "decision_step", "label": "Decision Logic", "status": "waiting"},
                 {"id": "document_store", "type": "data_store", "label": "Local PDF Store", "status": "ok"},
                 {"id": "llm_provider", "type": "external_connection", "label": "LLM Provider", "status": "pending"},
@@ -347,6 +380,7 @@ def _initial_state(run_id: str, bid_id: str, quote_ids: List[str]) -> Dict[str, 
                 {"source": "vendor_proposal", "target": "bid_recommender", "type": "passes_results_to", "status": "waiting"},
                 {"source": "bid_recommender", "target": "contract_review", "type": "delegates_to", "status": "waiting"},
                 {"source": "contract_review", "target": "bid_recommender", "type": "returns_result_to", "status": "waiting"},
+                {"source": "market_research", "target": "bid_recommender", "type": "passes_benchmarks_to", "status": "waiting"},
                 {"source": "bid_recommender", "target": "decision_logic", "type": "passes_results_to", "status": "waiting"},
                 {"source": "contract_review", "target": "document_store", "type": "reads_from", "status": "waiting"},
                 {"source": "contract_review", "target": "llm_provider", "type": "uses_external_service", "status": "waiting"},

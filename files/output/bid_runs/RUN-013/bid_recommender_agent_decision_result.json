@@ -1,0 +1,82 @@
+{
+  "run_id": "RUN-013",
+  "bid_id": "BID-001",
+  "status": "completed",
+  "agent": "Bid Recommender Agent",
+  "winner": {
+    "quote_id": "BID-001-Q01",
+    "vendor_name": "",
+    "risk_score": 78.0,
+    "risk_level": "HIGH",
+    "findings": [
+      "There is a direct conflict on warranty start: the fixed field says \"On Delivery\" while the vendor quote says \"Warranty starts On Commissioning.\" This ambiguity is material because warranty burn risk changes depending on whether site readiness delays commissioning.",
+      "Advance payment exposure is high: the fixed field shows 60% advance on an INR 18.0 Cr contract, and the quote confirms \"50% advance payment\" on an INR 15.84 Cr offer. Either way, the upfront payment is very large and the package does not mention any bank guarantee, retention, or other buyer security.",
+      "Installation responsibility is assigned to the buyer in both sources, but the package does not define who handles commissioning dependencies, site readiness, electrical readiness, or regulatory approvals. That creates delivery-before-readiness and undefined-handover risk.",
+      "Training is not included according to both the fixed field and the quote, yet this is medical equipment with no stated operator training, handover criteria, or refresher training obligation.",
+      "Service support is only partially specified: the quote gives a \"Service response target: 12 hours\" and says \"Local service team: True,\" but it does not define resolution time, uptime, spare parts availability, preventive maintenance, exclusions, or remedies for missed service levels.",
+      "The vendor is a new entrant with limited history, which increases execution risk when combined with high advance, buyer-side installation, and pending readiness items.",
+      "Commercial claims are only partly evidence-backed. The quote mentions \"4 similar hospital references\" and compliance claims, but also says \"Some claims may require verification during technical evaluation,\" so the submission is not fully substantiated.",
+      "The proposal is mixed rather than operationally specific: it includes some concrete commercial terms, but also emphasizes \"brand reputation, patient confidence, and market differentiation\" more than detailed implementation obligations."
+    ],
+    "recommendation": "Do not award until the vendor resolves the warranty-start conflict, provides a buyer-protective payment/security structure, and submits a complete implementation schedule covering site readiness, commissioning, training, acceptance, and service remedies. Require a bank guarantee or equivalent security for the advance, shift warranty to commissioning/acceptance, and obtain a detailed responsibility matrix before proceeding."
+  },
+  "ranked_quotes": [
+    {
+      "quote_id": "BID-001-Q01",
+      "vendor_name": "",
+      "risk_score": 78.0,
+      "risk_level": "HIGH",
+      "findings": [
+        "There is a direct conflict on warranty start: the fixed field says \"On Delivery\" while the vendor quote says \"Warranty starts On Commissioning.\" This ambiguity is material because warranty burn risk changes depending on whether site readiness delays commissioning.",
+        "Advance payment exposure is high: the fixed field shows 60% advance on an INR 18.0 Cr contract, and the quote confirms \"50% advance payment\" on an INR 15.84 Cr offer. Either way, the upfront payment is very large and the package does not mention any bank guarantee, retention, or other buyer security.",
+        "Installation responsibility is assigned to the buyer in both sources, but the package does not define who handles commissioning dependencies, site readiness, electrical readiness, or regulatory approvals. That creates delivery-before-readiness and undefined-handover risk.",
+        "Training is not included according to both the fixed field and the quote, yet this is medical equipment with no stated operator training, handover criteria, or refresher training obligation.",
+        "Service support is only partially specified: the quote gives a \"Service response target: 12 hours\" and says \"Local service team: True,\" but it does not define resolution time, uptime, spare parts availability, preventive maintenance, exclusions, or remedies for missed service levels.",
+        "The vendor is a new entrant with limited history, which increases execution risk when combined with high advance, buyer-side installation, and pending readiness items.",
+        "Commercial claims are only partly evidence-backed. The quote mentions \"4 similar hospital references\" and compliance claims, but also says \"Some claims may require verification during technical evaluation,\" so the submission is not fully substantiated.",
+        "The proposal is mixed rather than operationally specific: it includes some concrete commercial terms, but also emphasizes \"brand reputation, patient confidence, and market differentiation\" more than detailed implementation obligations."
+      ],
+      "recommendation": "Do not award until the vendor resolves the warranty-start conflict, provides a buyer-protective payment/security structure, and submits a complete implementation schedule covering site readiness, commissioning, training, acceptance, and service remedies. Require a bank guarantee or equivalent security for the advance, shift warranty to commissioning/acceptance, and obtain a detailed responsibility matrix before proceeding."
+    }
+  ],
+  "shortlist": [
+    {
+      "quote_id": "BID-001-Q01",
+      "vendor_name": "",
+      "risk_score": 78.0,
+      "risk_level": "HIGH",
+      "findings": [
+        "There is a direct conflict on warranty start: the fixed field says \"On Delivery\" while the vendor quote says \"Warranty starts On Commissioning.\" This ambiguity is material because warranty burn risk changes depending on whether site readiness delays commissioning.",
+        "Advance payment exposure is high: the fixed field shows 60% advance on an INR 18.0 Cr contract, and the quote confirms \"50% advance payment\" on an INR 15.84 Cr offer. Either way, the upfront payment is very large and the package does not mention any bank guarantee, retention, or other buyer security.",
+        "Installation responsibility is assigned to the buyer in both sources, but the package does not define who handles commissioning dependencies, site readiness, electrical readiness, or regulatory approvals. That creates delivery-before-readiness and undefined-handover risk.",
+        "Training is not included according to both the fixed field and the quote, yet this is medical equipment with no stated operator training, handover criteria, or refresher training obligation.",
+        "Service support is only partially specified: the quote gives a \"Service response target: 12 hours\" and says \"Local service team: True,\" but it does not define resolution time, uptime, spare parts availability, preventive maintenance, exclusions, or remedies for missed service levels.",
+        "The vendor is a new entrant with limited history, which increases execution risk when combined with high advance, buyer-side installation, and pending readiness items.",
+        "Commercial claims are only partly evidence-backed. The quote mentions \"4 similar hospital references\" and compliance claims, but also says \"Some claims may require verification during technical evaluation,\" so the submission is not fully substantiated.",
+        "The proposal is mixed rather than operationally specific: it includes some concrete commercial terms, but also emphasizes \"brand reputation, patient confidence, and market differentiation\" more than detailed implementation obligations."
+      ],
+      "recommendation": "Do not award until the vendor resolves the warranty-start conflict, provides a buyer-protective payment/security structure, and submits a complete implementation schedule covering site readiness, commissioning, training, acceptance, and service remedies. Require a bank guarantee or equivalent security for the advance, shift warranty to commissioning/acceptance, and obtain a detailed responsibility matrix before proceeding."
+    }
+  ],
+  "rationale": "The quoted offer is high risk and should not be awarded as-is. The main issues are a direct warranty-start conflict between the fixed field and the vendor quote, very large advance payment exposure without stated buyer security, and missing implementation detail for site readiness, commissioning, training, acceptance, and service remedies. The vendor is also a new entrant, and the commercial claims are only partly substantiated. Based on the provided findings, the safer recommendation is to pause award until these gaps are resolved.",
+  "feedback": [
+    "Resolve the warranty-start conflict and align it to commissioning or acceptance in the final contract.",
+    "Provide a buyer-protective payment structure, including bank guarantee, retention, or equivalent security for the advance.",
+    "Submit a detailed responsibility matrix covering installation, commissioning, site readiness, electrical readiness, and regulatory approvals.",
+    "Include operator training, handover criteria, and refresher training obligations in the scope.",
+    "Define service levels beyond response time, including resolution time, spare parts availability, preventive maintenance, exclusions, and remedies for missed SLAs.",
+    "Substantiate the stated hospital references and compliance claims during technical evaluation."
+  ],
+  "negotiation_points": [
+    "Reduce or secure the advance payment with a bank guarantee or similar instrument.",
+    "Move warranty commencement from delivery to commissioning/acceptance.",
+    "Clarify who owns commissioning dependencies and readiness milestones before delivery.",
+    "Add training and acceptance deliverables at no extra ambiguity.",
+    "Require a complete service SLA with measurable remedies and spare-parts commitments."
+  ],
+  "artifact_refs": [
+    "artifact_vendor_proposal",
+    "artifact_bid_recommendation",
+    "artifact_contract_review"
+  ]
+}

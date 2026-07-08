@@ -1,0 +1,83 @@
+{
+  "run_id": "RUN-016",
+  "bid_id": "BID-001",
+  "status": "completed",
+  "agent": "Bid Recommender Agent",
+  "winner": {
+    "quote_id": "BID-001-Q01",
+    "vendor_name": "",
+    "risk_score": 78.0,
+    "risk_level": "HIGH",
+    "findings": [
+      "The fixed fields and raw quote conflict on advance payment: fixed fields show 60% advance on an INR 18.0 Cr contract, while the quote states 50% advance on INR 15.84 Cr. This creates ambiguity on the actual payment exposure and should be resolved before award.",
+      "The fixed fields say warranty starts 'On Delivery,' but the raw quote states 'Warranty starts On Commissioning.' This is a material conflict because warranty burn risk is much higher if it starts at delivery before installation and commissioning are complete.",
+      "Installation responsibility is assigned to the buyer in both sources, while site readiness is not complete: construction is only 60% complete, electrical readiness is pending, regulatory approval is pending, and no technicians are available against 6 required. This creates a high delivery-before-readiness and undefined-handover risk.",
+      "Training is not included in the fixed fields and the quote confirms 'Training included: False.' For medical equipment, lack of training increases operational and acceptance risk and may delay commissioning or safe use.",
+      "The vendor provides a service response target of 12 hours and says a local service team exists, but the submission does not define uptime, resolution time, spare parts, preventive maintenance, escalation, exclusions, or remedies. The service commitment is therefore only partially supported and not contract-complete.",
+      "The vendor is a new entrant with limited history ('1 years in operation') and the quote itself notes that some claims may require verification. This increases execution and support risk, especially for a high-value MRI procurement.",
+      "The proposal is mixed: it contains some operational specifics (delivery, warranty start, service response target) but also marketing-heavy claims about 'brand reputation' and 'patient confidence' that do not reduce contract risk and are not evidence-backed in the quote.",
+      "Critical contract information is missing or unclear, including acceptance criteria, commissioning responsibility, milestone-based payment triggers, retention or bank guarantee, penalty/liquidated damages, spare parts commitment, preventive maintenance scope, and what happens if site readiness or approvals delay installation."
+    ],
+    "recommendation": "Do not award until the vendor submits a clarified commercial and technical offer that resolves the advance-payment and warranty-start conflicts, adds acceptance/commissioning milestones, confirms bank guarantee or retention against the advance, defines installation and commissioning responsibilities, includes training for named users, and provides a complete service SLA with spare parts, preventive maintenance, and remedies. Require proof of site readiness and regulatory readiness before shipment or make delivery conditional on those approvals."
+  },
+  "ranked_quotes": [
+    {
+      "quote_id": "BID-001-Q01",
+      "vendor_name": "",
+      "risk_score": 78.0,
+      "risk_level": "HIGH",
+      "findings": [
+        "The fixed fields and raw quote conflict on advance payment: fixed fields show 60% advance on an INR 18.0 Cr contract, while the quote states 50% advance on INR 15.84 Cr. This creates ambiguity on the actual payment exposure and should be resolved before award.",
+        "The fixed fields say warranty starts 'On Delivery,' but the raw quote states 'Warranty starts On Commissioning.' This is a material conflict because warranty burn risk is much higher if it starts at delivery before installation and commissioning are complete.",
+        "Installation responsibility is assigned to the buyer in both sources, while site readiness is not complete: construction is only 60% complete, electrical readiness is pending, regulatory approval is pending, and no technicians are available against 6 required. This creates a high delivery-before-readiness and undefined-handover risk.",
+        "Training is not included in the fixed fields and the quote confirms 'Training included: False.' For medical equipment, lack of training increases operational and acceptance risk and may delay commissioning or safe use.",
+        "The vendor provides a service response target of 12 hours and says a local service team exists, but the submission does not define uptime, resolution time, spare parts, preventive maintenance, escalation, exclusions, or remedies. The service commitment is therefore only partially supported and not contract-complete.",
+        "The vendor is a new entrant with limited history ('1 years in operation') and the quote itself notes that some claims may require verification. This increases execution and support risk, especially for a high-value MRI procurement.",
+        "The proposal is mixed: it contains some operational specifics (delivery, warranty start, service response target) but also marketing-heavy claims about 'brand reputation' and 'patient confidence' that do not reduce contract risk and are not evidence-backed in the quote.",
+        "Critical contract information is missing or unclear, including acceptance criteria, commissioning responsibility, milestone-based payment triggers, retention or bank guarantee, penalty/liquidated damages, spare parts commitment, preventive maintenance scope, and what happens if site readiness or approvals delay installation."
+      ],
+      "recommendation": "Do not award until the vendor submits a clarified commercial and technical offer that resolves the advance-payment and warranty-start conflicts, adds acceptance/commissioning milestones, confirms bank guarantee or retention against the advance, defines installation and commissioning responsibilities, includes training for named users, and provides a complete service SLA with spare parts, preventive maintenance, and remedies. Require proof of site readiness and regulatory readiness before shipment or make delivery conditional on those approvals."
+    }
+  ],
+  "shortlist": [
+    {
+      "quote_id": "BID-001-Q01",
+      "vendor_name": "",
+      "risk_score": 78.0,
+      "risk_level": "HIGH",
+      "findings": [
+        "The fixed fields and raw quote conflict on advance payment: fixed fields show 60% advance on an INR 18.0 Cr contract, while the quote states 50% advance on INR 15.84 Cr. This creates ambiguity on the actual payment exposure and should be resolved before award.",
+        "The fixed fields say warranty starts 'On Delivery,' but the raw quote states 'Warranty starts On Commissioning.' This is a material conflict because warranty burn risk is much higher if it starts at delivery before installation and commissioning are complete.",
+        "Installation responsibility is assigned to the buyer in both sources, while site readiness is not complete: construction is only 60% complete, electrical readiness is pending, regulatory approval is pending, and no technicians are available against 6 required. This creates a high delivery-before-readiness and undefined-handover risk.",
+        "Training is not included in the fixed fields and the quote confirms 'Training included: False.' For medical equipment, lack of training increases operational and acceptance risk and may delay commissioning or safe use.",
+        "The vendor provides a service response target of 12 hours and says a local service team exists, but the submission does not define uptime, resolution time, spare parts, preventive maintenance, escalation, exclusions, or remedies. The service commitment is therefore only partially supported and not contract-complete.",
+        "The vendor is a new entrant with limited history ('1 years in operation') and the quote itself notes that some claims may require verification. This increases execution and support risk, especially for a high-value MRI procurement.",
+        "The proposal is mixed: it contains some operational specifics (delivery, warranty start, service response target) but also marketing-heavy claims about 'brand reputation' and 'patient confidence' that do not reduce contract risk and are not evidence-backed in the quote.",
+        "Critical contract information is missing or unclear, including acceptance criteria, commissioning responsibility, milestone-based payment triggers, retention or bank guarantee, penalty/liquidated damages, spare parts commitment, preventive maintenance scope, and what happens if site readiness or approvals delay installation."
+      ],
+      "recommendation": "Do not award until the vendor submits a clarified commercial and technical offer that resolves the advance-payment and warranty-start conflicts, adds acceptance/commissioning milestones, confirms bank guarantee or retention against the advance, defines installation and commissioning responsibilities, includes training for named users, and provides a complete service SLA with spare parts, preventive maintenance, and remedies. Require proof of site readiness and regulatory readiness before shipment or make delivery conditional on those approvals."
+    }
+  ],
+  "rationale": "Based on the provided findings, BID-001-Q01 is the only quote in scope and it carries high execution and contract risk. The quote has unresolved conflicts on advance payment and warranty start, incomplete service terms, no training, and unclear acceptance/commissioning and readiness dependencies. The review findings support a hold rather than award until these issues are clarified.",
+  "feedback": [
+    "Resolve the advance-payment discrepancy between the fixed fields and the raw quote before any award decision.",
+    "Clarify whether warranty starts on delivery or on commissioning, as this materially changes risk exposure.",
+    "Provide a complete installation and commissioning responsibility matrix, including what happens if site readiness or approvals are delayed.",
+    "Include training for named users and confirm it in the commercial offer.",
+    "Expand the service commitment into a full SLA covering uptime, resolution time, spare parts, preventive maintenance, escalation, exclusions, and remedies.",
+    "Add acceptance criteria and milestone-based payment triggers, plus retention or bank guarantee against advance payment."
+  ],
+  "negotiation_points": [
+    "Reduce or secure the advance payment with a bank guarantee or retention mechanism.",
+    "Move warranty commencement to commissioning, or explicitly define protection during installation and pre-commissioning.",
+    "Make delivery conditional on site readiness and regulatory approval, or shift installation responsibility to the vendor with clear handover terms.",
+    "Include mandatory training at no extra cost for the required users.",
+    "Commit to a written SLA with response, resolution, spare parts, and preventive maintenance obligations.",
+    "Provide clear remedies for delay, non-performance, and failed commissioning."
+  ],
+  "artifact_refs": [
+    "artifact_vendor_proposal",
+    "artifact_bid_recommendation",
+    "artifact_contract_review"
+  ]
+}

@@ -7,15 +7,13 @@ preserving identical behaviour.
 """
 from __future__ import annotations
 
-import time
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timezone
-from typing import Callable, List
+from typing import List
 
 from ..models import AgentResult, PreMortemReport, ProcurementInput
-from ..services import bid_outputs, document_parser, input_bids
+from ..services import bid_outputs, document_parser, input_bids, market_research
 from ..services.debate import build_debate
-from ..services.llm import get_last_call_meta
 from . import (
     bid_recommender_agent,
     contract_agent,
@@ -24,6 +22,7 @@ from . import (
     historical_agent,
     infrastructure_agent,
     scenario_agent,
+    vendor_proposal_agent,
     workforce_agent,
 )
 
@@ -57,91 +56,6 @@ def _risk_to_status(risk_level_value: str) -> str:
     if risk_level_value == "MODERATE":
         return "amber"
     return "green"
-
-
-def run_premortem_stream(data: ProcurementInput, send: Callable[[dict], None]) -> None:
-    """Run the full analysis and emit SSE-ready dicts via send() as events arrive."""
-    send({"type": "run_started", "agents": [
-        "contract", "infrastructure", "workforce", "historical", "financial", "decision"
-    ]})
-
-    def run_agent(agent_id: str, fn: Callable, *args) -> AgentResult:
-        send({"type": "agent_started", "id": agent_id})
-        t0 = time.monotonic()
-        result = fn(*args)
-        ms = int((time.monotonic() - t0) * 1000)
-        meta = get_last_call_meta()
-        status = _risk_to_status(result.risk_level.value)
-        send({
-            "type": "agent_finished",
-            "id": agent_id,
-            "status": status,
-            "risk_score": round(result.risk_score, 1),
-            "verdict": result.recommendation,
-            "summary": result.reasoning,
-            "tokens": {"in": meta["tokens_in"], "out": meta["tokens_out"]},
-            "time_ms": ms,
-            "model": meta["model"],
-            "research": [
-                {"title": e, "url": "", "snippet": e} for e in result.evidence[:4]
-            ],
-        })
-        return result
-
-    with ThreadPoolExecutor(max_workers=5) as ex:
-        f_contract = ex.submit(run_agent, "contract", contract_agent.analyze, data)
-        f_infra = ex.submit(run_agent, "infrastructure", infrastructure_agent.analyze, data)
-        f_workforce = ex.submit(run_agent, "workforce", workforce_agent.analyze, data)
-        f_historical = ex.submit(run_agent, "historical", historical_agent.analyze, data)
-
-        infra_result = f_infra.result()
-        predicted_delay = infra_result.metrics.get("predicted_delay_months", 8.0)
-        f_financial = ex.submit(run_agent, "financial", financial_agent.analyze, data, predicted_delay)
-
-        results_list = [
-            f_contract.result(),
-            infra_result,
-            f_workforce.result(),
-            f_financial.result(),
-            f_historical.result(),
-        ]
-
-    send({"type": "agent_started", "id": "decision"})
-    t0 = time.monotonic()
-    consolidated = decision_board.consolidate(data, results_list)
-    ms = int((time.monotonic() - t0) * 1000)
-    meta = get_last_call_meta()
-
-    decision_val = consolidated["recommended_decision"]
-    decision_str = decision_val.value if hasattr(decision_val, "value") else str(decision_val)
-
-    if "NO" in decision_str.upper():
-        dec_status = "red"
-    elif "CONDITION" in decision_str.upper():
-        dec_status = "amber"
-    else:
-        dec_status = "green"
-
-    send({
-        "type": "agent_finished",
-        "id": "decision",
-        "status": dec_status,
-        "verdict": decision_str,
-        "summary": str(consolidated.get("predicted_failure_mode", "")),
-        "tokens": {"in": meta["tokens_in"], "out": meta["tokens_out"]},
-        "time_ms": ms,
-        "model": meta["model"],
-        "research": [],
-    })
-
-    exposure_cr = consolidated.get("projected_financial_loss_cr", 0)
-    send({
-        "type": "run_finished",
-        "decision": decision_str,
-        "score": consolidated.get("overall_risk_score", 0),
-        "conditions": consolidated.get("conditions", []),
-        "exposure_range": f"₹{exposure_cr:.1f} Cr",
-    })
 
 
 def run_premortem(data: ProcurementInput) -> PreMortemReport:
@@ -214,34 +128,11 @@ def run_bid_evaluation(run_id: str, bid_id: str, quote_ids: List[str]) -> None:
             content = pdf_path.read_bytes()
             text = document_parser.extract_text(pdf_path.name, content)
             vendor_proposals.append(
-                {
-                    "quote_id": quote_id,
-                    "fixed_features": {
-                        "vendor_name": {
-                            "value": quote.get("vendor_name", ""),
-                            "status": "found" if quote.get("vendor_name") else "missing",
-                            "confidence": 1.0 if quote.get("vendor_name") else 0.0,
-                            "evidence": "bids_database.csv",
-                        },
-                        "equipment_type": {
-                            "value": quote.get("equipment_type", ""),
-                            "status": "found" if quote.get("equipment_type") else "missing",
-                            "confidence": 1.0 if quote.get("equipment_type") else 0.0,
-                            "evidence": "bids_database.csv",
-                        },
-                    },
-                    "proposal_text": {
-                        "raw_text": text,
-                        "text_preview": text[:2000],
-                        "char_count": len(text),
-                        "source_pdf_path": str(pdf_path),
-                    },
-                    "proposal_intelligence": {},
-                    "raw_text_reference": {
-                        "pdf_path": quote["pdf_path"],
-                        "full_text_available": bool(text),
-                    },
-                }
+                vendor_proposal_agent.analyze_quote(
+                    quote=quote,
+                    raw_text=text,
+                    source_pdf_path=str(pdf_path),
+                )
             )
             bid_outputs.write_vendor_proposals(run_id, vendor_proposals)
             bid_outputs.update_agent(
@@ -278,12 +169,36 @@ def run_bid_evaluation(run_id: str, bid_id: str, quote_ids: List[str]) -> None:
             run_id,
             "bid_recommender",
             "running",
+            "Preparing market benchmarks",
+        )
+        market_result = market_research.research_bid_market(
+            bid_id=bid_id,
+            equipment_type=_first_value(quote_rows, "equipment_type", "Medical Equipment"),
+            procurement_name=_first_value(quote_rows, "procurement_name", bid_id),
+            quote_summaries=_quote_summaries(quote_rows, vendor_proposals, reviews),
+        )
+        bid_outputs.write_market_research(run_id, market_result)
+        bid_outputs.update_agent(
+            run_id,
+            "market_research",
+            "completed",
+            (
+                "Market research skipped"
+                if market_result.get("status") == "skipped"
+                else "Market benchmarks prepared"
+            ),
+        )
+        bid_outputs.update_agent(
+            run_id,
+            "bid_recommender",
+            "running",
             "Comparing reviewed quotes",
         )
         result = bid_recommender_agent.recommend(
             run_id=run_id,
             bid_id=bid_id,
             reviews=reviews,
+            market_research=market_result,
         )
         bid_outputs.update_agent(
             run_id,
@@ -294,3 +209,40 @@ def run_bid_evaluation(run_id: str, bid_id: str, quote_ids: List[str]) -> None:
         bid_outputs.complete_run(run_id, result)
     except Exception as exc:
         bid_outputs.fail_run(run_id, str(exc))
+
+
+def _first_value(rows: List[dict], key: str, fallback: str) -> str:
+    for row in rows:
+        value = row.get(key)
+        if value:
+            return str(value)
+    return fallback
+
+
+def _quote_summaries(
+    quote_rows: List[dict],
+    vendor_proposals: List[dict],
+    reviews: List[dict],
+) -> List[dict]:
+    proposals_by_id = {item["quote_id"]: item for item in vendor_proposals}
+    reviews_by_id = {item["quote_id"]: item for item in reviews}
+    summaries = []
+    for quote in quote_rows:
+        quote_id = quote["quote_id"]
+        proposal = proposals_by_id.get(quote_id, {})
+        review = reviews_by_id.get(quote_id, {})
+        text = proposal.get("proposal_text", {}).get("text_preview", "")
+        summaries.append(
+            {
+                "quote_id": quote_id,
+                "vendor_name": quote.get("vendor_name", ""),
+                "equipment_type": quote.get("equipment_type", ""),
+                "procurement_name": quote.get("procurement_name", ""),
+                "risk_score": review.get("risk_score"),
+                "risk_level": review.get("risk_level", ""),
+                "findings": review.get("findings", [])[:5],
+                "recommendation": review.get("recommendation", ""),
+                "text_preview": text[:1200],
+            }
+        )
+    return summaries

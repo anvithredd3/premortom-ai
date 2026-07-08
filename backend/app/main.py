@@ -10,23 +10,28 @@ GET  /sample                 - the AIIMS MRI demo input
 """
 from __future__ import annotations
 
-import asyncio
-import json
+import os
+from typing import Any
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from fastapi import BackgroundTasks, FastAPI, File, Form, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import Response, StreamingResponse
+from fastapi.responses import Response
 
-from .agents import extraction_agent, profiler_agent
-from .agents.orchestrator import run_bid_evaluation, run_premortem, run_premortem_stream
+from .agents import extraction_agent, ui_guidance_agent
+from .agents.orchestrator import run_bid_evaluation, run_premortem
 from .models import PreMortemReport, ProcurementInput
-from .services import bid_outputs, document_parser, input_bids, report as report_service
+from .services import (
+    bid_outputs,
+    db_status,
+    document_parser,
+    input_bids,
+    report as report_service,
+)
 from .services.llm import has_api_key
-
-
-class ProfileRequest(BaseModel):
-    text: str
+from .services.decision_history_pgvector import store_ui_guidance_agent_history
+from .services.okf_memory import write_okf_memory_index
+from .services.okf_pgvector import index_okf_chunks_pgvector, pgvector_index_config
 
 app = FastAPI(
     title="PreMortem AI",
@@ -44,12 +49,47 @@ class BidRunRequest(BaseModel):
     bid_id: str
     quote_ids: list[str] = []
 
+
+class UiGuidanceRequest(BaseModel):
+    mode: str = "rfq_intake"
+    role: str = "procurement_officer"
+    free_text: str = ""
+    static_inputs: dict[str, Any] = Field(default_factory=dict)
+    feature_weights: dict[str, float] = Field(default_factory=dict)
+    minimum_criteria: list[str] = Field(default_factory=list)
+    negotiable_criteria: list[str] = Field(default_factory=list)
+    bid_id: str = ""
+    quote_id: str = ""
+    vendor_proposal: dict[str, Any] = Field(default_factory=dict)
+    store_history: bool = True
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+@app.on_event("startup")
+def write_memory_indexes_on_startup() -> None:
+    if os.getenv("OKF_WRITE_MEMORY_INDEX", "0") in {"1", "true", "True"}:
+        write_okf_memory_index()
+
+    if os.getenv("OKF_INDEX_PGVECTOR", "0") in {"1", "true", "True"}:
+        try:
+            count = index_okf_chunks_pgvector()
+            config = pgvector_index_config()
+            print(
+                "Indexed "
+                f"{count} OKF memory chunks into pgvector "
+                f"(embedding={config['embedding_method']}, "
+                f"dims={config['vector_dims']}, "
+                f"chunking={config['chunk_strategy']}, "
+                f"history_indexed={config['stores_history']})."
+            )
+        except Exception as exc:
+            print(f"Skipping pgvector OKF index: {exc}")
 
 
 @app.get("/health")
@@ -59,6 +99,11 @@ def health():
         "mode": "agentic" if has_api_key() else "offline (rule-based)",
         "service": "PreMortem AI",
     }
+
+
+@app.get("/db/status")
+def database_status():
+    return db_status.get_database_status()
 
 
 @app.get("/sample", response_model=ProcurementInput)
@@ -74,52 +119,6 @@ def analyze(data: ProcurementInput):
     return run_premortem(data)
 
 
-@app.post("/analyze_stream")
-async def analyze_stream(data: ProcurementInput):
-    """SSE endpoint — emits JSON events as each agent finishes."""
-    loop = asyncio.get_running_loop()
-    queue: asyncio.Queue = asyncio.Queue()
-
-    def sync_run() -> None:
-        def send(event: dict) -> None:
-            loop.call_soon_threadsafe(queue.put_nowait, event)
-        try:
-            run_premortem_stream(data, send)
-        except Exception as exc:
-            loop.call_soon_threadsafe(queue.put_nowait, {"type": "error", "message": str(exc)})
-        finally:
-            loop.call_soon_threadsafe(queue.put_nowait, None)  # sentinel
-
-    async def event_generator():
-        fut = loop.run_in_executor(None, sync_run)
-        while True:
-            event = await queue.get()
-            if event is None:
-                break
-            yield f"data: {json.dumps(event)}\n\n"
-        await fut  # surface any unhandled exception
-
-    return StreamingResponse(
-        event_generator(),
-        media_type="text/event-stream",
-        headers={
-            "Cache-Control": "no-cache",
-            "X-Accel-Buffering": "no",
-            "Connection": "keep-alive",
-        },
-    )
-
-
-@app.post("/profile")
-def profile(request: ProfileRequest):
-    """Classify text and web-research product norms into ProcurementInput fields.
-
-    Returns {status:"OUT_OF_SCOPE", reason} or
-            {status:"READY", category, proposed_fields, missing_fields, research}.
-    """
-    return profiler_agent.profile(request.text)
-
-
 @app.post("/upload")
 async def upload(file: UploadFile = File(...)):
     content = await file.read()
@@ -133,6 +132,103 @@ async def upload(file: UploadFile = File(...)):
         "text_preview": text[:2000],
         "raw_document_text": text,
     }
+
+
+@app.post("/ui-guidance/rfq-negotiation")
+def run_ui_guidance(payload: UiGuidanceRequest):
+    if payload.vendor_proposal:
+        result = ui_guidance_agent.analyze_vendor_proposal(
+            payload.vendor_proposal,
+            source_name=(
+                str(payload.vendor_proposal.get("quote_id") or payload.quote_id)
+                or "vendor_proposal"
+            ),
+        )
+    else:
+        source_text = "\n".join(
+            item
+            for item in (
+                payload.free_text,
+                _format_ui_static_inputs(payload.static_inputs),
+                _format_ui_criteria(payload.minimum_criteria, payload.negotiable_criteria),
+            )
+            if item
+        )
+        result = ui_guidance_agent.analyze_text(
+            raw_document_text=source_text,
+            source_name="ui_guidance_request",
+        )
+
+    result["mode"] = payload.mode
+    result["request_context"] = {
+        "role": payload.role,
+        "free_text": payload.free_text,
+        "static_inputs": payload.static_inputs,
+        "feature_weights": payload.feature_weights,
+        "minimum_criteria": payload.minimum_criteria,
+        "negotiable_criteria": payload.negotiable_criteria,
+        "bid_id": payload.bid_id,
+        "quote_id": payload.quote_id,
+    }
+    result["feature_weight_feedback"] = _feature_weight_feedback(payload.feature_weights)
+    result["history"] = {"stored": False, "run_id": "", "error": ""}
+
+    if payload.store_history:
+        try:
+            run_id = store_ui_guidance_agent_history(
+                result=result,
+                bid_id=payload.bid_id,
+                quote_id=payload.quote_id
+                or str(payload.vendor_proposal.get("quote_id") or ""),
+                source_name=str(result.get("source_name") or "ui_guidance_request"),
+            )
+            result["history"] = {"stored": True, "run_id": run_id, "error": ""}
+        except Exception as exc:
+            result["history"] = {"stored": False, "run_id": "", "error": str(exc)}
+    return result
+
+
+def _format_ui_static_inputs(static_inputs: dict[str, Any]) -> str:
+    if not static_inputs:
+        return ""
+    lines = ["Static expectation inputs:"]
+    for key, value in sorted(static_inputs.items()):
+        if value not in (None, "", [], {}):
+            lines.append(f"- {key}: {value}")
+    return "\n".join(lines)
+
+
+def _format_ui_criteria(
+    minimum_criteria: list[str],
+    negotiable_criteria: list[str],
+) -> str:
+    lines = []
+    if minimum_criteria:
+        lines.append("Minimum criteria:")
+        lines.extend(f"- {item}" for item in minimum_criteria if item)
+    if negotiable_criteria:
+        lines.append("Negotiable criteria:")
+        lines.extend(f"- {item}" for item in negotiable_criteria if item)
+    return "\n".join(lines)
+
+
+def _feature_weight_feedback(weights: dict[str, float]) -> list[str]:
+    if not weights:
+        return ["No feature weights were provided."]
+    total = sum(float(value or 0) for value in weights.values())
+    feedback = [f"Feature weights total {total:g}."]
+    if abs(total - 100.0) > 0.01:
+        feedback.append("Feature weights should ideally total 100; normalize or review before final use.")
+    if any(float(value or 0) < 0 for value in weights.values()):
+        feedback.append("Feature weights should not be negative.")
+    if weights:
+        top = sorted(weights.items(), key=lambda item: float(item[1] or 0), reverse=True)[:3]
+        feedback.append(
+            "Top weighted criteria: "
+            + ", ".join(f"{key}={float(value):g}" for key, value in top)
+            + "."
+        )
+    return feedback
 
 
 @app.post("/report/{fmt}")

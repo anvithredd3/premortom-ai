@@ -1,0 +1,21 @@
+{
+  "run_id": "RUN-015",
+  "quote_reviews": [
+    {
+      "quote_id": "BID-001-Q01",
+      "vendor_name": "",
+      "risk_score": 78.0,
+      "risk_level": "HIGH",
+      "findings": [
+        "The raw quote and fixed fields conflict on advance payment: the fixed field says 60% advance, while the vendor quote says 50% advance. Either way, the advance is large and there is no bank guarantee or retention language provided.",
+        "The raw quote is more favorable on warranty than the fixed field: the fixed field says warranty starts 'On Delivery,' but the vendor quote says 'Warranty starts On Commissioning.' This conflict must be resolved before award because delivery can occur before the equipment is usable.",
+        "Installation responsibility is assigned to the buyer, while site readiness is not complete: construction is only 60% complete, electrical readiness is pending, regulatory approval is pending, and there are zero technicians available versus six required. This creates a high risk of delivery-before-readiness and delayed commissioning.",
+        "Training is not included, which increases handover and operational-readiness risk for a medical equipment installation.",
+        "Service support is mentioned only as 'Service response target: 12 hours' with no resolution time, uptime commitment, spare parts commitment, escalation path, or remedy for missed service levels.",
+        "The vendor is a new entrant with limited history, which increases execution risk, and the quote itself says some claims may require verification during technical evaluation.",
+        "The submission is mixed but leans marketing-heavy: it includes compliance and reputation claims, but limited operational detail on acceptance criteria, commissioning responsibilities, milestone payments, or security for advance payment."
+      ],
+      "recommendation": "Do not award until the vendor confirms in writing: warranty start at commissioning/acceptance, a reduced advance with bank guarantee or equivalent security, vendor responsibility for installation/commissioning support, included training, and a complete service SLA with response, resolution, spare parts, and remedies. Also require proof of site readiness and regulatory approval before shipment."
+    }
+  ]
+}

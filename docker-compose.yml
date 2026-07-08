@@ -1,12 +1,12 @@
 services:
   db:
-    image: postgres:16-alpine
+    image: pgvector/pgvector:pg16
     environment:
       POSTGRES_USER: premortem
       POSTGRES_PASSWORD: premortem
       POSTGRES_DB: premortem
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
@@ -16,13 +16,40 @@ services:
       retries: 5
 
   backend:
-    build: ./backend
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
     environment:
       OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      LLM_PROVIDER: ${LLM_PROVIDER:-}
       OPENAI_MODEL: ${OPENAI_MODEL:-gpt-5.5}
+      OPENAI_EMBED_MODEL: ${OPENAI_EMBED_MODEL:-text-embedding-3-small}
+      CLAUDE_MODEL: ${CLAUDE_MODEL:-claude-haiku-4-5-20251001}
+      OKF_MEMORY_ROOT: /app/agent_profiles/contract_agent_profile
+      BID_RECOMMENDER_AGENT_OKF_MEMORY_ROOT: /app/agent_profiles/bid_recommender_agent_profile
+      INTERNET_MARKET_RESEARCH_AGENT_OKF_MEMORY_ROOT: /app/agent_profiles/internet_market_research_agent_profile
+      UI_GUIDANCE_AGENT_OKF_MEMORY_ROOT: /app/agent_profiles/ui_guidance_agent_profile
+      OKF_WRITE_MEMORY_INDEX: ${OKF_WRITE_MEMORY_INDEX:-1}
+      OKF_INDEX_PGVECTOR: ${OKF_INDEX_PGVECTOR:-1}
+      OKF_USE_PGVECTOR_RETRIEVAL: ${OKF_USE_PGVECTOR_RETRIEVAL:-1}
+      MARKET_RESEARCH_ENABLED: ${MARKET_RESEARCH_ENABLED:-0}
+      MARKET_RESEARCH_PROVIDER: ${MARKET_RESEARCH_PROVIDER:-openai_web_search}
+      MARKET_RESEARCH_MODEL: ${MARKET_RESEARCH_MODEL:-gpt-5.5}
+      DECISION_HISTORY_MEMORY_ENABLED: ${DECISION_HISTORY_MEMORY_ENABLED:-1}
+      DECISION_HISTORY_GLOBAL_LIMIT: ${DECISION_HISTORY_GLOBAL_LIMIT:-10}
+      DECISION_HISTORY_VENDOR_LIMIT: ${DECISION_HISTORY_VENDOR_LIMIT:-5}
+      DECISION_HISTORY_CATEGORY_LIMIT: ${DECISION_HISTORY_CATEGORY_LIMIT:-5}
+      DECISION_HISTORY_SIMILAR_LIMIT: ${DECISION_HISTORY_SIMILAR_LIMIT:-5}
+      DECISION_HISTORY_ITEM_CHAR_LIMIT: ${DECISION_HISTORY_ITEM_CHAR_LIMIT:-500}
+      DECISION_HISTORY_TOTAL_CHAR_LIMIT: ${DECISION_HISTORY_TOTAL_CHAR_LIMIT:-6000}
       DATABASE_URL: postgresql://premortem:premortem@db:5432/premortem
+      PREMORTEM_OUTPUT_DIR: /files/output
+      PREMORTEM_SAMPLES_DIR: /files/input/samples
     ports:
       - "8000:8000"
+    volumes:
+      - ./files/output:/files/output
     depends_on:
       db:
         condition: service_healthy

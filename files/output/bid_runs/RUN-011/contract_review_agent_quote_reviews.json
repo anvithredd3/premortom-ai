@@ -1,0 +1,22 @@
+{
+  "run_id": "RUN-011",
+  "quote_reviews": [
+    {
+      "quote_id": "BID-001-Q01",
+      "vendor_name": "",
+      "risk_score": 78.0,
+      "risk_level": "HIGH",
+      "findings": [
+        "There is a direct conflict on warranty start: the fixed field says \"On Delivery\" while the vendor quote says \"Warranty starts On Commissioning.\" This ambiguity matters because commissioning may be delayed by buyer-side readiness, which could either burn warranty time or create a dispute over when coverage begins.",
+        "Advance payment exposure is very high: the fixed field shows 60% advance on an INR 18.0 Cr contract, which is INR 10.8 Cr, and the quote does not mention any bank guarantee, retention, or other security for the advance.",
+        "Installation responsibility is assigned to the buyer, while electrical readiness and regulatory approval are still pending and construction completion is only 60%. This creates a delivery-before-readiness and undefined-handover risk because the vendor is not clearly accountable for commissioning dependencies.",
+        "Training is not included according to the fixed field, and the quote also states \"Training included: False.\" For medical equipment, lack of training increases operational and acceptance risk, especially when no minimum competency, audience, or handover evidence is specified.",
+        "Service support is only partially specified. The quote gives a \"Service response target: 12 hours\" and says \"Local service team: True,\" but it does not define resolution time, spare parts availability, preventive maintenance, exclusions, or remedies for missed service levels.",
+        "The vendor is a new entrant with limited history, which increases execution risk when combined with a large advance, buyer-side installation responsibility, and pending site readiness. The quote itself notes that some claims may require verification.",
+        "Commercial and compliance claims are only lightly evidenced. The quote lists IEC 60601, ISO 13485, and local regulatory approval, but the text says these claims \"may require verification during technical evaluation,\" so they should not be treated as fully substantiated award conditions yet.",
+        "The proposal is mixed rather than operationally specific: it includes some concrete commercial terms, but also emphasizes \"brand reputation, patient confidence, and market differentiation\" more than installation, acceptance, training, or commissioning detail."
+      ],
+      "recommendation": "Do not award until the vendor resolves the warranty-start conflict, provides an advance-payment security instrument acceptable to the buyer, and submits a detailed installation/commissioning/training plan tied to site readiness and acceptance milestones. Require written confirmation of regulatory approval status, service SLA details, and evidence for compliance claims before contract signature."
+    }
+  ]
+}

@@ -1,0 +1,72 @@
+{
+  "run_id": "RUN-024",
+  "bid_id": "BID-001",
+  "status": "completed",
+  "agent": "Bid Recommender Agent",
+  "winner": {
+    "quote_id": "BID-001-Q01",
+    "vendor_name": "",
+    "risk_score": 50.0,
+    "risk_level": "MODERATE",
+    "findings": [
+      "Offline mode \u2014 no API key set. Add OPENAI_API_KEY or ANTHROPIC_API_KEY to enable analysis."
+    ],
+    "recommendation": "Configure an API key to enable agentic analysis."
+  },
+  "ranked_quotes": [
+    {
+      "quote_id": "BID-001-Q01",
+      "vendor_name": "",
+      "risk_score": 50.0,
+      "risk_level": "MODERATE",
+      "findings": [
+        "Offline mode \u2014 no API key set. Add OPENAI_API_KEY or ANTHROPIC_API_KEY to enable analysis."
+      ],
+      "recommendation": "Configure an API key to enable agentic analysis."
+    }
+  ],
+  "shortlist": [
+    {
+      "quote_id": "BID-001-Q01",
+      "vendor_name": "",
+      "risk_score": 50.0,
+      "risk_level": "MODERATE",
+      "findings": [
+        "Offline mode \u2014 no API key set. Add OPENAI_API_KEY or ANTHROPIC_API_KEY to enable analysis."
+      ],
+      "recommendation": "Configure an API key to enable agentic analysis."
+    }
+  ],
+  "rationale": "Only one quote is present, so there is no basis for comparative ranking or winner selection across vendors. The available finding is an offline-mode/system issue ('no API key set') rather than a bid-specific commercial or compliance issue, so it does not support an award decision. Market research was skipped and contains no usable benchmark evidence.",
+  "feedback": [
+    "No valid cross-quote comparison is possible because only one quote was provided.",
+    "The only finding is an analysis-environment issue, not a quote risk.",
+    "No vendor name, price, or contract terms are available to assess value or compliance."
+  ],
+  "negotiation_points": [
+    "Provide the full quote set for comparison before award.",
+    "Resubmit with complete commercial and contract terms, including price, delivery, warranty, and service details.",
+    "If this is a system-generated placeholder, replace it with actual bid review findings before decision-making."
+  ],
+  "artifact_refs": [
+    "artifact_vendor_proposal",
+    "artifact_market_research",
+    "artifact_bid_recommendation",
+    "artifact_contract_review"
+  ],
+  "market_research_summary": {
+    "provider": "openai_web_search",
+    "status": "skipped",
+    "retrieved_at": "2026-07-08T15:40:55.345517+00:00",
+    "market_price_range": {
+      "summary": "",
+      "confidence": "low",
+      "sources": []
+    },
+    "typical_terms": {},
+    "red_flags": [],
+    "limitations": [
+      "OpenAI web search returned no parseable JSON."
+    ]
+  }
+}

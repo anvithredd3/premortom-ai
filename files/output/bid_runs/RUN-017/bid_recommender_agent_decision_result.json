@@ -1,0 +1,82 @@
+{
+  "run_id": "RUN-017",
+  "bid_id": "BID-001",
+  "status": "completed",
+  "agent": "Bid Recommender Agent",
+  "winner": {
+    "quote_id": "BID-001-Q01",
+    "vendor_name": "",
+    "risk_score": 72.0,
+    "risk_level": "HIGH",
+    "findings": [
+      "The fixed fields and the vendor quote conflict on advance payment: the procurement context says 60% advance, while the quote says 50% advance. This creates commercial ambiguity and affects security/retention analysis.",
+      "The fixed fields and the vendor quote conflict on warranty start: the procurement context says warranty starts on delivery, while the quote says warranty starts on commissioning. This is a material risk because delivery may occur before site readiness and commissioning.",
+      "Installation responsibility is assigned to the buyer, while site readiness indicators are unfavorable: construction completion is only 60%, electrical readiness is pending, regulatory approval is pending, and no technicians are available versus 6 required. This creates a delivery-before-readiness and undefined-handover risk.",
+      "Training is explicitly excluded in the quote ('Training included: False'), increasing operational handover risk for a medical equipment procurement.",
+      "Service support is only partially specified: the quote gives a 12-hour response target and says a local service team exists, but it does not state resolution times, spare parts, preventive maintenance, uptime remedies, or exclusions.",
+      "The vendor is a new entrant with limited history, which increases execution risk unless references and compliance claims are verified.",
+      "Commercial claims are only partly evidence-backed: the quote mentions IEC 60601, ISO 13485, and local regulatory approval, but also says some claims may require verification during technical evaluation."
+    ],
+    "recommendation": "Do not award until the vendor submits a reconciled commercial and contract schedule that clearly states one advance percentage, the warranty start trigger, installation/commissioning responsibilities, training scope, acceptance criteria, and service SLA terms; require advance security or retention and make payment contingent on delivery, installation, commissioning, and acceptance."
+  },
+  "ranked_quotes": [
+    {
+      "quote_id": "BID-001-Q01",
+      "vendor_name": "",
+      "risk_score": 72.0,
+      "risk_level": "HIGH",
+      "findings": [
+        "The fixed fields and the vendor quote conflict on advance payment: the procurement context says 60% advance, while the quote says 50% advance. This creates commercial ambiguity and affects security/retention analysis.",
+        "The fixed fields and the vendor quote conflict on warranty start: the procurement context says warranty starts on delivery, while the quote says warranty starts on commissioning. This is a material risk because delivery may occur before site readiness and commissioning.",
+        "Installation responsibility is assigned to the buyer, while site readiness indicators are unfavorable: construction completion is only 60%, electrical readiness is pending, regulatory approval is pending, and no technicians are available versus 6 required. This creates a delivery-before-readiness and undefined-handover risk.",
+        "Training is explicitly excluded in the quote ('Training included: False'), increasing operational handover risk for a medical equipment procurement.",
+        "Service support is only partially specified: the quote gives a 12-hour response target and says a local service team exists, but it does not state resolution times, spare parts, preventive maintenance, uptime remedies, or exclusions.",
+        "The vendor is a new entrant with limited history, which increases execution risk unless references and compliance claims are verified.",
+        "Commercial claims are only partly evidence-backed: the quote mentions IEC 60601, ISO 13485, and local regulatory approval, but also says some claims may require verification during technical evaluation."
+      ],
+      "recommendation": "Do not award until the vendor submits a reconciled commercial and contract schedule that clearly states one advance percentage, the warranty start trigger, installation/commissioning responsibilities, training scope, acceptance criteria, and service SLA terms; require advance security or retention and make payment contingent on delivery, installation, commissioning, and acceptance."
+    }
+  ],
+  "shortlist": [
+    {
+      "quote_id": "BID-001-Q01",
+      "vendor_name": "",
+      "risk_score": 72.0,
+      "risk_level": "HIGH",
+      "findings": [
+        "The fixed fields and the vendor quote conflict on advance payment: the procurement context says 60% advance, while the quote says 50% advance. This creates commercial ambiguity and affects security/retention analysis.",
+        "The fixed fields and the vendor quote conflict on warranty start: the procurement context says warranty starts on delivery, while the quote says warranty starts on commissioning. This is a material risk because delivery may occur before site readiness and commissioning.",
+        "Installation responsibility is assigned to the buyer, while site readiness indicators are unfavorable: construction completion is only 60%, electrical readiness is pending, regulatory approval is pending, and no technicians are available versus 6 required. This creates a delivery-before-readiness and undefined-handover risk.",
+        "Training is explicitly excluded in the quote ('Training included: False'), increasing operational handover risk for a medical equipment procurement.",
+        "Service support is only partially specified: the quote gives a 12-hour response target and says a local service team exists, but it does not state resolution times, spare parts, preventive maintenance, uptime remedies, or exclusions.",
+        "The vendor is a new entrant with limited history, which increases execution risk unless references and compliance claims are verified.",
+        "Commercial claims are only partly evidence-backed: the quote mentions IEC 60601, ISO 13485, and local regulatory approval, but also says some claims may require verification during technical evaluation."
+      ],
+      "recommendation": "Do not award until the vendor submits a reconciled commercial and contract schedule that clearly states one advance percentage, the warranty start trigger, installation/commissioning responsibilities, training scope, acceptance criteria, and service SLA terms; require advance security or retention and make payment contingent on delivery, installation, commissioning, and acceptance."
+    }
+  ],
+  "rationale": "The only quote provided is high risk and contains material inconsistencies with the procurement context: advance payment is 50% in the quote versus 60% in the context, warranty start is on commissioning rather than delivery, and installation is left to the buyer despite weak site readiness. Training is excluded and service terms are incomplete, so the offer is not ready for award on the current terms.",
+  "feedback": [
+    "BID-001-Q01 is the only quote and is assessed as HIGH risk (72).",
+    "Resolve the advance payment mismatch: context says 60% advance, quote says 50%.",
+    "Align warranty start: context says warranty starts on delivery, quote says commissioning.",
+    "Clarify installation and handover responsibilities because buyer installation conflicts with incomplete site readiness.",
+    "Include training in scope or provide a clear handover/training plan.",
+    "Expand service SLA details to cover resolution time, spare parts, preventive maintenance, uptime remedies, and exclusions.",
+    "Verify the vendor\u2019s compliance and reference claims before award."
+  ],
+  "negotiation_points": [
+    "Submit a reconciled commercial schedule with one agreed advance percentage.",
+    "Confirm warranty start trigger in writing.",
+    "Define installation, commissioning, and acceptance responsibilities.",
+    "Provide training scope and delivery method.",
+    "Provide a complete service SLA, including response and resolution commitments.",
+    "Add advance security or retention and link payment to delivery, installation, commissioning, and acceptance.",
+    "Provide evidence for IEC 60601, ISO 13485, and local regulatory approval claims."
+  ],
+  "artifact_refs": [
+    "artifact_vendor_proposal",
+    "artifact_bid_recommendation",
+    "artifact_contract_review"
+  ]
+}

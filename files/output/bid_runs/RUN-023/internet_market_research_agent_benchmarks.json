@@ -1,0 +1,38 @@
+{
+  "run_id": "RUN-023",
+  "market_research": {
+    "provider": "openai_web_search",
+    "status": "skipped",
+    "retrieved_at": "2026-07-08T14:54:53.678174+00:00",
+    "equipment_type": "",
+    "market_price_range": {
+      "summary": "",
+      "confidence": "low",
+      "sources": []
+    },
+    "typical_terms": {},
+    "regulatory_or_certification_expectations": {
+      "summary": "",
+      "confidence": "low",
+      "sources": []
+    },
+    "vendor_or_product_reputation_signals": [],
+    "consumables_and_lifecycle_costs": {
+      "summary": "",
+      "known_consumables": [],
+      "recurring_cost_risks": [],
+      "confidence": "low",
+      "sources": []
+    },
+    "current_market_or_future_trends": {
+      "summary": "",
+      "signals": [],
+      "confidence": "low",
+      "sources": []
+    },
+    "red_flags": [],
+    "limitations": [
+      "OpenAI web search returned no parseable JSON."
+    ]
+  }
+}

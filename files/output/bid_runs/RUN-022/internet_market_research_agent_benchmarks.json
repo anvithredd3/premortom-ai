@@ -1,0 +1,213 @@
+{
+  "run_id": "RUN-022",
+  "market_research": {
+    "provider": "web.run",
+    "retrieved_at": "2026-07-07T00:00:00Z",
+    "equipment_type": "MRI machine / medical imaging equipment",
+    "market_price_range": {
+      "summary": "Publicly accessible benchmark evidence for MRI systems is sparse and highly configuration-dependent, so I cannot responsibly state a single market price range from the sources found. The bid quote of INR 15.84 Cr should be benchmarked against comparable MRI system tenders and OEM configurations, but the available sources here do not provide a directly comparable current price band.",
+      "confidence": "low",
+      "sources": [
+        {
+          "url": "https://assets-bg.gem.gov.in/resources/pdf/GeM_handbook.pdf",
+          "note": "GeM handbook indicates procurement is configuration- and service-dependent, but does not provide MRI pricing.",
+          "retrieved_at": "2026-07-07T00:00:00Z"
+        },
+        {
+          "url": "https://bidplus-global.gem.gov.in/",
+          "note": "GeM bid portal confirms public bid publication context, but no comparable MRI price band was extracted from the accessible page.",
+          "retrieved_at": "2026-07-07T00:00:00Z"
+        }
+      ]
+    },
+    "typical_terms": {
+      "delivery_timeline": {
+        "summary": "For complex medical equipment, delivery timelines are usually contract-specific and tied to site readiness, installation, and commissioning. The quote\u2019s 5.6-month delivery period is plausible as a project timeline, but the sources found do not establish a universal MRI benchmark.",
+        "confidence": "low",
+        "sources": [
+          {
+            "url": "https://assets-bg.gem.gov.in/resources/pdf/GeM_handbook.pdf",
+            "note": "GeM describes delivery period as a binding contract term and emphasizes fulfillment timelines for goods/services.",
+            "retrieved_at": "2026-07-07T00:00:00Z"
+          },
+          {
+            "url": "https://assets-bg.gem.gov.in/resources/pdf/GeM_handbook.pdf",
+            "note": "GeM notes installation/commissioning timelines are part of order fulfillment and payment workflow.",
+            "retrieved_at": "2026-07-07T00:00:00Z"
+          }
+        ]
+      },
+      "advance_payment": {
+        "summary": "Public procurement practice in the sources reviewed emphasizes milestone/acceptance-based payment rather than large unsecured advances. The bid\u2019s 50% advance is materially high relative to the acceptance-based structure described in GeM guidance, but I did not find a source establishing a universal MRI advance-payment norm.",
+        "confidence": "medium",
+        "sources": [
+          {
+            "url": "https://assets-bg.gem.gov.in/resources/pdf/General%20Terms%20and%20Conditions%20on%20GeM%204.0%20(Version%201.7).pdf",
+            "note": "GeM terms reference payment after consignee receipt-cum-acceptance certificate (CRAC) and acceptance-based fulfillment.",
+            "retrieved_at": "2026-07-07T00:00:00Z"
+          },
+          {
+            "url": "https://assets-bg.gem.gov.in/resources/pdf/GeM_handbook.pdf",
+            "note": "GeM handbook describes PRC/CRAC and payment transfer after fulfillment milestones.",
+            "retrieved_at": "2026-07-07T00:00:00Z"
+          }
+        ]
+      },
+      "warranty_start": {
+        "summary": "Warranty start at commissioning or acceptance is common in OEM and procurement documentation for installed medical equipment. This is especially relevant for MRI systems because delivery-based warranty can consume warranty time before site readiness; the quote\u2019s commissioning-based warranty is more buyer-protective than delivery-based warranty.",
+        "confidence": "high",
+        "sources": [
+          {
+            "url": "https://www.documents.philips.com/assets/20260409/24287995689c4be2b4c9b42700cb9f90.pdf",
+            "note": "Philips MR systems warranty language references warranty timing after installation and availability for first patient use.",
+            "retrieved_at": "2026-07-07T00:00:00Z"
+          },
+          {
+            "url": "https://services.gehealthcare.com/gehcstorefront/p/E8011M",
+            "note": "GE HealthCare accessory warranty language shows warranty can start after installation and may include commissioning/start-up terms.",
+            "retrieved_at": "2026-07-07T00:00:00Z"
+          }
+        ]
+      },
+      "installation": {
+        "summary": "Installation and commissioning are commonly treated as part of the supplier scope or explicitly tied to acceptance in public procurement and OEM documentation. If the buyer is responsible for installation, the contract should clearly define site-readiness prerequisites, handover criteria, and who bears delay risk.",
+        "confidence": "high",
+        "sources": [
+          {
+            "url": "https://assets-bg.gem.gov.in/resources/pdf/General%20Terms%20and%20Conditions%20on%20GeM%204.0%20(Version%201.7).pdf",
+            "note": "GeM terms state that for items requiring installation/commissioning, those services should be included in the offer price and tied to contract fulfillment.",
+            "retrieved_at": "2026-07-07T00:00:00Z"
+          },
+          {
+            "url": "https://www.documents.philips.com/assets/20260409/24287995689c4be2b4c9b42700cb9f90.pdf",
+            "note": "Philips warranty documentation references installation and first patient use as relevant milestones.",
+            "retrieved_at": "2026-07-07T00:00:00Z"
+          }
+        ]
+      },
+      "training": {
+        "summary": "Training is commonly included or at least explicitly addressed in medical equipment offers. A quote that excludes training is a procurement red flag unless the buyer has separately arranged competency transfer and acceptance criteria.",
+        "confidence": "high",
+        "sources": [
+          {
+            "url": "https://services.gehealthcare.com/gehcstorefront/p/E8011M",
+            "note": "GE HealthCare warranty/service descriptions explicitly mention end-user training in some warranty codes.",
+            "retrieved_at": "2026-07-07T00:00:00Z"
+          },
+          {
+            "url": "https://services.gehealthcare.com/gehcstorefront/p/E8829TG",
+            "note": "GE HealthCare product listing explicitly states training included for an MRI-related product.",
+            "retrieved_at": "2026-07-07T00:00:00Z"
+          }
+        ]
+      },
+      "service_sla": {
+        "summary": "Service terms for MRI equipment are usually expected to specify response time, resolution/escalation, parts availability, and hours of coverage. The quote\u2019s 12-hour response target is only a partial SLA because it omits resolution time, spare parts, preventive maintenance, exclusions, and remedies.",
+        "confidence": "high",
+        "sources": [
+          {
+            "url": "https://services.gehealthcare.com/gehcstorefront/p/E8011M",
+            "note": "GE HealthCare warranty language includes service hours and support structure, showing that service terms are normally more detailed than a simple response target.",
+            "retrieved_at": "2026-07-07T00:00:00Z"
+          },
+          {
+            "url": "https://www.siemens-healthineers.com/en-us/equipment-services/time-and-material",
+            "note": "Siemens Healthineers service page highlights priority response and planned maintenance, supporting the expectation of defined service support terms.",
+            "retrieved_at": "2026-07-07T00:00:00Z"
+          }
+        ]
+      }
+    },
+    "regulatory_or_certification_expectations": {
+      "summary": "For MRI/medical imaging equipment, common expectations include IEC 60601 safety compliance, ISO 13485 quality management, and local regulatory approval/registration where applicable. These are baseline expectations, but the exact approval path depends on jurisdiction and product classification.",
+      "confidence": "high",
+      "sources": [
+        {
+          "url": "https://services.gehealthcare.com/gehcstorefront/p/E8011M",
+          "note": "GE HealthCare product/service pages reference regulatory-compliant service and product support context.",
+          "retrieved_at": "2026-07-07T00:00:00Z"
+        },
+        {
+          "url": "https://www.siemens-healthineers.com/en-us/equipment-services/time-and-material",
+          "note": "Siemens Healthineers notes factory-sourced parts meet strict regulatory requirements.",
+          "retrieved_at": "2026-07-07T00:00:00Z"
+        },
+        {
+          "url": "https://www.documents.philips.com/assets/20260409/24287995689c4be2b4c9b42700cb9f90.pdf",
+          "note": "Philips MR warranty documentation is consistent with OEM-controlled medical-device compliance expectations.",
+          "retrieved_at": "2026-07-07T00:00:00Z"
+        }
+      ]
+    },
+    "vendor_or_product_reputation_signals": [
+      {
+        "vendor_name": "StartCare Devices 01",
+        "signal": "New entrant with limited history and only 4 similar hospital references in the quote text.",
+        "interpretation": "Higher execution risk than an established OEM or long-tenured integrator; references should be verified.",
+        "sources": [
+          {
+            "url": "internal_quote_text",
+            "note": "Quote text provided by user states 1 year in operation and 4 similar hospital references.",
+            "retrieved_at": "2026-07-07T00:00:00Z"
+          }
+        ]
+      },
+      {
+        "vendor_name": "StartCare Devices 01",
+        "signal": "Quote emphasizes brand reputation and market differentiation more than operational details.",
+        "interpretation": "May indicate weaker specificity on installation, training, and service obligations.",
+        "sources": [
+          {
+            "url": "internal_quote_text",
+            "note": "Quote text provided by user states the offer emphasizes brand reputation and patient confidence more than operational details.",
+            "retrieved_at": "2026-07-07T00:00:00Z"
+          }
+        ]
+      },
+      {
+        "vendor_name": "GE HealthCare",
+        "signal": "OEM documentation shows detailed warranty/service structures and training references for MRI-related products.",
+        "interpretation": "Established OEM-style documentation is a positive benchmark for completeness of commercial and service terms.",
+        "sources": [
+          {
+            "url": "https://services.gehealthcare.com/gehcstorefront/p/E8011M",
+            "note": "Detailed warranty/service terms and training references.",
+            "retrieved_at": "2026-07-07T00:00:00Z"
+          },
+          {
+            "url": "https://services.gehealthcare.com/gehcstorefront/p/E8829TG",
+            "note": "Training included and warranty language on MRI-related product page.",
+            "retrieved_at": "2026-07-07T00:00:00Z"
+          }
+        ]
+      },
+      {
+        "vendor_name": "Philips",
+        "signal": "OEM warranty documentation ties warranty to installation/first patient use and includes service-hour structure.",
+        "interpretation": "Supports the benchmark that warranty and service terms should be milestone-based and operationally specific.",
+        "sources": [
+          {
+            "url": "https://www.documents.philips.com/assets/20260409/24287995689c4be2b4c9b42700cb9f90.pdf",
+            "note": "Philips MR systems warranty document.",
+            "retrieved_at": "2026-07-07T00:00:00Z"
+          }
+        ]
+      }
+    ],
+    "red_flags": [
+      "Warranty start conflict: delivery-based warranty versus commissioning-based warranty should be reconciled before award.",
+      "Very high advance payment exposure without stated bank guarantee, retention, or other security.",
+      "Buyer-responsible installation while site readiness is incomplete creates delivery-before-readiness risk.",
+      "Training excluded, which is atypical for complex medical equipment unless separately contracted.",
+      "Service SLA is incomplete because it lacks resolution time, spare parts, preventive maintenance, exclusions, and remedies.",
+      "Vendor is a new entrant with limited history, increasing execution and support risk."
+    ],
+    "limitations": [
+      "I could not extract a reliable, directly comparable current market price band for MRI systems from accessible public sources.",
+      "MRI pricing varies substantially by magnet strength, brand, software package, coils, installation scope, and local regulatory requirements.",
+      "Some benchmark evidence comes from OEM accessory/warranty pages rather than full MRI system tenders, so comparability is imperfect.",
+      "The quote text was treated as user-provided evidence; I did not independently verify the vendor or its claims.",
+      "This research is benchmark context only and should not override bid documents, technical evaluation, or legal/compliance review."
+    ]
+  }
+}

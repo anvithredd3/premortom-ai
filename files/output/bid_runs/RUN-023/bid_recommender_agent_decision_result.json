@@ -1,0 +1,72 @@
+{
+  "run_id": "RUN-023",
+  "bid_id": "BID-001",
+  "status": "completed",
+  "agent": "Bid Recommender Agent",
+  "winner": {
+    "quote_id": "BID-001-Q01",
+    "vendor_name": "",
+    "risk_score": 50.0,
+    "risk_level": "MODERATE",
+    "findings": [
+      "Offline mode \u2014 no API key set. Add OPENAI_API_KEY or ANTHROPIC_API_KEY to enable analysis."
+    ],
+    "recommendation": "Configure an API key to enable agentic analysis."
+  },
+  "ranked_quotes": [
+    {
+      "quote_id": "BID-001-Q01",
+      "vendor_name": "",
+      "risk_score": 50.0,
+      "risk_level": "MODERATE",
+      "findings": [
+        "Offline mode \u2014 no API key set. Add OPENAI_API_KEY or ANTHROPIC_API_KEY to enable analysis."
+      ],
+      "recommendation": "Configure an API key to enable agentic analysis."
+    }
+  ],
+  "shortlist": [
+    {
+      "quote_id": "BID-001-Q01",
+      "vendor_name": "",
+      "risk_score": 50.0,
+      "risk_level": "MODERATE",
+      "findings": [
+        "Offline mode \u2014 no API key set. Add OPENAI_API_KEY or ANTHROPIC_API_KEY to enable analysis."
+      ],
+      "recommendation": "Configure an API key to enable agentic analysis."
+    }
+  ],
+  "rationale": "Only one quote is present, so no comparative ranking is possible. The available finding is an offline-mode/system issue: no API key set, which prevents analysis. This is a process limitation rather than a vendor quote attribute, so the bid cannot be meaningfully recommended on quote evidence alone.",
+  "feedback": [
+    "No valid vendor comparison can be made because only one quote is provided.",
+    "The only finding relates to offline analysis setup, not to the quote\u2019s commercial or technical terms.",
+    "Market research was skipped and contains no usable benchmark evidence."
+  ],
+  "negotiation_points": [
+    "Provide the missing quote details needed for review, including price, scope, delivery, warranty, and service terms.",
+    "Resubmit with complete contract review findings for each quote so the recommendation can be based on bid evidence.",
+    "If this is a system/configuration issue, set the required API key and rerun the analysis before award consideration."
+  ],
+  "artifact_refs": [
+    "artifact_vendor_proposal",
+    "artifact_market_research",
+    "artifact_bid_recommendation",
+    "artifact_contract_review"
+  ],
+  "market_research_summary": {
+    "provider": "openai_web_search",
+    "status": "skipped",
+    "retrieved_at": "2026-07-08T14:54:53.678174+00:00",
+    "market_price_range": {
+      "summary": "",
+      "confidence": "low",
+      "sources": []
+    },
+    "typical_terms": {},
+    "red_flags": [],
+    "limitations": [
+      "OpenAI web search returned no parseable JSON."
+    ]
+  }
+}

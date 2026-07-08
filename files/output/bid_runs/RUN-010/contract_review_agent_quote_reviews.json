@@ -1,0 +1,22 @@
+{
+  "run_id": "RUN-010",
+  "quote_reviews": [
+    {
+      "quote_id": "BID-001-Q01",
+      "vendor_name": "",
+      "risk_score": 78.0,
+      "risk_level": "HIGH",
+      "findings": [
+        "There is a direct conflict on advance payment: the fixed field says 60% advance, while the vendor quote says 50% advance. Either way, the advance is very high for an 18.0 Cr medical equipment contract and there is no bank guarantee or other security mentioned.",
+        "Warranty start is conflicting and materially important: the fixed field says 'On Delivery,' but the vendor quote says 'On Commissioning.' If warranty starts on delivery, the buyer could lose warranty time before installation and commissioning are complete.",
+        "Installation responsibility is assigned to the buyer, while site readiness is not in place: construction completion is only 60%, electrical readiness is pending, regulatory approval is pending, and no technicians are available against 6 required. This creates a high risk of delivery-before-readiness and delayed commissioning.",
+        "Training is explicitly excluded ('Training included: False'), yet no alternative handover, operator readiness, or refresher training obligation is stated. This is a material execution risk for medical equipment.",
+        "Service support is only partially specified. The quote gives a 12-hour response target and says a local service team exists, but it does not state resolution time, spare parts commitment, preventive maintenance, uptime, or remedies for missed service levels.",
+        "The vendor is a new entrant with limited operating history, which increases performance and warranty-claim risk, especially given the size and complexity of an MRI procurement.",
+        "Commercial and compliance claims are only partly evidence-backed. The quote mentions IEC 60601, ISO 13485, and local regulatory approval, but also says some claims may require verification during technical evaluation, so these should not be treated as confirmed award-ready commitments.",
+        "The proposal is mixed but leans marketing-heavy: it emphasizes 'brand reputation, patient confidence, and market differentiation' more than operational details, which reduces confidence in execution specificity."
+      ],
+      "recommendation": "Do not award until the buyer resolves the advance-payment conflict, requires a bank guarantee or equivalent advance security, confirms warranty start at commissioning/acceptance in the final contract, adds vendor responsibility or a detailed installation/commissioning plan, and obtains a complete training and service SLA with spare parts, resolution time, and remedies. Require documentary verification of compliance claims and references before proceeding."
+    }
+  ]
+}

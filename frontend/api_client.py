@@ -23,6 +23,12 @@ def health() -> dict:
     return requests.get(f"{API_BASE}/health", timeout=TIMEOUT).json()
 
 
+def database_status() -> dict:
+    r = requests.get(f"{API_BASE}/db/status", timeout=TIMEOUT)
+    r.raise_for_status()
+    return r.json()
+
+
 def sample_input() -> dict:
     return requests.get(f"{API_BASE}/sample", timeout=TIMEOUT).json()
 

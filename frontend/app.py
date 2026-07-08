@@ -87,6 +87,8 @@ with st.sidebar:
             "3 · Agent Debate Room",
             "4 · Executive Dashboard",
             "5 · PreMortem Report",
+            "6 · Database / Memory",
+            "7 · Market Research",
             "★ Bonus Lab (What-If / Digital Twin)",
         ],
     )
@@ -465,6 +467,194 @@ def _download(fmt: str, rep: dict, mime: str):
 
 
 # --------------------------------------------------------------------------- #
+# Screen 6 - Database / Memory
+# --------------------------------------------------------------------------- #
+def screen_database():
+    st.subheader("Screen 6 · Database / Memory")
+    st.caption(
+        "Read-only view of the local Postgres/pgvector state. "
+        "Agent memory and decision history are intentionally tracked separately."
+    )
+
+    try:
+        status = api.database_status()
+    except Exception as e:
+        st.error(f"Could not read database status: {e}")
+        return
+
+    if status.get("error"):
+        st.warning(status["error"])
+
+    c1, c2, c3 = st.columns(3)
+    c1.metric(
+        "Database",
+        "Connected" if status.get("database_connected") else "Offline",
+    )
+    c2.metric(
+        "pgvector",
+        "Available" if status.get("pgvector_available") else "Missing",
+    )
+    c3.metric(
+        "DATABASE_URL",
+        "Set" if status.get("database_configured") else "Missing",
+    )
+
+    tables = status.get("tables", {})
+    memory = tables.get("agent_memory_chunks", {})
+    history = tables.get("decision_history", {})
+    history_chunks = tables.get("decision_history_chunks", {})
+
+    st.divider()
+    m1, m2, m3 = st.columns(3)
+    m1.metric(
+        "Agent Memory Rows",
+        int(memory.get("row_count") or 0),
+        "table exists" if memory.get("exists") else "table missing",
+    )
+    m2.metric(
+        "Decision History Rows",
+        int(history.get("row_count") or 0),
+        "table exists" if history.get("exists") else "not added yet",
+    )
+    m3.metric(
+        "History Chunk Rows",
+        int(history_chunks.get("row_count") or 0),
+        "table exists" if history_chunks.get("exists") else "not added yet",
+    )
+
+    if status.get("recent_memory_rows"):
+        st.markdown("### Recent Agent Memory Chunks")
+        st.dataframe(status["recent_memory_rows"], use_container_width=True)
+    else:
+        st.info("No agent memory rows found yet.")
+
+    if status.get("recent_decision_rows"):
+        st.markdown("### Recent Decision History")
+        st.dataframe(status["recent_decision_rows"], use_container_width=True)
+    else:
+        st.info(
+            "Decision history storage has not been populated yet. "
+            "The next backend step is to add `decision_history` and "
+            "`decision_history_chunks` writes after run completion."
+        )
+
+
+# --------------------------------------------------------------------------- #
+# Screen 7 - Market Research
+# --------------------------------------------------------------------------- #
+def screen_market_research():
+    st.subheader("Screen 7 · Market Research")
+
+    bid_id = st.text_input("Bid ID", value="BID-001")
+    if st.button("Load latest market research", use_container_width=True):
+        st.session_state.market_research_bid_id = bid_id
+
+    bid_id = st.session_state.get("market_research_bid_id", bid_id)
+    try:
+        latest_run = api.get_latest_bid_run(bid_id)
+        artifact = api.get_bid_run_artifact(
+            latest_run["run_id"],
+            "artifact_market_research",
+        )
+    except Exception as e:
+        st.info(f"No market research artifact found yet: {e}")
+        return
+
+    st.caption(f"Latest run: {latest_run['run_id']}")
+    content = artifact.get("content") or {}
+    market = content.get("market_research") or {}
+    if not market:
+        st.info("Market research artifact is not ready yet.")
+        return
+
+    status = market.get("status", "completed")
+    provider = market.get("provider", "")
+    retrieved_at = market.get("retrieved_at", "")
+    st.markdown(f"**Provider:** `{provider}`  \n**Status:** `{status}`  \n**Retrieved:** `{retrieved_at}`")
+
+    if market.get("limitations"):
+        with st.expander("Limitations", expanded=status == "skipped"):
+            for item in market.get("limitations", []):
+                st.markdown(f"- {item}")
+
+    _render_benchmark_field("Market Price Range", market.get("market_price_range"))
+
+    typical_terms = market.get("typical_terms") or {}
+    if typical_terms:
+        st.markdown("### Typical Terms")
+        for label, value in typical_terms.items():
+            _render_benchmark_field(label.replace("_", " ").title(), value)
+
+    _render_benchmark_field(
+        "Consumables And Lifecycle Costs",
+        market.get("consumables_and_lifecycle_costs"),
+    )
+    _render_benchmark_field(
+        "Current Market Or Future Trends",
+        market.get("current_market_or_future_trends"),
+    )
+    _render_benchmark_field(
+        "Regulatory Or Certification Expectations",
+        market.get("regulatory_or_certification_expectations"),
+    )
+
+    if market.get("red_flags"):
+        st.markdown("### Red Flags")
+        for item in market["red_flags"]:
+            st.markdown(f"- {item}")
+
+    signals = market.get("vendor_or_product_reputation_signals") or []
+    if signals:
+        st.markdown("### Benchmark / Reputation Signals")
+        for signal in signals:
+            title = signal.get("vendor_name") or signal.get("source_organization") or "Signal"
+            with st.expander(str(title)):
+                st.write(signal.get("signal", ""))
+                if signal.get("interpretation"):
+                    st.markdown("**Interpretation**")
+                    st.write(signal["interpretation"])
+                _render_sources(signal.get("sources") or [])
+
+
+def _render_benchmark_field(title: str, value):
+    if not value:
+        return
+    st.markdown(f"### {title}")
+    if isinstance(value, dict):
+        confidence = value.get("confidence")
+        if confidence:
+            st.caption(f"Confidence: {confidence}")
+        summary = value.get("summary")
+        if summary:
+            st.write(summary)
+        for key in ("known_consumables", "recurring_cost_risks", "signals"):
+            items = value.get(key) or []
+            if items:
+                st.markdown(f"**{key.replace('_', ' ').title()}**")
+                for item in items:
+                    st.markdown(f"- {item}")
+        _render_sources(value.get("sources") or [])
+    else:
+        st.write(value)
+
+
+def _render_sources(sources):
+    if not sources:
+        return
+    with st.expander("Sources"):
+        for source in sources:
+            if isinstance(source, dict):
+                url = source.get("url", "")
+                note = source.get("note", "")
+                if url:
+                    st.markdown(f"- [{url}]({url})")
+                if note:
+                    st.caption(note)
+            else:
+                st.markdown(f"- {source}")
+
+
+# --------------------------------------------------------------------------- #
 # Bonus Lab - What-If / Digital Twin
 # --------------------------------------------------------------------------- #
 def screen_bonus():
@@ -576,5 +766,9 @@ elif screen.startswith("4"):
     screen_dashboard()
 elif screen.startswith("5"):
     screen_report()
+elif screen.startswith("6"):
+    screen_database()
+elif screen.startswith("7"):
+    screen_market_research()
 else:
     screen_bonus()

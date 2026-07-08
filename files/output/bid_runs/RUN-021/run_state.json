@@ -1,0 +1,133 @@
+{
+  "run_id": "RUN-021",
+  "bid_id": "BID-001",
+  "status": "completed",
+  "current_step": "completed",
+  "agents": {
+    "bid_recommender": {
+      "status": "completed",
+      "message": "Comparing reviewed quotes"
+    },
+    "contract_review": {
+      "status": "completed",
+      "message": "Reviewing BID-001-Q01"
+    },
+    "decision_logic": {
+      "status": "completed",
+      "message": "Recommendation prepared"
+    },
+    "vendor_proposal": {
+      "status": "completed",
+      "message": "Proposal text extracted for BID-001-Q01"
+    }
+  },
+  "quotes": [
+    {
+      "quote_id": "BID-001-Q01",
+      "status": "completed",
+      "vendor_name": "",
+      "risk_score": 82.0
+    }
+  ],
+  "graph": {
+    "nodes": [
+      {
+        "id": "vendor_proposal",
+        "type": "agent",
+        "label": "Vendor Proposal",
+        "status": "completed"
+      },
+      {
+        "id": "bid_recommender",
+        "type": "agent",
+        "label": "Bid Recommender",
+        "status": "running"
+      },
+      {
+        "id": "contract_review",
+        "type": "agent",
+        "label": "Contract Review",
+        "status": "running"
+      },
+      {
+        "id": "decision_logic",
+        "type": "decision_step",
+        "label": "Decision Logic",
+        "status": "completed"
+      },
+      {
+        "id": "document_store",
+        "type": "data_store",
+        "label": "Local PDF Store",
+        "status": "ok"
+      },
+      {
+        "id": "llm_provider",
+        "type": "external_connection",
+        "label": "LLM Provider",
+        "status": "pending"
+      }
+    ],
+    "edges": [
+      {
+        "source": "vendor_proposal",
+        "target": "contract_review",
+        "type": "passes_results_to",
+        "status": "waiting"
+      },
+      {
+        "source": "vendor_proposal",
+        "target": "bid_recommender",
+        "type": "passes_results_to",
+        "status": "waiting"
+      },
+      {
+        "source": "bid_recommender",
+        "target": "contract_review",
+        "type": "delegates_to",
+        "status": "waiting"
+      },
+      {
+        "source": "contract_review",
+        "target": "bid_recommender",
+        "type": "returns_result_to",
+        "status": "waiting"
+      },
+      {
+        "source": "bid_recommender",
+        "target": "decision_logic",
+        "type": "passes_results_to",
+        "status": "waiting"
+      },
+      {
+        "source": "contract_review",
+        "target": "document_store",
+        "type": "reads_from",
+        "status": "waiting"
+      },
+      {
+        "source": "contract_review",
+        "target": "llm_provider",
+        "type": "uses_external_service",
+        "status": "waiting"
+      }
+    ]
+  },
+  "external_connections": [
+    {
+      "id": "document_store",
+      "label": "Local PDF Store",
+      "status": "ok"
+    },
+    {
+      "id": "llm_provider",
+      "label": "LLM Provider",
+      "status": "pending"
+    }
+  ],
+  "telemetry": {
+    "elapsed_ms": 0,
+    "llm_calls": 0,
+    "errors": 0
+  }
+}

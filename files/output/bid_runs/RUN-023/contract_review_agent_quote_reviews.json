@@ -1,0 +1,15 @@
+{
+  "run_id": "RUN-023",
+  "quote_reviews": [
+    {
+      "quote_id": "BID-001-Q01",
+      "vendor_name": "",
+      "risk_score": 50.0,
+      "risk_level": "MODERATE",
+      "findings": [
+        "Offline mode \u2014 no API key set. Add OPENAI_API_KEY or ANTHROPIC_API_KEY to enable analysis."
+      ],
+      "recommendation": "Configure an API key to enable agentic analysis."
+    }
+  ]
+}
