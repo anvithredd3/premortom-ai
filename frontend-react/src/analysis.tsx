@@ -36,7 +36,7 @@ const AGENT_NAMES: Record<AgentId, string> = {
 const FIELD_LABELS: Record<string, string> = {
   procurement_name: 'Procurement Name',
   equipment_type: 'Equipment Type',
-  contract_value_cr: 'Contract Value (₹ Cr)',
+  contract_value_cr: 'Contract Value',
   advance_payment_pct: 'Advance Payment %',
   delivery_timeline_months: 'Delivery Timeline (months)',
   warranty_start: 'Warranty Start',

@@ -17,6 +17,24 @@ const C = {
 
 const FONT = "'JetBrains Mono', monospace"
 
+/* ── Currency config ────────────────────────────────────────────────── */
+interface CurrencyCfg {
+  code: string; symbol: string; unit: string; label: string; unitFull: string; toCr: number
+}
+
+const CURRENCIES: CurrencyCfg[] = [
+  { code: 'USD_M',  symbol: '$', unit: 'M',  label: 'USD M',  unitFull: 'millions',  toCr: 8.5  },
+  { code: 'USD_K',  symbol: '$', unit: 'K',  label: 'USD K',  unitFull: 'thousands', toCr: 0.0085 },
+  { code: 'EUR_M',  symbol: '€', unit: 'M',  label: 'EUR M',  unitFull: 'millions',  toCr: 9.2  },
+  { code: 'GBP_M',  symbol: '£', unit: 'M',  label: 'GBP M',  unitFull: 'millions',  toCr: 10.8 },
+  { code: 'INR_CR', symbol: '₹', unit: 'Cr', label: 'INR Cr', unitFull: 'Crores',    toCr: 1.0  },
+  { code: 'INR_L',  symbol: '₹', unit: 'L',  label: 'INR L',  unitFull: 'Lakhs',     toCr: 0.01 },
+]
+
+function getCurrency(code: string): CurrencyCfg {
+  return CURRENCIES.find(c => c.code === code) ?? CURRENCIES[0]
+}
+
 /* ── Field schema ───────────────────────────────────────────────────── */
 type FieldType = 'text' | 'number' | 'bool' | 'select' | 'array'
 interface FieldDef { key: string; label: string; type: FieldType; opts?: readonly string[] }
@@ -24,7 +42,7 @@ interface FieldDef { key: string; label: string; type: FieldType; opts?: readonl
 const FIELDS: FieldDef[] = [
   { key: 'procurement_name',          label: 'PROCUREMENT NAME',              type: 'text' },
   { key: 'equipment_type',            label: 'EQUIPMENT TYPE',                type: 'text' },
-  { key: 'contract_value_cr',         label: 'CONTRACT VALUE (₹ Cr)',         type: 'number' },
+  { key: 'contract_value_cr',         label: 'CONTRACT VALUE',                type: 'number' },
   { key: 'advance_payment_pct',       label: 'ADVANCE PAYMENT %',             type: 'number' },
   { key: 'delivery_timeline_months',  label: 'DELIVERY TIMELINE (months)',    type: 'number' },
   { key: 'warranty_start',            label: 'WARRANTY START',                type: 'select', opts: ['On Delivery', 'On Commissioning', 'On Installation'] },
@@ -74,6 +92,85 @@ const inputBase = (missing: boolean): React.CSSProperties => ({
   outline: 'none',
   boxSizing: 'border-box',
 })
+
+/* ── Currency field ─────────────────────────────────────────────────── */
+function CurrencyField({
+  value, missing, onChange, onDisplayChange,
+}: {
+  value: string               // INR Cr string (backend-facing)
+  missing: boolean
+  onChange: (crVal: string) => void
+  onDisplayChange: (display: string) => void
+}) {
+  const defaultCurr = CURRENCIES[0]  // USD M
+  const initCrNum = parseFloat(value)
+
+  const [currCode, setCurrCode] = useState(defaultCurr.code)
+  const [raw, setRaw] = useState<string>(() => {
+    if (!isNaN(initCrNum) && initCrNum > 0)
+      return (initCrNum / defaultCurr.toCr).toFixed(2)
+    return ''
+  })
+
+  const curr = getCurrency(currCode)
+
+  function push(rawVal: string, c: CurrencyCfg) {
+    const n = parseFloat(rawVal)
+    if (!isNaN(n) && rawVal !== '') {
+      onChange((n * c.toCr).toFixed(4))
+      onDisplayChange(`${c.symbol}${n % 1 === 0 ? n : n.toFixed(1)}${c.unit}`)
+    } else {
+      onChange(''); onDisplayChange('')
+    }
+  }
+
+  function handleAmount(v: string) { setRaw(v); push(v, curr) }
+
+  function handleCurrency(code: string) {
+    const c = getCurrency(code); setCurrCode(code); push(raw, c)
+  }
+
+  const crNum = parseFloat(value)
+  const showConv = !isNaN(crNum) && crNum > 0 && currCode !== 'INR_CR'
+
+  const selStyle: React.CSSProperties = {
+    background: '#0a0a0a', border: `1px solid ${C.border}`, borderRadius: 2,
+    padding: '7px 10px', fontSize: 9, color: C.muted, fontFamily: FONT,
+    outline: 'none', cursor: 'pointer', flexShrink: 0,
+    WebkitAppearance: 'none', appearance: 'none',
+  }
+
+  return (
+    <div>
+      <div style={{ display: 'flex', gap: 6 }}>
+        <div style={{ position: 'relative', flex: 1 }}>
+          <span style={{
+            position: 'absolute', left: 9, top: '50%', transform: 'translateY(-50%)',
+            fontSize: 12, color: '#4a4a4a', fontFamily: FONT, pointerEvents: 'none', lineHeight: 1,
+          }}>
+            {curr.symbol}
+          </span>
+          <input
+            type="number" min="0" value={raw}
+            placeholder={missing ? '— NEEDS INPUT' : `0 ${curr.unitFull}`}
+            onChange={e => handleAmount(e.target.value)}
+            style={{ ...inputBase(missing), paddingLeft: 22 }}
+          />
+        </div>
+        <select value={currCode} onChange={e => handleCurrency(e.target.value)} style={selStyle}>
+          {CURRENCIES.map(c => (
+            <option key={c.code} value={c.code}>{c.label}</option>
+          ))}
+        </select>
+      </div>
+      {showConv && (
+        <div style={{ marginTop: 4, fontSize: 8, color: '#3a3a3a', letterSpacing: '0.1em' }}>
+          = ₹ {crNum.toFixed(1)} Cr  ·  approx rate
+        </div>
+      )}
+    </div>
+  )
+}
 
 /* ── Field input renderer ───────────────────────────────────────────── */
 function FieldInput({ def, value, missing, onChange }: {
@@ -179,7 +276,7 @@ function Research({ items }: { items: ResearchItem[] }) {
 
 /* ── Main intake view ───────────────────────────────────────────────── */
 export interface IntakeViewProps {
-  onConfirm: (fields: object, meta: { category: string; research: ResearchItem[]; missingFields: string[] }) => void
+  onConfirm: (fields: object, meta: { category: string; research: ResearchItem[]; missingFields: string[]; contractDisplay?: string }) => void
   onLoadSample: () => void
 }
 
@@ -195,6 +292,7 @@ export function IntakeView({ onConfirm, onLoadSample }: IntakeViewProps) {
   const [research, setResearch] = useState<ResearchItem[]>([])
   const [missing, setMissing] = useState<Set<string>>(new Set())
   const [form, setForm] = useState<Record<string, string>>({})
+  const [contractDisplay, setContractDisplay] = useState('')
   const fileRef = useRef<HTMLInputElement>(null)
 
   /* ── Handlers ────────────────────────────────────────────────────── */
@@ -264,7 +362,7 @@ export function IntakeView({ onConfirm, onLoadSample }: IntakeViewProps) {
     if (f) processFile(f)
   }
 
-  const handleRun = () => onConfirm(buildInput(form), { category, research, missingFields: Array.from(missing) })
+  const handleRun = () => onConfirm(buildInput(form), { category, research, missingFields: Array.from(missing), contractDisplay })
 
   const setField = (key: string, val: string) => setForm(p => ({ ...p, [key]: val }))
 
@@ -433,12 +531,21 @@ export function IntakeView({ onConfirm, onLoadSample }: IntakeViewProps) {
                         <span style={{ width: 4, height: 4, borderRadius: '50%', background: C.amber, display: 'inline-block', flexShrink: 0 }} />
                       )}
                     </div>
-                    <FieldInput
-                      def={f}
-                      value={form[f.key] ?? ''}
-                      missing={isMissing}
-                      onChange={v => setField(f.key, v)}
-                    />
+                    {f.key === 'contract_value_cr' ? (
+                      <CurrencyField
+                        value={form[f.key] ?? ''}
+                        missing={isMissing}
+                        onChange={v => setField(f.key, v)}
+                        onDisplayChange={setContractDisplay}
+                      />
+                    ) : (
+                      <FieldInput
+                        def={f}
+                        value={form[f.key] ?? ''}
+                        missing={isMissing}
+                        onChange={v => setField(f.key, v)}
+                      />
+                    )}
                   </div>
                 )
               })}

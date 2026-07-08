@@ -156,6 +156,7 @@ export default function App() {
   const [intakeResearch,  setIntakeResearch]  = useState<ResearchItem[]>([])
   const [intakeCategory,  setIntakeCategory]  = useState('')
   const [intakeMissingFields, setIntakeMissingFields] = useState<string[]>([])
+  const [contractDisplay, setContractDisplay] = useState<string | undefined>(undefined)
   const [focusId, setFocusId]   = useState<FocusId>(null)
 
   // Bid workflow state
@@ -166,12 +167,13 @@ export default function App() {
   /* ── PreMortem handlers ─────────────────────────────────────────── */
   const goToGraph = (
     fields: object,
-    meta?: { category?: string; research?: ResearchItem[]; missingFields?: string[] },
+    meta?: { category?: string; research?: ResearchItem[]; missingFields?: string[]; contractDisplay?: string },
   ) => {
     setConfirmedInput(fields as Record<string, unknown>)
     setIntakeResearch(meta?.research ?? [])
     setIntakeCategory(meta?.category ?? '')
     setIntakeMissingFields(meta?.missingFields ?? [])
+    setContractDisplay(meta?.contractDisplay)
     reset()
     startAnalysis(fields)
     setPmView('graph')
@@ -343,9 +345,11 @@ export default function App() {
                   <div style={{ fontSize: 11, color: '#c0c0c0', lineHeight: 1.5 }}>{ctxName ?? '—'}</div>
                   {(ctxValue != null || ctxType) && (
                     <div style={{ marginTop: 4, fontSize: 9, color: '#3e3e3e', lineHeight: 1.6 }}>
-                      {ctxValue != null ? `₹${ctxValue} Cr` : ''}
-                      {ctxValue != null && ctxType ? ' · ' : ''}
-                      {ctxType ?? ''}
+                      {contractDisplay
+                        ? <><span style={{ color: '#5a5a5a' }}>{contractDisplay}</span><span style={{ color: '#2e2e2e' }}> · ₹{ctxValue} Cr</span></>
+                        : ctxValue != null ? `₹${ctxValue} Cr` : ''
+                      }
+                      {ctxType ? <><span style={{ color: '#2a2a2a' }}> · </span>{ctxType}</> : null}
                     </div>
                   )}
                 </div>
