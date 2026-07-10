@@ -1,15 +1,12 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import type { Bid, BidGraphEdge, BidGraphNode, RunQuote, RunState } from './types'
+import { useTheme } from './theme'
 
 /* ── Theme ─────────────────────────────────────────────────────────────── */
-const C = {
-  bg: '#080808', surface: '#0d0d0d', border: '#1a1a1a',
-  text: '#d8d8d8', muted: '#555', faint: '#2e2e2e',
-  accent: '#ff2222', green: '#22c55e', amber: '#f59e0b', red: '#ef4444',
-} as const
 const FONT = "'JetBrains Mono', monospace"
 
 function Lbl({ children, style }: { children: React.ReactNode; style?: React.CSSProperties }) {
+  const { theme: C } = useTheme()
   return (
     <span style={{
       fontSize: 8, letterSpacing: '0.18em', textTransform: 'uppercase',
@@ -21,21 +18,21 @@ function Lbl({ children, style }: { children: React.ReactNode; style?: React.CSS
 }
 
 /* ── Status helpers ─────────────────────────────────────────────────────── */
-function nodeColor(status: string) {
+function nodeColor(status: string, C: { green: string; red: string; faint: string; textDim: string }) {
   if (status === 'completed' || status === 'ok') return C.green
-  if (status === 'running') return '#e8e8e8'
+  if (status === 'running') return C.textDim
   if (status === 'failed') return C.red
   return C.faint
 }
 
-function quoteStatusColor(status: string) {
+function quoteStatusColor(status: string, C: { green: string; red: string; muted: string; textDim: string }) {
   if (status === 'completed') return C.green
-  if (status === 'running') return '#e8e8e8'
+  if (status === 'running') return C.textDim
   if (status === 'failed') return C.red
-  return '#2e2e2e'
+  return C.muted
 }
 
-function riskColor(score: number) {
+function riskColor(score: number, C: { red: string; amber: string; green: string }) {
   if (score >= 75) return C.red
   if (score >= 50) return C.amber
   return C.green
@@ -48,15 +45,16 @@ function fmtScore(score?: number) {
 
 /* ── Agent graph (SVG-based) ─────────────────────────────────────────── */
 const NODE_DEFS: Record<string, { x: number; y: number; w: number; h: number; label: string }> = {
-  vendor_proposal: { x: 40,  y: 70, w: 130, h: 34, label: 'VENDOR PROPOSAL' },
-  contract_review: { x: 220, y: 70, w: 130, h: 34, label: 'CONTRACT REVIEW' },
-  bid_recommender: { x: 400, y: 70, w: 130, h: 34, label: 'BID RECOMMENDER' },
-  decision_logic:  { x: 580, y: 70, w: 120, h: 34, label: 'DECISION LOGIC' },
-  document_store:  { x: 220, y: 155, w: 110, h: 28, label: 'PDF STORE' },
-  llm_provider:    { x: 400, y: 155, w: 110, h: 28, label: 'LLM PROVIDER' },
+  vendor_proposal:  { x: 20,  y: 60,  w: 120, h: 34, label: 'VENDOR PROPOSAL' },
+  contract_review:  { x: 175, y: 60,  w: 120, h: 34, label: 'CONTRACT REVIEW' },
+  market_research:  { x: 175, y: 115, w: 120, h: 34, label: 'MARKET RESEARCH' },
+  bid_recommender:  { x: 340, y: 85,  w: 130, h: 34, label: 'BID RECOMMENDER' },
+  decision_logic:   { x: 510, y: 85,  w: 120, h: 34, label: 'DECISION LOGIC' },
+  document_store:   { x: 340, y: 155, w: 110, h: 28, label: 'PDF STORE' },
+  llm_provider:     { x: 510, y: 155, w: 110, h: 28, label: 'LLM PROVIDER' },
 }
 
-const SVG_W = 740, SVG_H = 210
+const SVG_W = 660, SVG_H = 210
 
 function cx(id: string) {
   const n = NODE_DEFS[id]; return n ? n.x + n.w / 2 : 0
@@ -66,6 +64,7 @@ function cy(id: string) {
 }
 
 function AgentGraph({ nodes, edges }: { nodes: BidGraphNode[]; edges: BidGraphEdge[] }) {
+  const { theme: C } = useTheme()
   const statusMap = Object.fromEntries(nodes.map(n => [n.id, n.status]))
 
   return (
@@ -76,7 +75,7 @@ function AgentGraph({ nodes, edges }: { nodes: BidGraphNode[]; edges: BidGraphEd
       <defs>
         <marker id="arrow" viewBox="0 0 6 6" refX="5" refY="3"
           markerWidth="4" markerHeight="4" orient="auto">
-          <path d="M0,0 L0,6 L6,3 z" fill="#2a2a2a" />
+          <path d="M0,0 L0,6 L6,3 z" fill={C.borderMid} />
         </marker>
       </defs>
 
@@ -89,7 +88,7 @@ function AgentGraph({ nodes, edges }: { nodes: BidGraphNode[]; edges: BidGraphEd
         return (
           <line
             key={i} x1={sx} y1={sy} x2={tx} y2={ty}
-            stroke={active ? '#2a2a2a' : '#181818'}
+            stroke={active ? C.borderMid : C.border}
             strokeWidth={1}
             strokeDasharray="4 3"
             markerEnd="url(#arrow)"
@@ -100,7 +99,7 @@ function AgentGraph({ nodes, edges }: { nodes: BidGraphNode[]; edges: BidGraphEd
       {/* Nodes */}
       {Object.entries(NODE_DEFS).map(([id, def]) => {
         const status = statusMap[id] ?? 'waiting'
-        const color = nodeColor(status)
+        const color = nodeColor(status, C)
         const isRunning = status === 'running'
         const isData = def.h < 32
         return (
@@ -108,7 +107,7 @@ function AgentGraph({ nodes, edges }: { nodes: BidGraphNode[]; edges: BidGraphEd
             <rect
               x={def.x} y={def.y} width={def.w} height={def.h} rx={2}
               fill={C.surface}
-              stroke={isRunning ? '#333' : color === C.faint ? '#181818' : `${color}44`}
+              stroke={isRunning ? C.borderMid : color === C.faint ? C.border : `${color}44`}
               strokeWidth={1}
             />
             {/* Status dot */}
@@ -120,7 +119,7 @@ function AgentGraph({ nodes, edges }: { nodes: BidGraphNode[]; edges: BidGraphEd
             {/* Label */}
             <text
               x={def.x + 20} y={def.y + def.h / 2 + 1}
-              fill={status === 'waiting' || status === 'pending' ? '#333' : '#888'}
+              fill={status === 'waiting' || status === 'pending' ? C.muted : C.textDim}
               fontSize={isData ? 7 : 7.5}
               fontFamily={FONT}
               letterSpacing="0.1em"
@@ -137,6 +136,7 @@ function AgentGraph({ nodes, edges }: { nodes: BidGraphNode[]; edges: BidGraphEd
 
 /* ── Quote progress table ─────────────────────────────────────────────── */
 function QuoteTable({ quotes }: { quotes: RunQuote[] }) {
+  const { theme: C } = useTheme()
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
       {quotes.map(q => (
@@ -147,14 +147,14 @@ function QuoteTable({ quotes }: { quotes: RunQuote[] }) {
         }}>
           <div style={{
             width: 5, height: 5, borderRadius: '50%', flexShrink: 0,
-            background: quoteStatusColor(q.status),
+            background: quoteStatusColor(q.status, C),
             boxShadow: q.status === 'running' ? `0 0 4px ${C.text}` : undefined,
           }} />
-          <div style={{ flex: 1, fontSize: 10, color: q.status === 'pending' ? '#3a3a3a' : C.text }}>
+          <div style={{ flex: 1, fontSize: 10, color: q.status === 'pending' ? C.muted : C.text }}>
             {q.vendor_name || q.quote_id}
           </div>
           {q.vendor_name && (
-            <div style={{ fontSize: 8, color: '#2e2e2e' }}>{q.quote_id}</div>
+            <div style={{ fontSize: 8, color: C.muted }}>{q.quote_id}</div>
           )}
           {q.status === 'running' && (
             <div style={{ fontSize: 8, color: '#444', letterSpacing: '0.12em' }}>ANALYZING···</div>
@@ -162,14 +162,14 @@ function QuoteTable({ quotes }: { quotes: RunQuote[] }) {
           {q.status === 'completed' && q.risk_score != null && (
             <div style={{
               fontSize: 10, fontWeight: 700,
-              color: riskColor(q.risk_score),
+              color: riskColor(q.risk_score, C),
             }}>
               {fmtScore(q.risk_score)}/100
             </div>
           )}
           <div style={{
             fontSize: 7, letterSpacing: '0.12em',
-            color: quoteStatusColor(q.status), opacity: 0.6,
+            color: quoteStatusColor(q.status, C), opacity: 0.6,
           }}>
             {q.status.toUpperCase()}
           </div>
@@ -188,6 +188,7 @@ export interface BidMonitorProps {
 }
 
 export function BidMonitor({ bid, runId, onBack, onComplete }: BidMonitorProps) {
+  const { theme: C } = useTheme()
   const [state, setState] = useState<RunState | null>(null)
   const [error, setError] = useState<string | null>(null)
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
@@ -231,7 +232,7 @@ export function BidMonitor({ bid, runId, onBack, onComplete }: BidMonitorProps) 
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 24 }}>
         <button onClick={onBack} style={{
-          background: 'none', border: 'none', color: '#3a3a3a',
+          background: 'none', border: 'none', color: C.textDim,
           fontFamily: FONT, fontSize: 9, letterSpacing: '0.14em',
           textTransform: 'uppercase', cursor: 'pointer', padding: 0,
         }}>
@@ -242,7 +243,7 @@ export function BidMonitor({ bid, runId, onBack, onComplete }: BidMonitorProps) 
           <div style={{ fontSize: 12, fontWeight: 700, color: C.text, letterSpacing: '0.05em' }}>
             {bid.procurement_name || bid.bid_id}
           </div>
-          <div style={{ fontSize: 8, color: '#3a3a3a', letterSpacing: '0.1em', marginTop: 2 }}>
+          <div style={{ fontSize: 8, color: C.muted, letterSpacing: '0.1em', marginTop: 2 }}>
             {runId}
           </div>
         </div>
@@ -250,10 +251,10 @@ export function BidMonitor({ bid, runId, onBack, onComplete }: BidMonitorProps) 
           {!isDone && (
             <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
               <div style={{
-                width: 5, height: 5, borderRadius: '50%', background: '#e8e8e8',
+                width: 5, height: 5, borderRadius: '50%', background: C.textDim,
                 animation: 'pulse 1.2s ease-in-out infinite',
               }} />
-              <span style={{ fontSize: 8, color: '#3a3a3a', letterSpacing: '0.14em' }}>RUNNING</span>
+              <span style={{ fontSize: 8, color: C.muted, letterSpacing: '0.14em' }}>RUNNING</span>
             </div>
           )}
           {isDone && !isFailed && (
@@ -263,7 +264,7 @@ export function BidMonitor({ bid, runId, onBack, onComplete }: BidMonitorProps) 
             <span style={{ fontSize: 8, color: C.red, letterSpacing: '0.14em' }}>FAILED</span>
           )}
           {telemetry && (
-            <span style={{ fontSize: 8, color: '#2a2a2a', letterSpacing: '0.1em' }}>
+            <span style={{ fontSize: 8, color: C.muted, letterSpacing: '0.1em' }}>
               {telemetry.llm_calls} LLM · {telemetry.errors} ERR
             </span>
           )}
@@ -272,8 +273,8 @@ export function BidMonitor({ bid, runId, onBack, onComplete }: BidMonitorProps) 
 
       {error && (
         <div style={{
-          fontSize: 9, color: C.accent, background: '#1a0808',
-          border: '1px solid #3a1010', borderRadius: 2,
+          fontSize: 9, color: C.accent, background: C.accent + '12',
+          border: `1px solid ${C.accent}44`, borderRadius: 2,
           padding: '8px 12px', marginBottom: 16,
         }}>
           {error}
@@ -281,8 +282,8 @@ export function BidMonitor({ bid, runId, onBack, onComplete }: BidMonitorProps) 
       )}
       {isFailed && state?.error && (
         <div style={{
-          fontSize: 9, color: C.red, background: '#1a0808',
-          border: '1px solid #3a1010', borderRadius: 2,
+          fontSize: 9, color: C.red, background: C.red + '12',
+          border: `1px solid ${C.red}44`, borderRadius: 2,
           padding: '10px 14px', marginBottom: 16,
         }}>
           RUN FAILED: {state.error}
@@ -307,7 +308,7 @@ export function BidMonitor({ bid, runId, onBack, onComplete }: BidMonitorProps) 
               QUOTES ({quotes.length})
             </Lbl>
             {quotes.length === 0 ? (
-              <div style={{ fontSize: 9, color: '#2e2e2e', letterSpacing: '0.14em' }}>
+              <div style={{ fontSize: 9, color: C.muted, letterSpacing: '0.14em' }}>
                 WAITING FOR QUOTE REVIEW TO BEGIN···
               </div>
             ) : (
@@ -331,7 +332,7 @@ export function BidMonitor({ bid, runId, onBack, onComplete }: BidMonitorProps) 
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 3 }}>
                     <div style={{
                       width: 5, height: 5, borderRadius: '50%', flexShrink: 0,
-                      background: nodeColor(ag.status),
+                      background: nodeColor(ag.status, C),
                     }} />
                     <span style={{
                       fontSize: 9, color: ag.status === 'waiting' ? '#333' : C.text,
@@ -342,7 +343,7 @@ export function BidMonitor({ bid, runId, onBack, onComplete }: BidMonitorProps) 
                   </div>
                   {ag.message && (
                     <div style={{
-                      fontSize: 8, color: '#3a3a3a', paddingLeft: 13, lineHeight: 1.4,
+                      fontSize: 8, color: C.textDim, paddingLeft: 13, lineHeight: 1.4,
                     }}>
                       {ag.message}
                     </div>
@@ -353,9 +354,9 @@ export function BidMonitor({ bid, runId, onBack, onComplete }: BidMonitorProps) 
 
             {state && (
               <div style={{ marginTop: 12, paddingTop: 12, borderTop: `1px solid ${C.border}` }}>
-                <div style={{ fontSize: 8, color: '#2a2a2a', lineHeight: 1.8 }}>
-                  <div>STEP: <span style={{ color: '#3a3a3a' }}>{state.current_step}</span></div>
-                  <div>STATUS: <span style={{ color: nodeColor(state.status) }}>{state.status.toUpperCase()}</span></div>
+                <div style={{ fontSize: 8, color: C.muted, lineHeight: 1.8 }}>
+                  <div>STEP: <span style={{ color: C.textDim }}>{state.current_step}</span></div>
+                  <div>STATUS: <span style={{ color: nodeColor(state.status, C) }}>{state.status.toUpperCase()}</span></div>
                 </div>
               </div>
             )}
@@ -371,11 +372,11 @@ export function BidMonitor({ bid, runId, onBack, onComplete }: BidMonitorProps) 
               {state.external_connections.map(conn => (
                 <div key={conn.id} style={{
                   display: 'flex', alignItems: 'center', gap: 8,
-                  marginBottom: 6, fontSize: 9, color: '#3a3a3a',
+                  marginBottom: 6, fontSize: 9, color: C.textDim,
                 }}>
                   <div style={{
                     width: 4, height: 4, borderRadius: '50%',
-                    background: conn.status === 'ok' ? C.green : conn.status === 'pending' ? C.amber : '#444',
+                    background: conn.status === 'ok' ? C.green : conn.status === 'pending' ? C.amber : C.muted,
                   }} />
                   {conn.label}
                 </div>

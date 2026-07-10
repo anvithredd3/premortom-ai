@@ -7,11 +7,11 @@ const FONT = "'JetBrains Mono', monospace"
 
 /* ── Status tokens ──────────────────────────────────────────────────── */
 const S: Record<NodeStatus, { border: string; glow: string; dot: string; text: string }> = {
-  idle:    { border: '#1e1e1e', glow: 'none',                              dot: '#2a2a2a', text: '#3a3a3a' },
-  running: { border: '#e8e8e8', glow: 'none',                              dot: '#e8e8e8', text: '#c0c0c0' },
-  green:   { border: '#22c55e', glow: '0 0 14px 3px rgba(34,197,94,0.25)',  dot: '#22c55e', text: '#d0d0d0' },
-  amber:   { border: '#f59e0b', glow: '0 0 14px 3px rgba(245,158,11,0.25)', dot: '#f59e0b', text: '#d0d0d0' },
-  red:     { border: '#ef4444', glow: '0 0 14px 3px rgba(239,68,68,0.25)',  dot: '#ef4444', text: '#d0d0d0' },
+  idle:    { border: '#1e1e1e', glow: 'none',                                    dot: '#2a2a2a', text: '#3a3a3a' },
+  running: { border: '#e8e8e8', glow: '0 0 14px 4px rgba(232,232,232,0.20)',     dot: '#e8e8e8', text: '#c0c0c0' },
+  green:   { border: '#22c55e', glow: '0 0 14px 3px rgba(34,197,94,0.28)',       dot: '#22c55e', text: '#d0d0d0' },
+  amber:   { border: '#f59e0b', glow: '0 0 14px 3px rgba(245,158,11,0.28)',      dot: '#f59e0b', text: '#d0d0d0' },
+  red:     { border: '#ef4444', glow: '0 0 14px 3px rgba(239,68,68,0.28)',       dot: '#ef4444', text: '#d0d0d0' },
 }
 
 const HANDLE: CSSProperties = {
@@ -351,3 +351,54 @@ export const ProfilerNode = memo(({ data }: { data: ProfilerNodeData }) => {
   )
 })
 ProfilerNode.displayName = 'ProfilerNode'
+
+/* ── DbNode ─────────────────────────────────────────────────────────── */
+export interface DbNodeData {
+  label: string
+  sublabel: string
+  active: boolean   // true while any agent that reads this DB is running
+  rowCount?: number
+}
+
+export const DbNode = memo(({ data }: { data: DbNodeData }) => {
+  const purple = '#7c3aed'
+  const dimPurple = '#2a1a4a'
+
+  return (
+    <div style={{
+      background: '#0a0814', border: `1px solid ${data.active ? purple + '66' : '#1a1030'}`,
+      borderRadius: 2, padding: '9px 13px', minWidth: 160, fontFamily: FONT,
+      boxShadow: data.active ? `0 0 12px 3px rgba(124,58,237,0.22)` : 'none',
+      transition: 'border-color 0.3s, box-shadow 0.3s',
+      userSelect: 'none',
+    }}>
+      <Handle type="target" position={Position.Top}    style={{ ...HANDLE, background: '#1a1030' }} />
+      <Handle type="source" position={Position.Bottom} style={{ ...HANDLE, background: '#1a1030' }} />
+
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
+        <div style={{
+          width: 5, height: 5, borderRadius: '50%', flexShrink: 0,
+          background: data.active ? purple : dimPurple,
+          animation: data.active ? 'pulse 1.2s ease-in-out infinite' : 'none',
+          transition: 'background 0.3s',
+        }} />
+        <div style={{ fontSize: 7, letterSpacing: '0.18em', color: data.active ? purple : dimPurple, textTransform: 'uppercase', fontWeight: 700 }}>
+          DATABASE
+        </div>
+        {data.rowCount != null && data.rowCount > 0 && (
+          <span style={{ marginLeft: 'auto', fontSize: 7, color: data.active ? '#3a1a6a' : '#1a1030', letterSpacing: '0.06em' }}>
+            {data.rowCount} rows
+          </span>
+        )}
+      </div>
+
+      <div style={{ fontSize: 9, color: data.active ? '#9a70d0' : '#2e1a4a', fontWeight: 600, lineHeight: 1.3, marginBottom: 3, transition: 'color 0.3s' }}>
+        {data.label}
+      </div>
+      <div style={{ fontSize: 7, color: data.active ? '#3a1a5a' : '#1a1030', letterSpacing: '0.08em', textTransform: 'uppercase', transition: 'color 0.3s' }}>
+        {data.sublabel}
+      </div>
+    </div>
+  )
+})
+DbNode.displayName = 'DbNode'

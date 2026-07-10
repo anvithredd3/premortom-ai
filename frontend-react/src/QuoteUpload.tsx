@@ -1,15 +1,12 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import type { Bid, Quote } from './types'
+import { useTheme } from './theme'
 
 /* ── Theme ─────────────────────────────────────────────────────────────── */
-const C = {
-  bg: '#080808', surface: '#0d0d0d', border: '#1a1a1a',
-  text: '#d8d8d8', muted: '#555', faint: '#2e2e2e',
-  accent: '#ff2222', green: '#22c55e', amber: '#f59e0b',
-} as const
 const FONT = "'JetBrains Mono', monospace"
 
 function Lbl({ children, style }: { children: string; style?: React.CSSProperties }) {
+  const { theme: C } = useTheme()
   return (
     <span style={{
       fontSize: 8, letterSpacing: '0.18em', textTransform: 'uppercase',
@@ -25,11 +22,12 @@ function Btn({
 }: {
   onClick: () => void; disabled?: boolean; children: React.ReactNode; variant?: 'ghost' | 'accent'
 }) {
+  const { theme: C } = useTheme()
   return (
     <button onClick={onClick} disabled={disabled} style={{
       background: variant === 'accent' ? C.accent : 'transparent',
-      color: disabled ? '#5a2a2a' : variant === 'accent' ? '#080808' : C.muted,
-      border: `1px solid ${disabled ? '#3a1010' : variant === 'accent' ? C.accent : C.border}`,
+      color: disabled ? C.red : variant === 'accent' ? C.bg : C.muted,
+      border: `1px solid ${disabled ? C.red : variant === 'accent' ? C.accent : C.border}`,
       borderRadius: 2, padding: '5px 14px', fontSize: 9,
       letterSpacing: '0.14em', textTransform: 'uppercase',
       fontFamily: FONT, fontWeight: variant === 'accent' ? 700 : 400,
@@ -53,6 +51,7 @@ export interface QuoteUploadProps {
 }
 
 export function QuoteUpload({ bid, onBack, onStartRun }: QuoteUploadProps) {
+  const { theme: C } = useTheme()
   const [quotes, setQuotes] = useState<Quote[]>([])
   const [loading, setLoading] = useState(true)
   const [uploading, setUploading] = useState(false)

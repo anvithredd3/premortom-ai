@@ -1,20 +1,34 @@
 import { CSSProperties, Suspense, lazy, useCallback, useState } from 'react'
-import { GraphCanvas } from './canvas'
 import { IntakeView } from './intake'
 import { useAnalysisStream } from './stream'
-import type { AgentId, AgentState, Bid, NodeStatus, ResearchItem } from './types'
-import type { FocusId } from './analysis'
+import type { Bid, FullReport } from './types'
 import { BidDashboard } from './BidDashboard'
 import { QuoteUpload } from './QuoteUpload'
 import { BidMonitor } from './BidMonitor'
 import { BidResults } from './BidResults'
+import { DbStatus } from './DbStatus'
+import { MarketResearch } from './MarketResearch'
+import { RfqNegotiation } from './RfqNegotiation'
+import { InvoiceMonitor } from './InvoiceMonitor'
+import { SystemDesign } from './SystemDesign'
+import { RunLogs } from './RunLogs'
+import { useTheme, DARK } from './theme'
 
-// Lazy-load the analysis page (+ plotly.js) — only fetched when user opens the view
-const AnalysisPage = lazy(() =>
-  import('./analysis').then(m => ({ default: m.AnalysisPage }))
+// Lazy-load analysis views (contain Plotly which is ~4.8 MB)
+const LazyInvestigationBoard = lazy(() =>
+  import('./analysis').then(m => ({ default: m.InvestigationBoard }))
+)
+const LazyDebateRoom = lazy(() =>
+  import('./analysis').then(m => ({ default: m.DebateRoom }))
+)
+const LazyExecutiveDashboard = lazy(() =>
+  import('./analysis').then(m => ({ default: m.ExecutiveDashboard }))
+)
+const LazyReportView = lazy(() =>
+  import('./analysis').then(m => ({ default: m.ReportView }))
 )
 
-/* ── Sample shortcut (AIIMS MRI) ─────────────────────────────────────── */
+/* ── Sample shortcut ─────────────────────────────────────────────────── */
 const SAMPLE_INPUT = {
   procurement_name: 'AIIMS MRI Scanner',
   equipment_type: 'MRI Machine',
@@ -32,168 +46,405 @@ const SAMPLE_INPUT = {
   historical_delays_months: [8.0, 11.0, 7.0],
 }
 
-/* ── Theme ──────────────────────────────────────────────────────────── */
-const C = {
-  bg: '#080808',
-  surface: '#0d0d0d',
-  border: '#1a1a1a',
-  text: '#d8d8d8',
-  muted: '#555',
-  faint: '#2e2e2e',
-  accent: '#ff2222',
-  green: '#22c55e',
-  amber: '#f59e0b',
-  red: '#ef4444',
-} as const
-
+/* ── Theme — use DARK as module-level fallback for non-component constants ── */
+const C = DARK
 const FONT = "'JetBrains Mono', monospace"
 
-const STATUS_DOT: Record<NodeStatus, string> = {
-  idle: C.faint, running: '#e8e8e8',
-  green: C.green, amber: C.amber, red: C.red,
+/* ── Feature availability indicator dots ─────────────────────────────
+   🔵 cyan  = built & functional
+   🟠 orange = UI shell / requires config
+   ⚫ #1e1e1e = not built / coming soon
+   ─────────────────────────────────────────────────────────────────── */
+type Avail = 'live' | 'partial' | 'soon'
+
+const AVAIL_COLOR: Record<Avail, string> = {
+  live:    C.cyan,
+  partial: C.orange,
+  soon:    '#1e2a2a',
 }
 
-const AGENT_DISPLAY: Record<AgentId, string> = {
-  contract: 'Contract', infrastructure: 'Infrastructure',
-  workforce: 'Workforce', historical: 'Historical',
-  financial: 'Financial', decision: 'Decision Board',
+/* ── Screen type ────────────────────────────────────────────────────── */
+type Screen =
+  | 'rfq'       // 00 — RFQ / Negotiation Guidance
+  | 'intake'    // 01 — Procurement Input
+  | 'board'     // 02 — Investigation Board
+  | 'debate'    // 03 — Debate Room
+  | 'dashboard' // 04 — Executive Dashboard
+  | 'report'    // 05 — PreMortem Report
+  | 'bid'       // 06 — Bid Evaluation
+  | 'market'    // 07 — Market Research
+  | 'db'        // 08 — Database / Memory
+  | 'invoice'   // 09 — Invoice Monitoring
+  | 'system'    // 10 — System Design
+  | 'logs'      // 11 — Run Output Logs
+
+type BidView = 'bid-dashboard' | 'quote-upload' | 'bid-monitor' | 'bid-results'
+
+/* ── Navigation config ──────────────────────────────────────────────── */
+interface NavItem {
+  screen: Screen
+  label: string
+  num: string
+  avail: Avail
 }
 
-/* ── Shared UI atoms ────────────────────────────────────────────────── */
-function Lbl({ children, style }: { children: string; style?: CSSProperties }) {
-  return (
-    <span style={{
-      fontSize: 8, letterSpacing: '0.18em', textTransform: 'uppercase',
-      color: C.muted, fontWeight: 600, fontFamily: FONT, ...style,
-    }}>
-      {children}
-    </span>
-  )
+interface NavGroup {
+  section: string
+  items: NavItem[]
 }
 
-function decisionColor(d: string) {
-  if (d.toUpperCase().includes('NO')) return C.red
-  if (d.toUpperCase().includes('CONDITION')) return C.amber
-  return C.green
+interface LockedItem {
+  label: string
+  desc: string
 }
 
-function Btn({
-  onClick, disabled, children, variant = 'ghost', active = false,
-}: {
-  onClick: () => void
-  disabled?: boolean
-  children: React.ReactNode
-  variant?: 'ghost' | 'accent' | 'tab'
-  active?: boolean
-}) {
-  const isAccent = variant === 'accent'
-  const isTab    = variant === 'tab'
-  return (
-    <button onClick={onClick} disabled={disabled} style={{
-      background: isAccent ? C.accent
-        : isTab && active ? '#161616'
-        : 'transparent',
-      color: disabled ? '#5a2a2a'
-        : isAccent ? '#080808'
-        : isTab && active ? C.text
-        : C.muted,
-      border: `1px solid ${
-        disabled ? '#3a1010'
-        : isAccent ? C.accent
-        : isTab && active ? C.border
-        : 'transparent'
-      }`,
-      borderRadius: 2, padding: isTab ? '4px 12px' : '5px 14px', fontSize: 9,
-      letterSpacing: '0.14em', textTransform: 'uppercase',
-      fontFamily: FONT, fontWeight: isAccent ? 700 : 400,
-      cursor: disabled ? 'not-allowed' : 'pointer',
-      transition: 'color 0.15s, border-color 0.15s, background 0.15s',
-    }}>
-      {children}
-    </button>
-  )
-}
+const NAV: NavGroup[] = [
+  {
+    section: 'PREMORTEM ANALYSIS',
+    items: [
+      { screen: 'rfq',       label: 'RFQ / NEGOTIATION',    num: '00', avail: 'partial' },
+      { screen: 'intake',    label: 'PROCUREMENT INPUT',    num: '01', avail: 'live'    },
+      { screen: 'board',     label: 'INVESTIGATION BOARD',  num: '02', avail: 'live'    },
+      { screen: 'debate',    label: 'DEBATE ROOM',          num: '03', avail: 'live'    },
+      { screen: 'dashboard', label: 'EXECUTIVE DASHBOARD',  num: '04', avail: 'live'    },
+      { screen: 'report',    label: 'PREMORTEM REPORT',     num: '05', avail: 'live'    },
+    ],
+  },
+  {
+    section: 'BID EVALUATION',
+    items: [
+      { screen: 'bid', label: 'BID EVALUATION', num: '06', avail: 'live' },
+    ],
+  },
+  {
+    section: 'INTELLIGENCE',
+    items: [
+      { screen: 'market',  label: 'MARKET RESEARCH',   num: '07', avail: 'partial' },
+      { screen: 'db',      label: 'DATABASE / MEMORY', num: '08', avail: 'live'    },
+    ],
+  },
+  {
+    section: 'POST-AWARD',
+    items: [
+      { screen: 'invoice', label: 'INVOICE MONITORING', num: '09', avail: 'soon' },
+    ],
+  },
+  {
+    section: 'PLATFORM',
+    items: [
+      { screen: 'system', label: 'SYSTEM DESIGN', num: '10', avail: 'live' },
+      { screen: 'logs',   label: 'RUN LOGS',       num: '11', avail: 'live' },
+    ],
+  },
+]
 
-/* ── Agent row in side panel ────────────────────────────────────────── */
-function AgentRow({ id, state }: { id: AgentId; state: AgentState }) {
-  const active = state.status !== 'idle'
+/* Future workflow placeholders — not navigable, just shown for platform vision */
+const FUTURE_WORKFLOWS: LockedItem[] = [
+  { label: 'VENDOR EVALUATION',     desc: 'Multi-vendor onboarding risk review' },
+  { label: 'COMPLIANCE AUDIT',      desc: 'Policy, regulatory, and governance check' },
+  { label: 'COST OPTIMISATION',     desc: 'Benchmark and lifecycle cost reduction' },
+  { label: 'CONTRACT RISK REVIEW',  desc: 'Standalone contract risk assessment' },
+]
+
+/* ── Lazy fallback ──────────────────────────────────────────────────── */
+function LoadingFallback() {
+  const { theme: C } = useTheme()
   return (
     <div style={{
-      display: 'flex', alignItems: 'center', gap: 9,
-      paddingBottom: 10, borderBottom: `1px solid ${C.border}`, marginBottom: 10,
+      flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center',
+      fontSize: 8, color: C.muted, letterSpacing: '0.18em', fontFamily: FONT, background: C.bg,
     }}>
-      <div style={{
-        width: 5, height: 5, borderRadius: '50%', flexShrink: 0,
-        background: STATUS_DOT[state.status], transition: 'background 0.3s',
-      }} />
-      <span style={{ flex: 1, fontSize: 10, letterSpacing: '0.04em', color: active ? C.text : C.muted, transition: 'color 0.3s' }}>
-        {AGENT_DISPLAY[id]}
-      </span>
-      {active && state.status !== 'running' && state.time_ms != null && (
-        <span style={{ fontSize: 9, color: '#3a3a3a' }}>{(state.time_ms / 1000).toFixed(1)}s</span>
-      )}
-      {state.status === 'running' && (
-        <span style={{ fontSize: 9, color: '#555', letterSpacing: '0.1em' }}>···</span>
-      )}
+      LOADING
     </div>
   )
 }
 
+/* ── Sidebar ────────────────────────────────────────────────────────── */
+function Sidebar({
+  screen, hasRun, onChange,
+}: {
+  screen: Screen
+  hasRun: boolean
+  onChange: (s: Screen) => void
+}) {
+  const { mode, toggle } = useTheme()
+
+  // Sidebar is always dark — intentional design choice
+  const SB = DARK
+
+  return (
+    <nav style={{
+      width: 210, flexShrink: 0, background: SB.navBg, borderRight: `1px solid ${SB.border}`,
+      display: 'flex', flexDirection: 'column', overflowY: 'auto',
+    }}>
+      {/* Brand */}
+      <div style={{ padding: '18px 16px 14px', borderBottom: `1px solid ${SB.border}` }}>
+        <div style={{ fontSize: 10, letterSpacing: '0.22em', color: SB.brand, fontWeight: 700, fontFamily: FONT }}>
+          PREMORTEM
+        </div>
+        <div style={{ fontSize: 7, color: SB.navFuture, letterSpacing: '0.14em', fontFamily: FONT, marginTop: 2 }}>
+          AGENTIC DECISION REVIEW PLATFORM
+        </div>
+      </div>
+
+      {/* Nav groups */}
+      <div style={{ flex: 1, padding: '8px 0', overflowY: 'auto' }}>
+        {NAV.map(group => (
+          <div key={group.section}>
+            <div style={{
+              padding: '12px 16px 4px',
+              fontSize: 7, letterSpacing: '0.18em', color: SB.navSection,
+              fontWeight: 600, fontFamily: FONT, textTransform: 'uppercase',
+            }}>
+              {group.section}
+            </div>
+
+            {group.items.map(item => {
+              const active = screen === item.screen
+              const needsRun = ['board', 'debate', 'dashboard', 'report'].includes(item.screen)
+              const dimmed = needsRun && !hasRun && !active
+              const dotColor = dimmed ? '#1a1a1a' : AVAIL_COLOR[item.avail]
+
+              return (
+                <button
+                  key={item.screen}
+                  onClick={() => onChange(item.screen)}
+                  style={{
+                    display: 'flex', alignItems: 'center', gap: 9,
+                    width: '100%', padding: '7px 16px',
+                    background: active ? '#111111' : 'none',
+                    border: 'none',
+                    borderLeft: `2px solid ${active ? SB.brand : 'transparent'}`,
+                    cursor: 'pointer',
+                  }}
+                >
+                  <div style={{
+                    width: 4, height: 4, borderRadius: '50%', flexShrink: 0,
+                    background: dotColor,
+                    boxShadow: item.avail === 'live' && !dimmed ? `0 0 4px ${dotColor}66` : 'none',
+                  }} />
+                  <span style={{
+                    fontSize: 7, color: active ? SB.brand : dimmed ? '#2a2a2a' : SB.navSection,
+                    fontFamily: FONT, letterSpacing: '0.08em', flexShrink: 0, width: 14,
+                  }}>
+                    {item.num}
+                  </span>
+                  <span style={{
+                    fontSize: 8, letterSpacing: '0.1em', textTransform: 'uppercase',
+                    color: active ? SB.navItemActive : dimmed ? '#2a2a2a' : SB.navItem,
+                    fontFamily: FONT, fontWeight: active ? 600 : 400,
+                  }}>
+                    {item.label}
+                  </span>
+                  {active && (
+                    <div style={{ marginLeft: 'auto', width: 3, height: 3, borderRadius: '50%', background: SB.brand, flexShrink: 0 }} />
+                  )}
+                </button>
+              )
+            })}
+          </div>
+        ))}
+
+        {/* Future workflows — locked */}
+        <div>
+          <div style={{
+            padding: '12px 16px 4px',
+            fontSize: 7, letterSpacing: '0.18em', color: '#252525',
+            fontWeight: 600, fontFamily: FONT, textTransform: 'uppercase',
+          }}>
+            FUTURE WORKFLOWS
+          </div>
+          {FUTURE_WORKFLOWS.map(fw => (
+            <div key={fw.label} title={fw.desc} style={{ display: 'flex', alignItems: 'center', gap: 9, padding: '6px 16px', cursor: 'default' }}>
+              <div style={{ width: 4, height: 4, borderRadius: '50%', background: '#1e1e1e', flexShrink: 0 }} />
+              <span style={{ fontSize: 7, color: '#222', fontFamily: FONT, letterSpacing: '0.08em', width: 14 }}>—</span>
+              <span style={{ fontSize: 8, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#252525', fontFamily: FONT }}>
+                {fw.label}
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Footer: legend + theme toggle */}
+      <div style={{ padding: '10px 16px', borderTop: `1px solid ${SB.border}`, display: 'flex', flexDirection: 'column', gap: 4 }}>
+        {([
+          [C.cyan,    'Live'],
+          [C.orange,  'Partial'],
+          ['#1e2a2a', 'Pending'],
+        ] as const).map(([col, lbl]) => (
+          <div key={lbl} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            <div style={{ width: 4, height: 4, borderRadius: '50%', background: col }} />
+            <span style={{ fontSize: 6, color: SB.navLegend, fontFamily: FONT, letterSpacing: '0.1em' }}>{lbl}</span>
+          </div>
+        ))}
+
+        {/* Theme toggle */}
+        <button
+          onClick={toggle}
+          title={`Switch to ${mode === 'dark' ? 'light' : 'dark'} mode`}
+          style={{
+            marginTop: 8, display: 'flex', alignItems: 'center', gap: 8,
+            background: '#111', border: `1px solid #252525`, borderRadius: 2,
+            padding: '5px 10px', cursor: 'pointer', width: '100%',
+          }}
+        >
+          <span style={{ fontSize: 12, lineHeight: 1 }}>{mode === 'dark' ? '☀' : '🌙'}</span>
+          <span style={{ fontSize: 7, color: SB.navLegend, fontFamily: FONT, letterSpacing: '0.12em' }}>
+            {mode === 'dark' ? 'LIGHT MODE' : 'DARK MODE'}
+          </span>
+        </button>
+
+        <div style={{ marginTop: 4, fontSize: 6, color: '#252525', fontFamily: FONT, letterSpacing: '0.08em' }}>
+          PREMORTEM AI v1.0
+        </div>
+      </div>
+    </nav>
+  )
+}
+
+/* ── Header bar ─────────────────────────────────────────────────────── */
+function Header({
+  screen, bidView, procName, runId, isRunning, hasRun,
+  onNewAnalysis, onAllBids, onRerun,
+}: {
+  screen: Screen
+  bidView: BidView
+  procName?: string
+  runId?: string | null
+  isRunning: boolean
+  hasRun: boolean
+  onNewAnalysis: () => void
+  onAllBids: () => void
+  onRerun: () => void
+}) {
+  const { theme: C } = useTheme()
+  const titles: Record<Screen, string> = {
+    rfq:       'RFQ / NEGOTIATION GUIDANCE',
+    intake:    'PROCUREMENT INPUT',
+    board:     'INVESTIGATION BOARD',
+    debate:    'DEBATE ROOM',
+    dashboard: 'EXECUTIVE DASHBOARD',
+    report:    'PREMORTEM REPORT',
+    bid:       'BID EVALUATION',
+    market:    'MARKET RESEARCH',
+    db:        'DATABASE / MEMORY',
+    invoice:   'INVOICE MONITORING',
+    system:    'SYSTEM DESIGN',
+    logs:      'RUN OUTPUT LOGS',
+  }
+
+  const bidBreadcrumb: Record<BidView, string> = {
+    'bid-dashboard': 'BID DASHBOARD',
+    'quote-upload':  'QUOTE UPLOAD',
+    'bid-monitor':   'MONITOR',
+    'bid-results':   'RESULTS',
+  }
+
+  const crumb = screen === 'bid' ? bidBreadcrumb[bidView] : titles[screen]
+
+  const btnStyle = (active = false): CSSProperties => ({
+    background: 'none', border: `1px solid ${active ? C.muted : C.border}`,
+    borderRadius: 2, padding: '4px 12px', fontSize: 8,
+    letterSpacing: '0.14em', textTransform: 'uppercase', fontFamily: FONT,
+    color: active ? C.text : C.muted, cursor: 'pointer',
+  })
+
+  return (
+    <header style={{
+      display: 'flex', alignItems: 'center', padding: '0 20px', height: 44, gap: 12,
+      borderBottom: `1px solid ${C.border}`, flexShrink: 0, background: C.surface,
+    }}>
+      <div style={{ fontSize: 8, color: C.textDim, letterSpacing: '0.1em', fontFamily: FONT }}>
+        {crumb}
+        {procName && !['intake', 'bid', 'rfq', 'invoice'].includes(screen) && (
+          <span style={{ color: C.muted }}> · {procName}</span>
+        )}
+      </div>
+
+      {isRunning && (
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+          <div style={{
+            width: 5, height: 5, borderRadius: '50%', background: C.textDim,
+            animation: 'pulse 1.2s ease-in-out infinite',
+          }} />
+          <span style={{ fontSize: 8, color: C.textDim, letterSpacing: '0.14em', fontFamily: FONT }}>
+            ANALYZING
+          </span>
+        </div>
+      )}
+
+      <div style={{ marginLeft: 'auto', display: 'flex', gap: 6 }}>
+        {['board', 'debate', 'dashboard', 'report'].includes(screen) && hasRun && (
+          <button onClick={onNewAnalysis} style={btnStyle()}>NEW ANALYSIS</button>
+        )}
+        {screen === 'intake' && hasRun && (
+          <>
+            <button onClick={onNewAnalysis} style={btnStyle()}>CLEAR</button>
+            <button onClick={onRerun} disabled={isRunning} style={btnStyle()}>RERUN</button>
+          </>
+        )}
+        {screen === 'bid' && bidView !== 'bid-dashboard' && (
+          <button onClick={onAllBids} style={btnStyle()}>ALL BIDS</button>
+        )}
+        {screen === 'bid' && runId && (
+          <span style={{ fontSize: 7, color: C.muted, fontFamily: FONT, letterSpacing: '0.1em' }}>
+            {runId}
+          </span>
+        )}
+      </div>
+
+      <style>{`
+        @keyframes pulse { 0%,100%{opacity:0.3} 50%{opacity:1} }
+      `}</style>
+    </header>
+  )
+}
+
 /* ── Root ───────────────────────────────────────────────────────────── */
-type Mode = 'premortem' | 'bid'
-type PreMortemView = 'intake' | 'graph' | 'analysis'
-type BidView = 'bid-dashboard' | 'quote-upload' | 'bid-monitor' | 'bid-results'
-
 export default function App() {
-  const { agentStates, runResult, isRunning, error, startAnalysis, reset } = useAnalysisStream()
+  const { agentStates, runResult, fullReport, isRunning, error, startAnalysis, reset } = useAnalysisStream()
+  const { theme: C } = useTheme()
 
-  // Mode: premortem (single procurement) vs bid (multi-quote evaluation)
-  const [mode, setMode] = useState<Mode>('premortem')
+  const [screen, setScreen] = useState<Screen>('intake')
 
-  // PreMortem state
-  const [pmView, setPmView]         = useState<PreMortemView>('intake')
+  // PreMortem shared state
   const [confirmedInput, setConfirmedInput] = useState<Record<string, unknown> | null>(null)
-  const [intakeResearch,  setIntakeResearch]  = useState<ResearchItem[]>([])
-  const [intakeCategory,  setIntakeCategory]  = useState('')
-  const [intakeMissingFields, setIntakeMissingFields] = useState<string[]>([])
-  const [contractDisplay, setContractDisplay] = useState<string | undefined>(undefined)
-  const [focusId, setFocusId]   = useState<FocusId>(null)
 
   // Bid workflow state
-  const [bidView, setBidView]       = useState<BidView>('bid-dashboard')
+  const [bidView,     setBidView]     = useState<BidView>('bid-dashboard')
   const [selectedBid, setSelectedBid] = useState<Bid | null>(null)
   const [activeRunId, setActiveRunId] = useState<string | null>(null)
 
+  const hasRun = runResult !== null
+
   /* ── PreMortem handlers ─────────────────────────────────────────── */
-  const goToGraph = (
+  const goToAnalysis = useCallback((
     fields: object,
-    meta?: { category?: string; research?: ResearchItem[]; missingFields?: string[]; contractDisplay?: string },
+    _meta?: { category?: string; research?: unknown[]; missingFields?: string[] },
   ) => {
     setConfirmedInput(fields as Record<string, unknown>)
-    setIntakeResearch(meta?.research ?? [])
-    setIntakeCategory(meta?.category ?? '')
-    setIntakeMissingFields(meta?.missingFields ?? [])
-    setContractDisplay(meta?.contractDisplay)
     reset()
     startAnalysis(fields)
-    setPmView('graph')
-  }
+    setScreen('board')
+  }, [reset, startAnalysis])
 
-  const goToIntake = () => { reset(); setPmView('intake') }
+  const handleNewAnalysis = useCallback(() => {
+    reset()
+    setConfirmedInput(null)
+    setScreen('intake')
+  }, [reset])
 
-  const handleLoadSample = () => goToGraph(SAMPLE_INPUT)
-
-  const handleNodeClick = useCallback((nodeId: string) => {
-    const agentId = nodeId as AgentId
-    const isAgent = agentId in agentStates
-    const done = isAgent && !['idle', 'running'].includes(agentStates[agentId].status)
-    if (done || nodeId === 'profiler' || nodeId === 'decision') {
-      setFocusId(nodeId as FocusId)
-      setPmView('analysis')
+  const handleRerun = useCallback(() => {
+    if (confirmedInput) {
+      reset()
+      startAnalysis(confirmedInput)
     }
-  }, [agentStates])
+  }, [confirmedInput, reset, startAnalysis])
 
-  /* ── Bid workflow handlers ──────────────────────────────────────── */
+  const handleLoadSample = useCallback(() => goToAnalysis(SAMPLE_INPUT), [goToAnalysis])
+
+  /* ── Bid handlers ───────────────────────────────────────────────── */
   function handleSelectBid(bid: Bid) {
     setSelectedBid(bid)
     setBidView('quote-upload')
@@ -221,276 +472,198 @@ export default function App() {
     setBidView('bid-results')
   }
 
-  /* ── Mode switch ────────────────────────────────────────────────── */
-  function switchMode(m: Mode) {
-    setMode(m)
-  }
-
-  const anyFinished  = Object.values(agentStates).some(s => s.status !== 'idle')
-  const inPostRun    = pmView !== 'intake'
-
-  const ctxName  = confirmedInput?.procurement_name as string | undefined
-  const ctxType  = confirmedInput?.equipment_type   as string | undefined
-  const ctxValue = confirmedInput?.contract_value_cr as number | undefined
-
-  /* ── Header breadcrumb ──────────────────────────────────────────── */
-  function breadcrumb() {
-    if (mode === 'bid') {
-      if (bidView === 'bid-dashboard') return 'BID DASHBOARD'
-      if (bidView === 'quote-upload') return selectedBid?.procurement_name ?? 'QUOTES'
-      if (bidView === 'bid-monitor') return activeRunId ?? 'MONITOR'
-      if (bidView === 'bid-results') return 'RESULTS'
+  /* ── Export handler ─────────────────────────────────────────────── */
+  const handleExport = useCallback(async (fmt: string) => {
+    if (!runResult || !confirmedInput) return
+    try {
+      const body = {
+        ...confirmedInput,
+        overall_risk_score: runResult.score,
+        conditions: runResult.conditions,
+        recommended_decision: runResult.decision,
+        projected_financial_loss_cr: parseFloat(
+          runResult.exposure_range.replace(/[^0-9.]/g, '')
+        ) || 0,
+        predicted_failure_mode: agentStates.decision.summary ?? '',
+        agent_results: [],
+        debate: fullReport?.debate ?? [],
+        scenarios: fullReport?.scenarios ?? [],
+        failure_probability_pct: fullReport?.failure_probability_pct ?? 0,
+        confidence_pct: fullReport?.confidence_pct ?? 85,
+        predicted_delay_months: fullReport?.predicted_delay_months ?? 0,
+        supporting_evidence: fullReport?.supporting_evidence ?? [],
+        predicted_outcomes: fullReport?.predicted_outcomes ?? [],
+        generated_at: fullReport?.generated_at ?? new Date().toISOString(),
+      }
+      const r = await fetch(`/api/report/${fmt}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      })
+      if (!r.ok) throw new Error(await r.text())
+      const blob = await r.blob()
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      const name = (confirmedInput.procurement_name as string ?? 'premortem').replace(/\s+/g, '_')
+      a.download = `${name}_premortem.${fmt}`
+      a.click()
+      URL.revokeObjectURL(url)
+    } catch (e) {
+      alert(`Export failed: ${e}`)
     }
-    return pmView === 'intake' ? 'INTAKE' : (ctxName ?? 'ANALYSIS')
-  }
+  }, [runResult, confirmedInput, agentStates, fullReport])
 
+  const procName = confirmedInput?.procurement_name as string | undefined
+
+  /* ── Render ─────────────────────────────────────────────────────── */
   return (
     <div style={{
-      display: 'flex', flexDirection: 'column', height: '100vh',
-      background: C.bg, fontFamily: FONT, color: C.text, overflow: 'hidden',
+      display: 'flex', height: '100vh', background: C.bg,
+      fontFamily: FONT, color: C.text, overflow: 'hidden',
     }}>
-      {/* ── Header ── */}
-      <header style={{
-        display: 'flex', alignItems: 'center',
-        padding: '0 20px', height: 44, gap: 16,
-        borderBottom: `1px solid ${C.border}`, flexShrink: 0,
-      }}>
-        {/* Brand + mode toggle */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <span style={{ fontSize: 10, letterSpacing: '0.22em', color: C.accent, fontWeight: 700 }}>
-            PREMORTEM
-          </span>
-          <span style={{ fontSize: 9, color: '#2e2e2e', letterSpacing: '0.1em' }}>
-            / {breadcrumb()}
-          </span>
-        </div>
+      <Sidebar screen={screen} hasRun={hasRun} onChange={setScreen} />
 
-        {/* Mode tabs */}
-        <div style={{ display: 'flex', gap: 2, borderLeft: `1px solid ${C.border}`, paddingLeft: 14 }}>
-          <Btn variant="tab" active={mode === 'premortem'} onClick={() => switchMode('premortem')}>
-            PREMORTEM
-          </Btn>
-          <Btn variant="tab" active={mode === 'bid'} onClick={() => switchMode('bid')}>
-            BID EVAL
-          </Btn>
-        </div>
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+        <Header
+          screen={screen}
+          bidView={bidView}
+          procName={procName}
+          runId={activeRunId}
+          isRunning={isRunning}
+          hasRun={hasRun}
+          onNewAnalysis={handleNewAnalysis}
+          onAllBids={() => setBidView('bid-dashboard')}
+          onRerun={handleRerun}
+        />
 
-        {/* PreMortem view tabs */}
-        {mode === 'premortem' && inPostRun && (
-          <div style={{ display: 'flex', gap: 4, borderLeft: `1px solid ${C.border}`, paddingLeft: 14 }}>
-            <Btn variant="tab" active={pmView === 'graph'} onClick={() => setPmView('graph')}>GRAPH</Btn>
-            <Btn variant="tab" active={pmView === 'analysis'} onClick={() => setPmView('analysis')}>ANALYSIS</Btn>
+        {/* Error banner */}
+        {error && (
+          <div style={{
+            padding: '8px 20px', background: C.accent + '12', borderBottom: `1px solid ${C.accent}44`,
+            fontSize: 9, color: C.accent, letterSpacing: '0.06em', fontFamily: FONT, flexShrink: 0,
+          }}>
+            ERROR: {error}
           </div>
         )}
 
-        {/* Right-side actions */}
-        <div style={{ display: 'flex', gap: 8, marginLeft: 'auto' }}>
-          {mode === 'premortem' && inPostRun && (
-            <Btn onClick={goToIntake}>NEW ANALYSIS</Btn>
-          )}
-          {mode === 'premortem' && pmView === 'graph' && anyFinished && !isRunning && confirmedInput && (
-            <Btn onClick={() => { reset(); startAnalysis(confirmedInput) }}>RERUN</Btn>
-          )}
-          {mode === 'bid' && bidView !== 'bid-dashboard' && (
-            <Btn onClick={() => setBidView('bid-dashboard')}>ALL BIDS</Btn>
-          )}
-        </div>
-      </header>
+        {/* ── Screen router ── */}
+        <div style={{ flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
 
-      {/* ── PreMortem Body ── */}
-      {mode === 'premortem' && (
-        <>
-          {pmView === 'intake' && (
-            <IntakeView onConfirm={goToGraph} onLoadSample={handleLoadSample} />
+          {/* 00 — RFQ / Negotiation Guidance */}
+          {screen === 'rfq' && <RfqNegotiation />}
+
+          {/* 01 — Procurement Input */}
+          {screen === 'intake' && (
+            <IntakeView onConfirm={goToAnalysis} onLoadSample={handleLoadSample} />
           )}
 
-          {pmView === 'graph' && (
-            <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
-              {/* Graph canvas */}
-              <div style={{ flex: 1, position: 'relative' }}>
-                <GraphCanvas
-                  agentStates={agentStates}
-                  intakeResearch={intakeResearch}
-                  intakeCategory={intakeCategory}
-                  onNodeClick={handleNodeClick}
-                />
-                {isRunning && (
-                  <div style={{
-                    position: 'absolute', bottom: 16, left: '50%', transform: 'translateX(-50%)',
-                    fontSize: 8, color: '#333', letterSpacing: '0.18em', pointerEvents: 'none',
-                  }}>
-                    AGENTS RUNNING
-                  </div>
-                )}
-                {anyFinished && !isRunning && (
-                  <div style={{
-                    position: 'absolute', bottom: 16, right: 56,
-                    fontSize: 8, color: '#2a2a2a', letterSpacing: '0.1em', pointerEvents: 'none',
-                    fontFamily: FONT,
-                  }}>
-                    CLICK NODE FOR ANALYSIS
-                  </div>
-                )}
-              </div>
-
-              {/* Side panel */}
-              <aside style={{
-                width: 260, borderLeft: `1px solid ${C.border}`,
-                display: 'flex', flexDirection: 'column',
-                background: C.surface, overflow: 'hidden',
-              }}>
-                {/* Procurement context */}
-                <div style={{ padding: '14px 16px', borderBottom: `1px solid ${C.border}`, flexShrink: 0 }}>
-                  <Lbl style={{ display: 'block', marginBottom: 8 }}>PROCUREMENT</Lbl>
-                  <div style={{ fontSize: 11, color: '#c0c0c0', lineHeight: 1.5 }}>{ctxName ?? '—'}</div>
-                  {(ctxValue != null || ctxType) && (
-                    <div style={{ marginTop: 4, fontSize: 9, color: '#3e3e3e', lineHeight: 1.6 }}>
-                      {contractDisplay
-                        ? <><span style={{ color: '#5a5a5a' }}>{contractDisplay}</span><span style={{ color: '#2e2e2e' }}> · ₹{ctxValue} Cr</span></>
-                        : ctxValue != null ? `₹${ctxValue} Cr` : ''
-                      }
-                      {ctxType ? <><span style={{ color: '#2a2a2a' }}> · </span>{ctxType}</> : null}
-                    </div>
-                  )}
-                </div>
-
-                {/* Agent list */}
-                <div style={{ padding: '14px 16px', flex: 1, overflowY: 'auto', borderBottom: `1px solid ${C.border}` }}>
-                  <Lbl style={{ display: 'block', marginBottom: 12 }}>AGENTS</Lbl>
-                  {(Object.entries(agentStates) as [AgentId, AgentState][]).map(([id, state]) => (
-                    <AgentRow key={id} id={id} state={state} />
-                  ))}
-                </div>
-
-                {/* Decision */}
-                <div style={{ padding: '14px 16px', flexShrink: 0, overflowY: 'auto' }}>
-                  <Lbl style={{ display: 'block', marginBottom: 12 }}>DECISION</Lbl>
-
-                  {!runResult && !error && (
-                    <div style={{ fontSize: 10, color: '#2e2e2e' }}>—</div>
-                  )}
-                  {error && (
-                    <div style={{
-                      fontSize: 9, color: C.red, background: '#1a0808',
-                      border: '1px solid #3a1010', borderRadius: 2, padding: '8px 10px', lineHeight: 1.5,
-                    }}>
-                      ERROR: {error}
-                    </div>
-                  )}
-                  {runResult && (
-                    <>
-                      <div style={{
-                        fontSize: 11, fontWeight: 700, letterSpacing: '0.05em',
-                        color: decisionColor(runResult.decision), marginBottom: 14, lineHeight: 1.4,
-                      }}>
-                        {runResult.decision}
-                      </div>
-                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 14 }}>
-                        {[
-                          { l: 'RISK SCORE', v: `${Math.round(runResult.score)}/100`, big: true },
-                          { l: 'EXPOSURE',   v: runResult.exposure_range,             big: false },
-                        ].map(({ l, v, big }) => (
-                          <div key={l} style={{ background: C.bg, border: `1px solid ${C.border}`, borderRadius: 2, padding: '8px 10px' }}>
-                            <Lbl>{l}</Lbl>
-                            <div style={{ fontSize: big ? 16 : 12, fontWeight: big ? 700 : 600, color: C.text, marginTop: 4, letterSpacing: '-0.02em' }}>
-                              {v}
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                      {runResult.conditions.length > 0 && (
-                        <>
-                          <Lbl style={{ display: 'block', marginBottom: 8 }}>CONDITIONS</Lbl>
-                          <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                            {runResult.conditions.slice(0, 4).map((c, i) => (
-                              <div key={i} style={{
-                                fontSize: 9, color: '#888', paddingLeft: 8,
-                                borderLeft: `1px solid ${C.faint}`, lineHeight: 1.55,
-                              }}>
-                                {c}
-                              </div>
-                            ))}
-                          </div>
-                        </>
-                      )}
-                      <button
-                        onClick={() => setPmView('analysis')}
-                        style={{
-                          marginTop: 14, background: 'none', border: `1px solid ${C.border}`,
-                          borderRadius: 2, padding: '5px 0', width: '100%',
-                          fontSize: 8, letterSpacing: '0.14em', textTransform: 'uppercase',
-                          color: C.muted, fontFamily: FONT, cursor: 'pointer',
-                        }}
-                      >
-                        FULL ANALYSIS →
-                      </button>
-                    </>
-                  )}
-                </div>
-              </aside>
-            </div>
-          )}
-
-          {pmView === 'analysis' && (
-            <Suspense fallback={
-              <div style={{
-                flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontSize: 8, color: '#2a2a2a', letterSpacing: '0.18em', fontFamily: FONT,
-              }}>
-                LOADING
-              </div>
-            }>
-              <AnalysisPage
+          {/* 02 — Investigation Board */}
+          {screen === 'board' && (
+            <Suspense fallback={<LoadingFallback />}>
+              <LazyInvestigationBoard
                 agentStates={agentStates}
-                runResult={runResult}
-                intakeResearch={intakeResearch}
-                intakeCategory={intakeCategory}
-                intakeMissingFields={intakeMissingFields}
                 confirmedInput={confirmedInput}
-                focusId={focusId}
-                onClearFocus={() => setFocusId(null)}
-                isRunning={isRunning}
               />
             </Suspense>
           )}
-        </>
-      )}
 
-      {/* ── Bid Workflow Body ── */}
-      {mode === 'bid' && (
-        <>
-          {bidView === 'bid-dashboard' && (
-            <BidDashboard onSelectBid={handleSelectBid} onUpload={bid => { setSelectedBid(bid); setBidView('quote-upload') }} />
+          {/* 03 — Debate Room */}
+          {screen === 'debate' && (
+            <Suspense fallback={<LoadingFallback />}>
+              <LazyDebateRoom
+                debate={fullReport?.debate ?? []}
+                runResult={runResult}
+              />
+            </Suspense>
           )}
 
-          {bidView === 'quote-upload' && selectedBid && (
-            <QuoteUpload
-              bid={selectedBid}
-              onBack={() => setBidView('bid-dashboard')}
-              onStartRun={handleStartRun}
+          {/* 04 — Executive Dashboard */}
+          {screen === 'dashboard' && (
+            <Suspense fallback={<LoadingFallback />}>
+              <LazyExecutiveDashboard
+                agentStates={agentStates}
+                runResult={runResult}
+                fullReport={fullReport as FullReport | null}
+                confirmedInput={confirmedInput}
+              />
+            </Suspense>
+          )}
+
+          {/* 05 — PreMortem Report */}
+          {screen === 'report' && (
+            <Suspense fallback={<LoadingFallback />}>
+              <LazyReportView
+                runResult={runResult}
+                fullReport={fullReport as FullReport | null}
+                confirmedInput={confirmedInput}
+                onExport={handleExport}
+              />
+            </Suspense>
+          )}
+
+          {/* 06 — Bid Evaluation */}
+          {screen === 'bid' && (
+            <>
+              {bidView === 'bid-dashboard' && (
+                <BidDashboard
+                  onSelectBid={handleSelectBid}
+                  onUpload={bid => { setSelectedBid(bid); setBidView('quote-upload') }}
+                />
+              )}
+              {bidView === 'quote-upload' && selectedBid && (
+                <QuoteUpload
+                  bid={selectedBid}
+                  onBack={() => setBidView('bid-dashboard')}
+                  onStartRun={handleStartRun}
+                />
+              )}
+              {bidView === 'bid-monitor' && selectedBid && activeRunId && (
+                <BidMonitor
+                  bid={selectedBid}
+                  runId={activeRunId}
+                  onBack={() => setBidView('quote-upload')}
+                  onComplete={handleRunComplete}
+                />
+              )}
+              {bidView === 'bid-results' && selectedBid && activeRunId && (
+                <BidResults
+                  runId={activeRunId}
+                  bidId={selectedBid.bid_id}
+                  bidName={selectedBid.procurement_name}
+                  onBack={() => setBidView('bid-monitor')}
+                  onNewBid={() => {
+                    setBidView('bid-dashboard')
+                    setSelectedBid(null)
+                    setActiveRunId(null)
+                  }}
+                  onGoNegotiation={() => setScreen('rfq')}
+                />
+              )}
+            </>
+          )}
+
+          {/* 07 — Market Research */}
+          {screen === 'market' && <MarketResearch runId={activeRunId} />}
+
+          {/* 08 — Database / Memory */}
+          {screen === 'db' && <DbStatus />}
+
+          {/* 09 — Invoice Monitoring */}
+          {screen === 'invoice' && <InvoiceMonitor />}
+
+          {/* 10 — System Design */}
+          {screen === 'system' && (
+            <SystemDesign
+              agentStates={agentStates}
+              hasRun={hasRun}
             />
           )}
 
-          {bidView === 'bid-monitor' && selectedBid && activeRunId && (
-            <BidMonitor
-              bid={selectedBid}
-              runId={activeRunId}
-              onBack={() => setBidView('quote-upload')}
-              onComplete={handleRunComplete}
-            />
-          )}
-
-          {bidView === 'bid-results' && selectedBid && activeRunId && (
-            <BidResults
-              runId={activeRunId}
-              bidId={selectedBid.bid_id}
-              bidName={selectedBid.procurement_name}
-              onBack={() => setBidView('bid-monitor')}
-              onNewBid={() => { setBidView('bid-dashboard'); setSelectedBid(null); setActiveRunId(null) }}
-            />
-          )}
-        </>
-      )}
+          {/* 11 — Run Output Logs */}
+          {screen === 'logs' && <RunLogs />}
+        </div>
+      </div>
     </div>
   )
 }

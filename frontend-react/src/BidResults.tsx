@@ -1,15 +1,12 @@
 import { useEffect, useState } from 'react'
-import type { BidResult, QuoteReview } from './types'
+import type { BidResult, MarketResearchSummary, QuoteReview } from './types'
+import { useTheme } from './theme'
 
 /* ── Theme ─────────────────────────────────────────────────────────────── */
-const C = {
-  bg: '#080808', surface: '#0d0d0d', border: '#1a1a1a',
-  text: '#d8d8d8', muted: '#555', faint: '#2e2e2e',
-  accent: '#ff2222', green: '#22c55e', amber: '#f59e0b', red: '#ef4444',
-} as const
 const FONT = "'JetBrains Mono', monospace"
 
 function Lbl({ children, style }: { children: React.ReactNode; style?: React.CSSProperties }) {
+  const { theme: C } = useTheme()
   return (
     <span style={{
       fontSize: 8, letterSpacing: '0.18em', textTransform: 'uppercase',
@@ -20,11 +17,13 @@ function Lbl({ children, style }: { children: React.ReactNode; style?: React.CSS
   )
 }
 
-function Chip({ children, color = C.muted }: { children: React.ReactNode; color?: string }) {
+function Chip({ children, color }: { children: React.ReactNode; color?: string }) {
+  const { theme: C } = useTheme()
+  const col = color ?? C.muted
   return (
     <span style={{
       fontSize: 7, letterSpacing: '0.14em', textTransform: 'uppercase',
-      color, border: `1px solid ${color}33`, borderRadius: 2,
+      color: col, border: `1px solid ${col}33`, borderRadius: 2,
       padding: '2px 7px', fontFamily: FONT,
     }}>
       {children}
@@ -32,7 +31,7 @@ function Chip({ children, color = C.muted }: { children: React.ReactNode; color?
   )
 }
 
-function riskColor(level: string, score: number) {
+function riskColor(level: string, score: number, C: { red: string; amber: string; green: string }) {
   if (level === 'HIGH' || level === 'CRITICAL' || score >= 75) return C.red
   if (level === 'MODERATE' || score >= 50) return C.amber
   return C.green
@@ -40,7 +39,8 @@ function riskColor(level: string, score: number) {
 
 /* ── Individual quote detail panel ─────────────────────────────────────── */
 function QuoteDetail({ review, onClose }: { review: QuoteReview; onClose: () => void }) {
-  const rc = riskColor(review.risk_level, review.risk_score)
+  const { theme: C } = useTheme()
+  const rc = riskColor(review.risk_level, review.risk_score, C)
   return (
     <div style={{
       position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.85)',
@@ -48,7 +48,7 @@ function QuoteDetail({ review, onClose }: { review: QuoteReview; onClose: () => 
       zIndex: 1000, fontFamily: FONT,
     }}>
       <div style={{
-        background: '#0b0b0b', border: `1px solid ${C.border}`, borderRadius: 2,
+        background: C.surface, border: `1px solid ${C.border}`, borderRadius: 2,
         width: 680, maxHeight: '80vh', overflow: 'auto', padding: '24px 28px',
       }}>
         {/* Header */}
@@ -58,7 +58,7 @@ function QuoteDetail({ review, onClose }: { review: QuoteReview; onClose: () => 
               {review.vendor_name || review.quote_id}
             </div>
             {review.vendor_name && (
-              <div style={{ fontSize: 8, color: '#3a3a3a', marginTop: 3, letterSpacing: '0.1em' }}>
+              <div style={{ fontSize: 8, color: C.muted, marginTop: 3, letterSpacing: '0.1em' }}>
                 {review.quote_id}
               </div>
             )}
@@ -68,11 +68,11 @@ function QuoteDetail({ review, onClose }: { review: QuoteReview; onClose: () => 
               <div style={{ fontSize: 22, fontWeight: 700, color: rc, letterSpacing: '-0.02em' }}>
                 {review.risk_score.toFixed(0)}
               </div>
-              <div style={{ fontSize: 7, color: '#3a3a3a', letterSpacing: '0.12em' }}>/100 RISK</div>
+              <div style={{ fontSize: 7, color: C.muted, letterSpacing: '0.12em' }}>/100 RISK</div>
             </div>
             <Chip color={rc}>{review.risk_level}</Chip>
             <button onClick={onClose} style={{
-              background: 'none', border: 'none', color: '#3a3a3a',
+              background: 'none', border: 'none', color: C.textDim,
               fontSize: 16, cursor: 'pointer', fontFamily: FONT, lineHeight: 1,
             }}>✕</button>
           </div>
@@ -97,14 +97,148 @@ function QuoteDetail({ review, onClose }: { review: QuoteReview; onClose: () => 
               display: 'flex', gap: 10, paddingBottom: 8,
               borderBottom: `1px solid ${C.border}`,
             }}>
-              <span style={{ fontSize: 8, color: '#2a2a2a', flexShrink: 0, paddingTop: 2, minWidth: 14 }}>
+              <span style={{ fontSize: 8, color: C.muted, flexShrink: 0, paddingTop: 2, minWidth: 14 }}>
                 {String(i + 1).padStart(2, '0')}
               </span>
-              <div style={{ fontSize: 10, color: '#aaa', lineHeight: 1.65 }}>{f}</div>
+              <div style={{ fontSize: 10, color: C.muted, lineHeight: 1.65 }}>{f}</div>
             </div>
           ))}
         </div>
       </div>
+    </div>
+  )
+}
+
+/* ── Vendor comparison table ────────────────────────────────────────────── */
+function VendorComparison({ quotes, winnerId }: { quotes: QuoteReview[]; winnerId: string }) {
+  const { theme: C } = useTheme()
+  const [open, setOpen] = useState(false)
+  if (quotes.length < 2) return null
+
+  return (
+    <div style={{ marginBottom: 24 }}>
+      <button
+        onClick={() => setOpen(o => !o)}
+        style={{
+          display: 'flex', alignItems: 'center', gap: 10, width: '100%',
+          background: 'none', border: `1px solid ${C.border}`, borderRadius: 2,
+          padding: '10px 14px', cursor: 'pointer', fontFamily: FONT,
+        }}
+      >
+        <Lbl>VENDOR COMPARISON — SIDE BY SIDE ({quotes.length})</Lbl>
+        <span style={{ marginLeft: 'auto', fontSize: 9, color: C.muted, fontFamily: FONT }}>
+          {open ? '▲ COLLAPSE' : '▼ EXPAND'}
+        </span>
+      </button>
+
+      {open && (
+        <div style={{ overflowX: 'auto', marginTop: 8 }}>
+          <table style={{
+            width: '100%', borderCollapse: 'collapse', fontFamily: FONT,
+            background: C.surface,
+          }}>
+            <thead>
+              <tr>
+                <th style={{
+                  textAlign: 'left', padding: '8px 14px', fontSize: 7,
+                  letterSpacing: '0.16em', color: C.muted, fontWeight: 600,
+                  borderBottom: `1px solid ${C.border}`, textTransform: 'uppercase',
+                  background: C.surface2, whiteSpace: 'nowrap',
+                }}>
+                  CRITERION
+                </th>
+                {quotes.map(q => {
+                  const rc = riskColor(q.risk_level, q.risk_score, C)
+                  const isWinner = q.quote_id === winnerId
+                  return (
+                    <th key={q.quote_id} style={{
+                      textAlign: 'center', padding: '8px 14px',
+                      borderBottom: `1px solid ${C.border}`,
+                      background: isWinner ? C.green + '12' : C.surface2,
+                      borderTop: isWinner ? `1px solid ${C.green}44` : 'none',
+                      minWidth: 140,
+                    }}>
+                      <div style={{ fontSize: 9, fontWeight: 700, color: C.text, marginBottom: 3 }}>
+                        {q.vendor_name || q.quote_id}
+                      </div>
+                      <div style={{ display: 'flex', justifyContent: 'center', gap: 6 }}>
+                        <span style={{ fontSize: 14, fontWeight: 700, color: rc }}>{q.risk_score.toFixed(0)}</span>
+                        <span style={{ fontSize: 7, color: C.muted, alignSelf: 'flex-end', paddingBottom: 2 }}>/100</span>
+                        {isWinner && (
+                          <span style={{
+                            fontSize: 7, color: C.green, border: `1px solid ${C.green}44`,
+                            borderRadius: 2, padding: '1px 5px', alignSelf: 'center',
+                          }}>
+                            WINNER
+                          </span>
+                        )}
+                      </div>
+                    </th>
+                  )
+                })}
+              </tr>
+            </thead>
+            <tbody>
+              {/* Risk level row */}
+              <tr>
+                <td style={{ padding: '8px 14px', fontSize: 8, color: C.muted, borderBottom: `1px solid ${C.border}`, whiteSpace: 'nowrap' }}>
+                  RISK LEVEL
+                </td>
+                {quotes.map(q => {
+                  const rc = riskColor(q.risk_level, q.risk_score, C)
+                  return (
+                    <td key={q.quote_id} style={{ textAlign: 'center', padding: '8px 14px', borderBottom: `1px solid ${C.border}` }}>
+                      <span style={{ fontSize: 8, color: rc, fontFamily: FONT, fontWeight: 600 }}>{q.risk_level}</span>
+                    </td>
+                  )
+                })}
+              </tr>
+              {/* Findings count */}
+              <tr style={{ background: C.surface2 }}>
+                <td style={{ padding: '8px 14px', fontSize: 8, color: C.muted, borderBottom: `1px solid ${C.border}`, whiteSpace: 'nowrap' }}>
+                  FINDINGS COUNT
+                </td>
+                {quotes.map(q => {
+                  const best = q.findings.length === Math.min(...quotes.map(x => x.findings.length))
+                  return (
+                    <td key={q.quote_id} style={{ textAlign: 'center', padding: '8px 14px', borderBottom: `1px solid ${C.border}` }}>
+                      <span style={{ fontSize: 9, color: best ? C.green : '#888', fontFamily: FONT, fontWeight: best ? 700 : 400 }}>
+                        {q.findings.length}
+                      </span>
+                    </td>
+                  )
+                })}
+              </tr>
+              {/* Top finding per vendor */}
+              <tr>
+                <td style={{ padding: '8px 14px', fontSize: 8, color: C.muted, borderBottom: `1px solid ${C.border}`, whiteSpace: 'nowrap', verticalAlign: 'top' }}>
+                  TOP FINDING
+                </td>
+                {quotes.map(q => (
+                  <td key={q.quote_id} style={{ padding: '8px 14px', borderBottom: `1px solid ${C.border}`, verticalAlign: 'top', maxWidth: 200 }}>
+                    <div style={{ fontSize: 8, color: '#666', fontFamily: FONT, lineHeight: 1.55 }}>
+                      {q.findings[0]?.slice(0, 100)}{(q.findings[0]?.length ?? 0) > 100 ? '…' : ''}
+                    </div>
+                  </td>
+                ))}
+              </tr>
+              {/* Recommendation summary */}
+              <tr style={{ background: C.surface2 }}>
+                <td style={{ padding: '8px 14px', fontSize: 8, color: C.muted, whiteSpace: 'nowrap', verticalAlign: 'top' }}>
+                  RECOMMENDATION
+                </td>
+                {quotes.map(q => (
+                  <td key={q.quote_id} style={{ padding: '8px 14px', verticalAlign: 'top', maxWidth: 200 }}>
+                    <div style={{ fontSize: 8, color: '#555', fontFamily: FONT, lineHeight: 1.55 }}>
+                      {q.recommendation.slice(0, 120)}{q.recommendation.length > 120 ? '…' : ''}
+                    </div>
+                  </td>
+                ))}
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   )
 }
@@ -115,19 +249,20 @@ function RankedCard({
 }: {
   review: QuoteReview; rank: number; isWinner: boolean; onClick: () => void
 }) {
-  const rc = riskColor(review.risk_level, review.risk_score)
+  const { theme: C } = useTheme()
+  const rc = riskColor(review.risk_level, review.risk_score, C)
   return (
     <div
       onClick={onClick}
       style={{
-        background: isWinner ? '#0c0c0c' : C.surface,
-        border: `1px solid ${isWinner ? '#2a2a2a' : C.border}`,
+        background: isWinner ? C.surface2 : C.surface,
+        border: `1px solid ${isWinner ? C.borderMid : C.border}`,
         borderRadius: 2, padding: '14px 16px', cursor: 'pointer',
         transition: 'border-color 0.12s',
         position: 'relative', overflow: 'hidden',
       }}
-      onMouseEnter={e => (e.currentTarget.style.borderColor = '#2e2e2e')}
-      onMouseLeave={e => (e.currentTarget.style.borderColor = isWinner ? '#2a2a2a' : C.border)}
+      onMouseEnter={e => (e.currentTarget.style.borderColor = C.borderMid)}
+      onMouseLeave={e => (e.currentTarget.style.borderColor = isWinner ? C.borderMid : C.border)}
     >
       {isWinner && (
         <div style={{
@@ -141,7 +276,7 @@ function RankedCard({
           background: isWinner ? `${C.green}18` : 'transparent',
           border: `1px solid ${isWinner ? `${C.green}44` : C.border}`,
           display: 'flex', alignItems: 'center', justifyContent: 'center',
-          fontSize: 9, color: isWinner ? C.green : '#3a3a3a', fontWeight: 700,
+          fontSize: 9, color: isWinner ? C.green : C.textDim, fontWeight: 700,
         }}>
           {rank}
         </div>
@@ -154,7 +289,7 @@ function RankedCard({
             <Chip color={rc}>{review.risk_level}</Chip>
           </div>
           {review.vendor_name && (
-            <div style={{ fontSize: 8, color: '#2e2e2e', marginBottom: 6 }}>{review.quote_id}</div>
+            <div style={{ fontSize: 8, color: C.muted, marginBottom: 6 }}>{review.quote_id}</div>
           )}
           <div style={{ fontSize: 9, color: '#555', lineHeight: 1.5, marginBottom: 8 }}>
             {review.findings.slice(0, 2).map((f, i) => (
@@ -163,7 +298,7 @@ function RankedCard({
               </div>
             ))}
           </div>
-          <div style={{ fontSize: 8, color: '#2a2a2a', letterSpacing: '0.1em' }}>
+          <div style={{ fontSize: 8, color: C.muted, letterSpacing: '0.1em' }}>
             {review.findings.length} FINDINGS · CLICK FOR FULL REVIEW →
           </div>
         </div>
@@ -171,7 +306,7 @@ function RankedCard({
           <div style={{ fontSize: 20, fontWeight: 700, color: rc, letterSpacing: '-0.02em' }}>
             {review.risk_score.toFixed(0)}
           </div>
-          <div style={{ fontSize: 7, color: '#2e2e2e', letterSpacing: '0.1em' }}>/100</div>
+          <div style={{ fontSize: 7, color: C.muted, letterSpacing: '0.1em' }}>/100</div>
         </div>
       </div>
     </div>
@@ -185,9 +320,11 @@ export interface BidResultsProps {
   bidName: string
   onBack: () => void
   onNewBid: () => void
+  onGoNegotiation?: () => void
 }
 
-export function BidResults({ runId, bidId, bidName, onBack, onNewBid }: BidResultsProps) {
+export function BidResults({ runId, bidId, bidName, onBack, onNewBid, onGoNegotiation }: BidResultsProps) {
+  const { theme: C } = useTheme()
   const [result, setResult] = useState<BidResult | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -217,7 +354,7 @@ export function BidResults({ runId, bidId, bidName, onBack, onNewBid }: BidResul
     return (
       <div style={{
         flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center',
-        fontFamily: FONT, fontSize: 9, color: '#2e2e2e', letterSpacing: '0.18em',
+        fontFamily: FONT, fontSize: 9, color: C.muted, letterSpacing: '0.18em',
       }}>
         LOADING RESULTS···
       </div>
@@ -229,7 +366,7 @@ export function BidResults({ runId, bidId, bidName, onBack, onNewBid }: BidResul
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 28 }}>
         <button onClick={onBack} style={{
-          background: 'none', border: 'none', color: '#3a3a3a',
+          background: 'none', border: 'none', color: C.textDim,
           fontFamily: FONT, fontSize: 9, letterSpacing: '0.14em',
           textTransform: 'uppercase', cursor: 'pointer', padding: 0,
         }}>
@@ -240,11 +377,20 @@ export function BidResults({ runId, bidId, bidName, onBack, onNewBid }: BidResul
           <div style={{ fontSize: 12, fontWeight: 700, color: C.text, letterSpacing: '0.05em' }}>
             BID RESULTS
           </div>
-          <div style={{ fontSize: 8, color: '#3a3a3a', letterSpacing: '0.1em', marginTop: 2 }}>
+          <div style={{ fontSize: 8, color: C.muted, letterSpacing: '0.1em', marginTop: 2 }}>
             {bidName || bidId} · {runId}
           </div>
         </div>
-        <div style={{ marginLeft: 'auto' }}>
+        <div style={{ marginLeft: 'auto', display: 'flex', gap: 6 }}>
+          {onGoNegotiation && (
+            <button onClick={onGoNegotiation} style={{
+              background: 'none', border: `1px solid #22d3ee44`, borderRadius: 2,
+              color: C.cyan, fontFamily: FONT, fontSize: 9, letterSpacing: '0.14em',
+              textTransform: 'uppercase', cursor: 'pointer', padding: '5px 14px',
+            }}>
+              NEGOTIATE →
+            </button>
+          )}
           <button onClick={onNewBid} style={{
             background: 'none', border: `1px solid ${C.border}`, borderRadius: 2,
             color: C.muted, fontFamily: FONT, fontSize: 9, letterSpacing: '0.14em',
@@ -257,8 +403,8 @@ export function BidResults({ runId, bidId, bidName, onBack, onNewBid }: BidResul
 
       {error && (
         <div style={{
-          fontSize: 9, color: C.accent, background: '#1a0808',
-          border: '1px solid #3a1010', borderRadius: 2,
+          fontSize: 9, color: C.accent, background: C.accent + '12',
+          border: `1px solid ${C.accent}44`, borderRadius: 2,
           padding: '10px 14px', marginBottom: 16,
         }}>
           {error}
@@ -270,7 +416,7 @@ export function BidResults({ runId, bidId, bidName, onBack, onNewBid }: BidResul
           {/* Winner card */}
           {result.winner && (
             <div style={{
-              background: '#080f08', border: `1px solid ${C.green}22`,
+              background: C.green + '10', border: `1px solid ${C.green}33`,
               borderRadius: 2, padding: '20px 24px', marginBottom: 24, position: 'relative',
             }}>
               <div style={{
@@ -286,12 +432,12 @@ export function BidResults({ runId, bidId, bidName, onBack, onNewBid }: BidResul
                     {result.winner.vendor_name || result.winner.quote_id}
                   </div>
                   {result.winner.vendor_name && (
-                    <div style={{ fontSize: 9, color: '#3a3a3a', marginBottom: 12 }}>
+                    <div style={{ fontSize: 9, color: C.textDim, marginBottom: 12 }}>
                       {result.winner.quote_id}
                     </div>
                   )}
                   <div style={{ display: 'flex', gap: 8 }}>
-                    <Chip color={riskColor(result.winner.risk_level, result.winner.risk_score)}>
+                    <Chip color={riskColor(result.winner.risk_level, result.winner.risk_score, C)}>
                       {result.winner.risk_level} RISK
                     </Chip>
                     <Chip color={C.muted}>{result.winner.findings.length} FINDINGS</Chip>
@@ -300,11 +446,11 @@ export function BidResults({ runId, bidId, bidName, onBack, onNewBid }: BidResul
                 <div style={{ textAlign: 'right', flexShrink: 0 }}>
                   <div style={{
                     fontSize: 36, fontWeight: 700, letterSpacing: '-0.04em',
-                    color: riskColor(result.winner.risk_level, result.winner.risk_score),
+                    color: riskColor(result.winner.risk_level, result.winner.risk_score, C),
                   }}>
                     {result.winner.risk_score.toFixed(0)}
                   </div>
-                  <div style={{ fontSize: 8, color: '#3a3a3a', letterSpacing: '0.12em' }}>RISK SCORE / 100</div>
+                  <div style={{ fontSize: 8, color: C.muted, letterSpacing: '0.12em' }}>RISK SCORE / 100</div>
                 </div>
               </div>
 
@@ -352,6 +498,52 @@ export function BidResults({ runId, bidId, bidName, onBack, onNewBid }: BidResul
                 </div>
               )}
             </div>
+          )}
+
+          {/* Market research summary */}
+          {result.market_research_summary && (() => {
+            const mr: MarketResearchSummary = result.market_research_summary!
+            if (mr.status === 'skipped' || !mr.market_price_range) return null
+            return (
+              <div style={{
+                background: C.surface, border: `1px solid ${C.border}`,
+                borderRadius: 2, padding: '16px 20px', marginBottom: 24,
+              }}>
+                <Lbl style={{ display: 'block', marginBottom: 10 }}>MARKET RESEARCH</Lbl>
+                {mr.market_price_range?.summary && (
+                  <div style={{ fontSize: 10, color: '#888', lineHeight: 1.65, marginBottom: 10 }}>
+                    {mr.market_price_range.summary}
+                  </div>
+                )}
+                <div style={{ display: 'flex', gap: 8 }}>
+                  <Chip color={C.muted}>{mr.equipment_type ?? 'Equipment'}</Chip>
+                  {mr.market_price_range?.confidence && (
+                    <Chip color={mr.market_price_range.confidence === 'high' ? C.green : C.amber}>
+                      {mr.market_price_range.confidence.toUpperCase()} CONFIDENCE
+                    </Chip>
+                  )}
+                </div>
+                {mr.key_risk_signals && mr.key_risk_signals.length > 0 && (
+                  <div style={{ marginTop: 10 }}>
+                    <Lbl style={{ display: 'block', marginBottom: 6 }}>MARKET RISK SIGNALS</Lbl>
+                    {mr.key_risk_signals.slice(0, 3).map((s, i) => (
+                      <div key={i} style={{
+                        fontSize: 9, color: C.amber, paddingLeft: 8,
+                        borderLeft: `1px solid ${C.amber}44`, lineHeight: 1.5, marginBottom: 4,
+                      }}>{s}</div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )
+          })()}
+
+          {/* Vendor comparison table */}
+          {result.ranked_quotes && result.ranked_quotes.length >= 2 && (
+            <VendorComparison
+              quotes={result.ranked_quotes}
+              winnerId={result.winner?.quote_id ?? ''}
+            />
           )}
 
           {/* Ranked list */}

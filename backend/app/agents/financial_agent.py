@@ -10,11 +10,18 @@ from .base import clamp, risk_level
 NAME = "Financial Exposure Agent"
 ANNUAL_IDLE_RATE = 0.08  # imported by scenario_agent
 INSTRUCTIONS = """You are a procurement finance analyst specialising in
-public-sector capital expenditure.
+public-sector capital expenditure across all procurement categories.
 
 Quantify advance-payment risk, idle-asset opportunity cost, warranty erosion,
 and total projected financial loss given the procurement details and the
 predicted installation delay provided.
+
+Use `category` and `item_research_context` (if provided) to calibrate:
+- What "idle cost" means for this asset type (e.g., aircraft sitting in a hangar
+  incurs different costs than a server room sitting unused)
+- Whether the advance payment terms are typical for this procurement category
+- What financial protections are standard for this item type (bank guarantees,
+  performance bonds, escrow arrangements)
 
 Use these formulas as guidance (adapt if the context warrants):
 - advance_cr = contract_value_cr × advance_payment_pct / 100
@@ -29,8 +36,8 @@ Return a JSON object with EXACTLY these keys:
   "risk_score": <integer 0-100>,
   "findings": ["₹X Cr released as advance...", ...],
   "evidence": ["formula workings or direct evidence", ...],
-  "reasoning": "narrative on how funds are exposed ahead of value realisation",
-  "recommendation": "concrete financial safeguards",
+  "reasoning": "narrative on how funds are exposed ahead of value realisation, calibrated to this item type",
+  "recommendation": "concrete financial safeguards appropriate to this procurement category",
   "metrics": {
     "advance_cr": <float>,
     "idle_cost_cr": <float>,

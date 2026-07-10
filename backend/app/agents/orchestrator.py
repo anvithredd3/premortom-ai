@@ -50,14 +50,6 @@ def _run_parallel(data: ProcurementInput) -> List[AgentResult]:
     return results
 
 
-def _risk_to_status(risk_level_value: str) -> str:
-    if risk_level_value in ("HIGH", "CRITICAL"):
-        return "red"
-    if risk_level_value == "MODERATE":
-        return "amber"
-    return "green"
-
-
 def run_premortem(data: ProcurementInput) -> PreMortemReport:
     results = _run_parallel(data)
 

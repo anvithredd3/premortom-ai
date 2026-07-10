@@ -52,6 +52,18 @@ class ProcurementInput(BaseModel):
     raw_document_text: Optional[str] = Field(
         default=None, description="Optional parsed text from an uploaded document"
     )
+    category: str = Field(
+        default="general",
+        description="Procurement category detected by item research (e.g. aviation, medical_equipment)",
+    )
+    item_research_context: Optional[str] = Field(
+        default=None,
+        description="Research summary about the item being procured, used to calibrate agent analysis",
+    )
+    extra_fields: dict = Field(
+        default_factory=dict,
+        description="Category-specific additional fields captured during intake",
+    )
 
 
 # --------------------------------------------------------------------------- #

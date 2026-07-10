@@ -10,7 +10,9 @@ GET  /sample                 - the AIIMS MRI demo input
 """
 from __future__ import annotations
 
+import json
 import os
+from pathlib import Path
 from typing import Any
 
 from pydantic import BaseModel, Field
@@ -18,7 +20,7 @@ from fastapi import BackgroundTasks, FastAPI, File, Form, HTTPException, UploadF
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import Response
 
-from .agents import extraction_agent, ui_guidance_agent
+from .agents import extraction_agent, item_research_agent, ui_guidance_agent
 from .agents.orchestrator import run_bid_evaluation, run_premortem
 from .models import PreMortemReport, ProcurementInput
 from .services import (
@@ -38,6 +40,10 @@ app = FastAPI(
     description="Agentic Procurement Failure Prediction Platform",
     version="1.0.0",
 )
+
+
+class ResearchItemRequest(BaseModel):
+    item_name: str
 
 
 class BidCreateRequest(BaseModel):
@@ -110,6 +116,12 @@ def database_status():
 def sample():
     """AIIMS MRI demo procurement package."""
     return ProcurementInput()
+
+
+@app.post("/research-item")
+def research_item(payload: ResearchItemRequest):
+    """Research a procurement item: detect category, suggest field values, provide context."""
+    return item_research_agent.research(payload.item_name.strip())
 
 
 @app.post("/analyze", response_model=PreMortemReport)
@@ -267,6 +279,40 @@ def export_report(fmt: str, report: PreMortemReport):
         media_type="application/json",
         status_code=400,
     )
+
+
+@app.get("/output-files")
+def list_output_files():
+    """List all run folders and their JSON/JSONL output files."""
+    output_dir = Path("files/output/bid_runs")
+    if not output_dir.exists():
+        return {"runs": []}
+    runs = []
+    for run_dir in sorted(output_dir.iterdir(), reverse=True):
+        if not run_dir.is_dir():
+            continue
+        files = sorted(
+            f.name for f in run_dir.iterdir()
+            if f.is_file() and f.suffix in (".json", ".jsonl")
+        )
+        if files:
+            runs.append({"run_id": run_dir.name, "files": files})
+    return {"runs": runs}
+
+
+@app.get("/output-files/{run_id}/{filename}")
+def get_output_file(run_id: str, filename: str):
+    """Return parsed content of a specific run output file."""
+    if ".." in run_id or ".." in filename or "/" in run_id or "/" in filename:
+        raise HTTPException(status_code=400, detail="Invalid path")
+    path = Path("files/output/bid_runs") / run_id / filename
+    if not path.exists() or not path.is_file():
+        raise HTTPException(status_code=404, detail="File not found")
+    text = path.read_text(encoding="utf-8")
+    if filename.endswith(".jsonl"):
+        lines = [json.loads(line) for line in text.strip().splitlines() if line.strip()]
+        return {"run_id": run_id, "filename": filename, "content": lines, "type": "jsonl"}
+    return {"run_id": run_id, "filename": filename, "content": json.loads(text), "type": "json"}
 
 
 @app.post("/bids")
