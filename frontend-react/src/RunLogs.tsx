@@ -5,6 +5,7 @@ const FONT = "'JetBrains Mono', monospace"
 
 interface RunEntry {
   run_id: string
+  type?: 'bid' | 'premortem'
   files: string[]
 }
 
@@ -62,6 +63,7 @@ function highlight(value: unknown, depth = 0, isDark: boolean): string {
 
 /* ── File icon ───────────────────────────────────────────────────────── */
 function fileIcon(name: string): string {
+  if (name === 'report.json') return '🧠'
   if (name.includes('contract')) return '📋'
   if (name.includes('vendor') || name.includes('proposal')) return '🏢'
   if (name.includes('market') || name.includes('research')) return '📊'
@@ -160,14 +162,14 @@ export function RunLogs() {
           padding: '12px 14px 8px', borderBottom: `1px solid ${theme.border}`,
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
         }}>
-          <span style={{ fontSize: 8, letterSpacing: '0.18em', color: theme.muted, fontFamily: FONT, fontWeight: 600 }}>
+          <span style={{ fontSize: 11, letterSpacing: '0.18em', color: theme.muted, fontFamily: FONT, fontWeight: 600 }}>
             RUN HISTORY
           </span>
           <button
             onClick={loadRuns}
             style={{
               background: 'none', border: `1px solid ${theme.border}`, borderRadius: 2,
-              padding: '2px 8px', fontSize: 7, color: theme.muted, fontFamily: FONT,
+              padding: '2px 8px', fontSize: 10, color: theme.muted, fontFamily: FONT,
               cursor: 'pointer', letterSpacing: '0.1em',
             }}
           >
@@ -176,14 +178,14 @@ export function RunLogs() {
         </div>
 
         {loading && (
-          <div style={{ padding: 16, fontSize: 9, color: theme.muted, fontFamily: FONT, letterSpacing: '0.1em' }}>
+          <div style={{ padding: 16, fontSize: 13, color: theme.muted, fontFamily: FONT, letterSpacing: '0.1em' }}>
             LOADING...
           </div>
         )}
 
         {!loading && runs.length === 0 && (
-          <div style={{ padding: 16, fontSize: 9, color: theme.muted, fontFamily: FONT, lineHeight: 1.6 }}>
-            No run outputs found. Run a bid evaluation to generate output files.
+          <div style={{ padding: 16, fontSize: 13, color: theme.muted, fontFamily: FONT, lineHeight: 1.6 }}>
+            No run outputs found. Run a PreMortem analysis or a bid evaluation to generate history.
           </div>
         )}
 
@@ -195,13 +197,20 @@ export function RunLogs() {
               style={S.runRow(selectedRun === run.run_id)}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <span style={{ fontSize: 9, color: theme.accent, fontFamily: FONT, fontWeight: 700 }}>
+                <span style={{ fontSize: 13, color: run.type === 'premortem' ? theme.cyan : theme.accent, fontFamily: FONT, fontWeight: 700 }}>
                   {run.run_id}
                 </span>
-                <span style={{ fontSize: 7, color: theme.muted, fontFamily: FONT }}>
+                <span style={{
+                  fontSize: 9, color: run.type === 'premortem' ? theme.cyan : theme.amber,
+                  border: `1px solid ${run.type === 'premortem' ? theme.cyan + '44' : theme.amber + '44'}`,
+                  borderRadius: 2, padding: '1px 5px', fontFamily: FONT, letterSpacing: '0.1em',
+                }}>
+                  {run.type === 'premortem' ? 'PM' : 'BID'}
+                </span>
+                <span style={{ fontSize: 10, color: theme.muted, fontFamily: FONT }}>
                   {run.files.length} file{run.files.length !== 1 ? 's' : ''}
                 </span>
-                <span style={{ marginLeft: 'auto', fontSize: 8, color: theme.muted, fontFamily: FONT }}>
+                <span style={{ marginLeft: 'auto', fontSize: 11, color: theme.muted, fontFamily: FONT }}>
                   {selectedRun === run.run_id ? '▾' : '▸'}
                 </span>
               </div>
@@ -214,12 +223,12 @@ export function RunLogs() {
                 onClick={() => handleFileClick(run.run_id, file)}
                 style={S.fileRow(selectedFile === file && selectedRun === run.run_id)}
               >
-                <span style={{ fontSize: 12, lineHeight: 1 }}>{fileIcon(file)}</span>
+                <span style={{ fontSize: 17, lineHeight: 1 }}>{fileIcon(file)}</span>
                 <div>
-                  <div style={{ fontSize: 8, color: theme.text, fontFamily: FONT, letterSpacing: '0.04em' }}>
+                  <div style={{ fontSize: 11, color: theme.text, fontFamily: FONT, letterSpacing: '0.04em' }}>
                     {friendlyName(file)}
                   </div>
-                  <div style={{ fontSize: 7, color: theme.muted, fontFamily: FONT, marginTop: 1 }}>
+                  <div style={{ fontSize: 10, color: theme.muted, fontFamily: FONT, marginTop: 1 }}>
                     {file.endsWith('.jsonl') ? 'EVENTS LOG' : 'JSON'}
                   </div>
                 </div>
@@ -239,22 +248,22 @@ export function RunLogs() {
         }}>
           {fileContent ? (
             <>
-              <span style={{ fontSize: 14 }}>{fileIcon(fileContent.filename)}</span>
+              <span style={{ fontSize: 19 }}>{fileIcon(fileContent.filename)}</span>
               <div>
-                <span style={{ fontSize: 10, color: theme.text, fontFamily: FONT, fontWeight: 600 }}>
+                <span style={{ fontSize: 14, color: theme.text, fontFamily: FONT, fontWeight: 600 }}>
                   {friendlyName(fileContent.filename)}
                 </span>
-                <span style={{ fontSize: 8, color: theme.muted, fontFamily: FONT, marginLeft: 10 }}>
+                <span style={{ fontSize: 11, color: theme.muted, fontFamily: FONT, marginLeft: 10 }}>
                   {fileContent.run_id}
                 </span>
-                <span style={{ fontSize: 7, color: theme.muted, fontFamily: FONT, marginLeft: 8,
+                <span style={{ fontSize: 10, color: theme.muted, fontFamily: FONT, marginLeft: 8,
                   padding: '2px 6px', border: `1px solid ${theme.border}`, borderRadius: 2 }}>
                   {fileContent.type.toUpperCase()}
                 </span>
               </div>
             </>
           ) : (
-            <span style={{ fontSize: 9, color: theme.muted, fontFamily: FONT, letterSpacing: '0.12em' }}>
+            <span style={{ fontSize: 13, color: theme.muted, fontFamily: FONT, letterSpacing: '0.12em' }}>
               {selectedRun
                 ? `SELECT A FILE FROM ${selectedRun}`
                 : 'SELECT A RUN FROM THE LEFT PANEL'}
@@ -262,7 +271,7 @@ export function RunLogs() {
           )}
           <div style={{ marginLeft: 'auto', display: 'flex', gap: 8, alignItems: 'center' }}>
             {error && (
-              <span style={{ fontSize: 8, color: theme.accent, fontFamily: FONT }}>{error}</span>
+              <span style={{ fontSize: 11, color: theme.accent, fontFamily: FONT }}>{error}</span>
             )}
             {fileContent && (
               <button
@@ -275,7 +284,7 @@ export function RunLogs() {
                 }}
                 style={{
                   background: 'none', border: `1px solid ${theme.border}`, borderRadius: 2,
-                  padding: '4px 12px', fontSize: 8, color: theme.muted, fontFamily: FONT,
+                  padding: '4px 12px', fontSize: 11, color: theme.muted, fontFamily: FONT,
                   cursor: 'pointer', letterSpacing: '0.1em',
                 }}
               >
@@ -288,17 +297,17 @@ export function RunLogs() {
         {/* Content */}
         <div style={{ flex: 1, overflowY: 'auto', padding: 20 }}>
           {fileLoading && (
-            <div style={{ fontSize: 9, color: theme.muted, fontFamily: FONT, letterSpacing: '0.12em' }}>
+            <div style={{ fontSize: 13, color: theme.muted, fontFamily: FONT, letterSpacing: '0.12em' }}>
               LOADING FILE...
             </div>
           )}
 
           {!fileLoading && !fileContent && !selectedRun && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8, maxWidth: 480 }}>
-              <div style={{ fontSize: 8, color: theme.muted, fontFamily: FONT, letterSpacing: '0.18em', fontWeight: 600 }}>
+              <div style={{ fontSize: 11, color: theme.muted, fontFamily: FONT, letterSpacing: '0.18em', fontWeight: 600 }}>
                 OUTPUT FILE VIEWER
               </div>
-              <div style={{ fontSize: 10, color: theme.textDim, fontFamily: FONT, lineHeight: 1.7 }}>
+              <div style={{ fontSize: 14, color: theme.textDim, fontFamily: FONT, lineHeight: 1.7 }}>
                 Select a run from the left panel to view agent output JSON files.
                 Each run produces one file per agent stage.
               </div>
@@ -315,10 +324,10 @@ export function RunLogs() {
                     display: 'flex', gap: 12, padding: '8px 12px',
                     background: theme.surface, border: `1px solid ${theme.border}`, borderRadius: 2,
                   }}>
-                    <span style={{ fontSize: 14, lineHeight: 1.4 }}>{icon}</span>
+                    <span style={{ fontSize: 19, lineHeight: 1.4 }}>{icon}</span>
                     <div>
-                      <div style={{ fontSize: 8, color: theme.text, fontFamily: FONT }}>{name as string}</div>
-                      <div style={{ fontSize: 8, color: theme.muted, fontFamily: FONT, marginTop: 2, lineHeight: 1.4 }}>{desc as string}</div>
+                      <div style={{ fontSize: 11, color: theme.text, fontFamily: FONT }}>{name as string}</div>
+                      <div style={{ fontSize: 11, color: theme.muted, fontFamily: FONT, marginTop: 2, lineHeight: 1.4 }}>{desc as string}</div>
                     </div>
                   </div>
                 ))}
@@ -334,7 +343,7 @@ export function RunLogs() {
               {/* JSONL: show as paginated event list */}
               {fileContent.type === 'jsonl' && Array.isArray(fileContent.content) ? (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                  <div style={{ fontSize: 7, color: theme.muted, fontFamily: FONT, letterSpacing: '0.14em', marginBottom: 8 }}>
+                  <div style={{ fontSize: 10, color: theme.muted, fontFamily: FONT, letterSpacing: '0.14em', marginBottom: 8 }}>
                     {(fileContent.content as unknown[]).length} EVENTS
                   </div>
                   {(fileContent.content as Record<string, unknown>[]).map((event, i) => (
@@ -343,23 +352,23 @@ export function RunLogs() {
                       background: theme.bg, border: `1px solid ${theme.border}`,
                     }}>
                       <div style={{ display: 'flex', gap: 10, marginBottom: 4, alignItems: 'center' }}>
-                        <span style={{ fontSize: 7, color: theme.muted, fontFamily: FONT }}>#{i + 1}</span>
+                        <span style={{ fontSize: 10, color: theme.muted, fontFamily: FONT }}>#{i + 1}</span>
                         {event.event_type != null && (
                           <span style={{
-                            fontSize: 7, color: theme.accent, fontFamily: FONT, letterSpacing: '0.1em',
+                            fontSize: 10, color: theme.accent, fontFamily: FONT, letterSpacing: '0.1em',
                             padding: '1px 6px', border: `1px solid ${theme.accent}44`, borderRadius: 2,
                           }}>
                             {String(event.event_type)}
                           </span>
                         )}
                         {event.agent != null && (
-                          <span style={{ fontSize: 7, color: theme.cyan, fontFamily: FONT }}>
+                          <span style={{ fontSize: 10, color: theme.cyan, fontFamily: FONT }}>
                             {String(event.agent)}
                           </span>
                         )}
                       </div>
                       <pre style={{
-                        margin: 0, fontSize: 9, lineHeight: 1.55, fontFamily: FONT,
+                        margin: 0, fontSize: 13, lineHeight: 1.55, fontFamily: FONT,
                         color: theme.textDim, whiteSpace: 'pre-wrap', wordBreak: 'break-word',
                       }}
                         dangerouslySetInnerHTML={{ __html: highlight(event, 0, isDark) }}
@@ -369,7 +378,7 @@ export function RunLogs() {
                 </div>
               ) : (
                 <pre style={{
-                  margin: 0, fontSize: 10, lineHeight: 1.6, fontFamily: FONT,
+                  margin: 0, fontSize: 14, lineHeight: 1.6, fontFamily: FONT,
                   color: theme.text, whiteSpace: 'pre-wrap', wordBreak: 'break-word',
                 }}
                   dangerouslySetInnerHTML={{ __html: highlight(fileContent.content, 0, isDark) }}

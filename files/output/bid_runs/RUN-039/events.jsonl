@@ -1,0 +1,22 @@
+{"id": 1, "timestamp": "2026-07-10T18:04:50.564694+00:00", "type": "run_queued", "bid_id": "BID-001"}
+{"id": 2, "timestamp": "2026-07-10T18:04:50.574222+00:00", "type": "run_started", "bid_id": "BID-001"}
+{"id": 3, "timestamp": "2026-07-10T18:04:50.575808+00:00", "type": "quote_running", "quote_id": "BID-001-Q01"}
+{"id": 4, "timestamp": "2026-07-10T18:04:50.576991+00:00", "type": "quote_running", "quote_id": "BID-001-Q02"}
+{"id": 5, "timestamp": "2026-07-10T18:04:50.578761+00:00", "type": "quote_running", "quote_id": "BID-001-Q03"}
+{"id": 6, "timestamp": "2026-07-10T18:04:50.580174+00:00", "type": "quote_running", "quote_id": "BID-001-Q04"}
+{"id": 7, "timestamp": "2026-07-10T18:04:50.581323+00:00", "type": "quote_running", "quote_id": "BID-001-Q05"}
+{"id": 8, "timestamp": "2026-07-10T18:04:50.582616+00:00", "type": "agent_status", "agent": "vendor_proposal", "status": "running"}
+{"id": 9, "timestamp": "2026-07-10T18:04:50.583989+00:00", "type": "agent_status", "agent": "contract_review", "status": "running"}
+{"id": 10, "timestamp": "2026-07-10T18:05:10.942676+00:00", "type": "quote_completed", "quote_id": "BID-001-Q03", "vendor_name": "", "risk_score": 55.0}
+{"id": 11, "timestamp": "2026-07-10T18:05:11.208002+00:00", "type": "quote_completed", "quote_id": "BID-001-Q01", "vendor_name": "", "risk_score": 65.0}
+{"id": 12, "timestamp": "2026-07-10T18:05:11.296160+00:00", "type": "quote_completed", "quote_id": "BID-001-Q02", "vendor_name": "", "risk_score": 45.0}
+{"id": 13, "timestamp": "2026-07-10T18:05:12.611811+00:00", "type": "quote_completed", "quote_id": "BID-001-Q04", "vendor_name": "", "risk_score": 65.0}
+{"id": 14, "timestamp": "2026-07-10T18:05:13.128582+00:00", "type": "quote_completed", "quote_id": "BID-001-Q05", "vendor_name": "", "risk_score": 55.0}
+{"id": 15, "timestamp": "2026-07-10T18:05:13.131390+00:00", "type": "agent_status", "agent": "vendor_proposal", "status": "completed"}
+{"id": 16, "timestamp": "2026-07-10T18:05:13.132648+00:00", "type": "agent_status", "agent": "contract_review", "status": "completed"}
+{"id": 17, "timestamp": "2026-07-10T18:05:13.134208+00:00", "type": "agent_status", "agent": "bid_recommender", "status": "running"}
+{"id": 18, "timestamp": "2026-07-10T18:05:13.136665+00:00", "type": "agent_status", "agent": "market_research", "status": "completed"}
+{"id": 19, "timestamp": "2026-07-10T18:05:13.138062+00:00", "type": "agent_status", "agent": "bid_recommender", "status": "running"}
+{"id": 20, "timestamp": "2026-07-10T18:05:25.144821+00:00", "type": "agent_status", "agent": "decision_logic", "status": "completed"}
+{"id": 21, "timestamp": "2026-07-10T18:05:25.147556+00:00", "type": "run_completed", "winner": {"quote_id": "BID-001-Q02", "vendor_name": "", "risk_score": 45.0, "risk_level": "MODERATE", "findings": ["Warranty starts on delivery, which is risky given the potential for site readiness delays and buyer responsibility for installation.", "Advance payment is 50% according to the raw document text, which is lower than the 60% stated in fixed fields, reducing financial exposure.", "Installation responsibility is conflicting: raw document states 'Vendor' while fixed fields state 'Buyer'.", "Training is included according to the raw document text, conflicting with the fixed fields stating it is not included.", "Regulatory approval is pending, which could delay commissioning and operational use.", "Electrical readiness is pending, which could delay installation and commissioning.", "Technicians required for installation are not available, which could delay the project."], "recommendation": "Clarify and confirm the warranty start, installation responsibility, and training inclusion terms to ensure they align with the vendor's quote. Negotiate for the warranty to start at commissioning or acceptance to mitigate risk. Ensure regulatory approval and electrical readiness are prioritized to avoid delays. Verify technician availability to meet installation requirements."}}
+{"id": 22, "timestamp": "2026-07-10T18:05:25.221619+00:00", "type": "decision_history_stored", "table": "decision_history"}

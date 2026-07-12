@@ -73,36 +73,36 @@ function Popover({ anchorEl, status, label, verdict, summary, research = [], pop
         boxShadow: '0 10px 30px rgba(0,0,0,0.7)',
       }}
     >
-      <div style={{ fontSize: 8, letterSpacing: '0.18em', color: '#3a3a3a', textTransform: 'uppercase', marginBottom: 8 }}>
+      <div style={{ fontSize: 11, letterSpacing: '0.18em', color: '#3a3a3a', textTransform: 'uppercase', marginBottom: 8 }}>
         {label}
       </div>
 
       {verdict && (
-        <div style={{ fontSize: 10, color: vCol, fontWeight: 600, lineHeight: 1.5, marginBottom: 10 }}>
+        <div style={{ fontSize: 14, color: vCol, fontWeight: 600, lineHeight: 1.5, marginBottom: 10 }}>
           {verdict}
         </div>
       )}
 
       {summary && (
         <>
-          <div style={{ fontSize: 8, letterSpacing: '0.15em', color: '#333', textTransform: 'uppercase', marginBottom: 5 }}>REASONING</div>
-          <div style={{ fontSize: 9, color: '#777', lineHeight: 1.65, marginBottom: 12 }}>{summary}</div>
+          <div style={{ fontSize: 11, letterSpacing: '0.15em', color: '#333', textTransform: 'uppercase', marginBottom: 5 }}>REASONING</div>
+          <div style={{ fontSize: 13, color: '#777', lineHeight: 1.65, marginBottom: 12 }}>{summary}</div>
         </>
       )}
 
-      <div style={{ fontSize: 8, letterSpacing: '0.15em', color: '#333', textTransform: 'uppercase', marginBottom: 6 }}>RESEARCH</div>
+      <div style={{ fontSize: 11, letterSpacing: '0.15em', color: '#333', textTransform: 'uppercase', marginBottom: 6 }}>RESEARCH</div>
       {research.length === 0
-        ? <div style={{ fontSize: 9, color: '#2e2e2e' }}>no external sources</div>
+        ? <div style={{ fontSize: 13, color: '#2e2e2e' }}>no external sources</div>
         : research.map((r, i) => (
           <div key={i} style={{ marginBottom: 10 }}>
             {r.url
-              ? <a href={r.url} target="_blank" rel="noreferrer" style={{ fontSize: 9, color: '#4a7eaa', textDecoration: 'none', display: 'block', marginBottom: 2 }}>
+              ? <a href={r.url} target="_blank" rel="noreferrer" style={{ fontSize: 13, color: '#4a7eaa', textDecoration: 'none', display: 'block', marginBottom: 2 }}>
                   ↗ {r.title || r.url}
                 </a>
-              : <div style={{ fontSize: 9, color: '#555', marginBottom: 2 }}>{r.title}</div>
+              : <div style={{ fontSize: 13, color: '#555', marginBottom: 2 }}>{r.title}</div>
             }
             {r.snippet && (
-              <div style={{ fontSize: 8, color: '#333', lineHeight: 1.55 }}>
+              <div style={{ fontSize: 11, color: '#333', lineHeight: 1.55 }}>
                 {r.snippet.slice(0, 130)}{r.snippet.length > 130 ? '…' : ''}
               </div>
             )}
@@ -175,17 +175,17 @@ export const AgentNode = memo(({ data }: { data: AgentNodeData }) => {
       <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
         <div style={{ width: 5, height: 5, borderRadius: '50%', background: st.dot, flexShrink: 0, transition: 'background 0.25s' }} />
         <div>
-          <div style={{ fontSize: 9, letterSpacing: '0.13em', textTransform: 'uppercase', color: st.text, fontWeight: 500, lineHeight: 1, transition: 'color 0.25s' }}>
+          <div style={{ fontSize: 13, letterSpacing: '0.13em', textTransform: 'uppercase', color: st.text, fontWeight: 500, lineHeight: 1, transition: 'color 0.25s' }}>
             {data.label}
           </div>
           {data.sublabel && (
-            <div style={{ fontSize: 8, letterSpacing: '0.07em', color: '#2a2a2a', marginTop: 3, textTransform: 'uppercase' }}>
+            <div style={{ fontSize: 11, letterSpacing: '0.07em', color: '#2a2a2a', marginTop: 3, textTransform: 'uppercase' }}>
               {data.sublabel}
             </div>
           )}
         </div>
         {isDone && (
-          <div style={{ marginLeft: 'auto', fontSize: 8, color: '#2a2a2a', letterSpacing: '0.06em' }}>▾</div>
+          <div style={{ marginLeft: 'auto', fontSize: 11, color: '#2a2a2a', letterSpacing: '0.06em' }}>▾</div>
         )}
       </div>
 
@@ -193,7 +193,7 @@ export const AgentNode = memo(({ data }: { data: AgentNodeData }) => {
       {hasTelemetry && (
         <div style={{
           marginTop: 8, paddingTop: 7, borderTop: '1px solid #181818',
-          fontSize: 8, color: '#333', letterSpacing: '0.05em',
+          fontSize: 11, color: '#333', letterSpacing: '0.05em',
           display: 'flex', gap: 5, alignItems: 'center',
         }}>
           <span>{shortModel(data.model)}</span>
@@ -268,17 +268,17 @@ export const DecisionNode = memo(({ data }: { data: DecisionNodeData }) => {
     >
       <Handle type="target" position={Position.Left} style={HANDLE} />
 
-      <div style={{ fontSize: 8, letterSpacing: '0.2em', textTransform: 'uppercase', color: '#383838', fontWeight: 700, marginBottom: 6 }}>
+      <div style={{ fontSize: 11, letterSpacing: '0.2em', textTransform: 'uppercase', color: '#383838', fontWeight: 700, marginBottom: 6 }}>
         DECISION BOARD
       </div>
-      <div style={{ fontSize: 10, letterSpacing: '0.06em', fontWeight: 600, color: isDone ? vCol : '#2e2e2e', transition: 'color 0.3s', minHeight: 14 }}>
+      <div style={{ fontSize: 14, letterSpacing: '0.06em', fontWeight: 600, color: isDone ? vCol : '#2e2e2e', transition: 'color 0.3s', minHeight: 14 }}>
         {data.status === 'idle' ? '—' : data.status === 'running' ? 'ANALYZING...' : (data.verdict ?? 'COMPLETE')}
       </div>
 
       {isDone && (data.model || data.time_ms != null) && (
         <div style={{
           marginTop: 8, paddingTop: 7, borderTop: '1px solid #181818',
-          fontSize: 8, color: '#333', letterSpacing: '0.05em',
+          fontSize: 11, color: '#333', letterSpacing: '0.05em',
           display: 'flex', gap: 5, alignItems: 'center',
         }}>
           <span>{shortModel(data.model)}</span>
@@ -329,10 +329,10 @@ export const ProfilerNode = memo(({ data }: { data: ProfilerNodeData }) => {
       <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
         <div style={{ width: 5, height: 5, borderRadius: '50%', background: st.dot, flexShrink: 0, transition: 'background 0.25s' }} />
         <div>
-          <div style={{ fontSize: 9, letterSpacing: '0.13em', textTransform: 'uppercase', color: st.text, fontWeight: 500, lineHeight: 1 }}>
+          <div style={{ fontSize: 13, letterSpacing: '0.13em', textTransform: 'uppercase', color: st.text, fontWeight: 500, lineHeight: 1 }}>
             PROFILER
           </div>
-          <div style={{ fontSize: 8, letterSpacing: '0.07em', color: '#2a2a2a', marginTop: 3, textTransform: 'uppercase' }}>
+          <div style={{ fontSize: 11, letterSpacing: '0.07em', color: '#2a2a2a', marginTop: 3, textTransform: 'uppercase' }}>
             INTAKE · RESEARCH
           </div>
         </div>
@@ -341,7 +341,7 @@ export const ProfilerNode = memo(({ data }: { data: ProfilerNodeData }) => {
       {data.status === 'green' && (
         <div style={{
           marginTop: 8, paddingTop: 7, borderTop: '1px solid #181818',
-          fontSize: 8, color: '#333', letterSpacing: '0.05em',
+          fontSize: 11, color: '#333', letterSpacing: '0.05em',
         }}>
           {data.category ? `${data.category}` : 'complete'}
           {data.researchCount ? ` · ${data.researchCount} src` : ''}
@@ -382,20 +382,20 @@ export const DbNode = memo(({ data }: { data: DbNodeData }) => {
           animation: data.active ? 'pulse 1.2s ease-in-out infinite' : 'none',
           transition: 'background 0.3s',
         }} />
-        <div style={{ fontSize: 7, letterSpacing: '0.18em', color: data.active ? purple : dimPurple, textTransform: 'uppercase', fontWeight: 700 }}>
+        <div style={{ fontSize: 10, letterSpacing: '0.18em', color: data.active ? purple : dimPurple, textTransform: 'uppercase', fontWeight: 700 }}>
           DATABASE
         </div>
         {data.rowCount != null && data.rowCount > 0 && (
-          <span style={{ marginLeft: 'auto', fontSize: 7, color: data.active ? '#3a1a6a' : '#1a1030', letterSpacing: '0.06em' }}>
+          <span style={{ marginLeft: 'auto', fontSize: 10, color: data.active ? '#3a1a6a' : '#1a1030', letterSpacing: '0.06em' }}>
             {data.rowCount} rows
           </span>
         )}
       </div>
 
-      <div style={{ fontSize: 9, color: data.active ? '#9a70d0' : '#2e1a4a', fontWeight: 600, lineHeight: 1.3, marginBottom: 3, transition: 'color 0.3s' }}>
+      <div style={{ fontSize: 13, color: data.active ? '#9a70d0' : '#2e1a4a', fontWeight: 600, lineHeight: 1.3, marginBottom: 3, transition: 'color 0.3s' }}>
         {data.label}
       </div>
-      <div style={{ fontSize: 7, color: data.active ? '#3a1a5a' : '#1a1030', letterSpacing: '0.08em', textTransform: 'uppercase', transition: 'color 0.3s' }}>
+      <div style={{ fontSize: 10, color: data.active ? '#3a1a5a' : '#1a1030', letterSpacing: '0.08em', textTransform: 'uppercase', transition: 'color 0.3s' }}>
         {data.sublabel}
       </div>
     </div>

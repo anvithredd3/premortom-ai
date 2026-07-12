@@ -9,7 +9,7 @@ function Lbl({ children, style }: { children: string; style?: React.CSSPropertie
   const { theme: C } = useTheme()
   return (
     <span style={{
-      fontSize: 8, letterSpacing: '0.18em', textTransform: 'uppercase',
+      fontSize: 11, letterSpacing: '0.18em', textTransform: 'uppercase',
       color: C.muted, fontWeight: 600, fontFamily: FONT, ...style,
     }}>
       {children}
@@ -28,7 +28,7 @@ function Btn({
       background: variant === 'accent' ? C.accent : 'transparent',
       color: disabled ? C.red : variant === 'accent' ? C.bg : C.muted,
       border: `1px solid ${disabled ? C.red : variant === 'accent' ? C.accent : C.border}`,
-      borderRadius: 2, padding: '5px 14px', fontSize: 9,
+      borderRadius: 2, padding: '5px 14px', fontSize: 13,
       letterSpacing: '0.14em', textTransform: 'uppercase',
       fontFamily: FONT, fontWeight: variant === 'accent' ? 700 : 400,
       cursor: disabled ? 'not-allowed' : 'pointer',
@@ -125,17 +125,17 @@ export function QuoteUpload({ bid, onBack, onStartRun }: QuoteUploadProps) {
       <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 28 }}>
         <button onClick={onBack} style={{
           background: 'none', border: 'none', color: '#3a3a3a',
-          fontFamily: FONT, fontSize: 9, letterSpacing: '0.14em',
+          fontFamily: FONT, fontSize: 13, letterSpacing: '0.14em',
           textTransform: 'uppercase', cursor: 'pointer', padding: 0,
         }}>
           ← BACK
         </button>
         <div style={{ width: 1, height: 12, background: C.border }} />
         <div>
-          <div style={{ fontSize: 12, fontWeight: 700, color: C.text, letterSpacing: '0.05em' }}>
+          <div style={{ fontSize: 17, fontWeight: 700, color: C.text, letterSpacing: '0.05em' }}>
             {bid.procurement_name || bid.bid_id}
           </div>
-          <div style={{ fontSize: 8, color: '#3a3a3a', letterSpacing: '0.12em', marginTop: 2 }}>
+          <div style={{ fontSize: 11, color: '#3a3a3a', letterSpacing: '0.12em', marginTop: 2 }}>
             {bid.bid_id}{bid.equipment_type ? ` · ${bid.equipment_type}` : ''}
           </div>
         </div>
@@ -165,7 +165,7 @@ export function QuoteUpload({ bid, onBack, onStartRun }: QuoteUploadProps) {
                   )
                 }
                 style={{
-                  background: 'none', border: 'none', fontFamily: FONT, fontSize: 8,
+                  background: 'none', border: 'none', fontFamily: FONT, fontSize: 11,
                   color: '#3a3a3a', letterSpacing: '0.12em', textTransform: 'uppercase',
                   cursor: 'pointer',
                 }}
@@ -176,10 +176,10 @@ export function QuoteUpload({ bid, onBack, onStartRun }: QuoteUploadProps) {
           </div>
 
           {loading ? (
-            <div style={{ fontSize: 9, color: '#2e2e2e', letterSpacing: '0.18em' }}>LOADING···</div>
+            <div style={{ fontSize: 13, color: '#2e2e2e', letterSpacing: '0.18em' }}>LOADING···</div>
           ) : quotes.length === 0 ? (
             <div style={{
-              fontSize: 10, color: '#2a2a2a', textAlign: 'center',
+              fontSize: 14, color: '#2a2a2a', textAlign: 'center',
               padding: '40px 0', letterSpacing: '0.1em',
             }}>
               NO QUOTES YET — UPLOAD PDFs
@@ -214,23 +214,23 @@ export function QuoteUpload({ bid, onBack, onStartRun }: QuoteUploadProps) {
                       )}
                     </div>
                     <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ fontSize: 10, color: C.text, fontWeight: 500 }}>
+                      <div style={{ fontSize: 14, color: C.text, fontWeight: 500 }}>
                         {q.vendor_name || q.original_filename || q.quote_id}
                       </div>
                       {q.vendor_name && q.original_filename && (
-                        <div style={{ fontSize: 8, color: '#3a3a3a', marginTop: 2 }}>
+                        <div style={{ fontSize: 11, color: '#3a3a3a', marginTop: 2 }}>
                           {q.original_filename}
                         </div>
                       )}
                     </div>
-                    <div style={{ fontSize: 8, color: '#2e2e2e', flexShrink: 0 }}>
+                    <div style={{ fontSize: 11, color: '#2e2e2e', flexShrink: 0 }}>
                       {fmtDate(q.created_at)}
                     </div>
-                    <div style={{ fontSize: 7, color: '#2a2a2a', flexShrink: 0, letterSpacing: '0.1em' }}>
+                    <div style={{ fontSize: 10, color: '#2a2a2a', flexShrink: 0, letterSpacing: '0.1em' }}>
                       {q.quote_id}
                     </div>
                     <div style={{
-                      fontSize: 7, letterSpacing: '0.12em',
+                      fontSize: 10, letterSpacing: '0.12em',
                       color: q.source === 'upload' ? C.green : '#3a3a3a',
                     }}>
                       {q.source?.toUpperCase()}
@@ -254,7 +254,7 @@ export function QuoteUpload({ bid, onBack, onStartRun }: QuoteUploadProps) {
               placeholder="Vendor name (optional)..."
               style={{
                 background: C.bg, border: `1px solid ${C.border}`, borderRadius: 2,
-                padding: '6px 10px', fontSize: 10, color: C.text, fontFamily: FONT,
+                padding: '6px 10px', fontSize: 14, color: C.text, fontFamily: FONT,
                 outline: 'none', width: '100%', boxSizing: 'border-box',
               }}
             />
@@ -279,14 +279,14 @@ export function QuoteUpload({ bid, onBack, onStartRun }: QuoteUploadProps) {
               style={{ display: 'none' }} onChange={handleFile}
             />
             <div style={{ fontSize: 18, marginBottom: 10, color: '#2a2a2a' }}>↑</div>
-            <div style={{ fontSize: 9, color: '#3a3a3a', letterSpacing: '0.12em' }}>
+            <div style={{ fontSize: 13, color: '#3a3a3a', letterSpacing: '0.12em' }}>
               {uploading ? 'UPLOADING···' : 'DROP PDF OR CLICK'}
             </div>
           </div>
 
           {error && (
             <div style={{
-              marginTop: 10, fontSize: 8, color: C.accent,
+              marginTop: 10, fontSize: 11, color: C.accent,
               background: '#1a0808', border: '1px solid #3a1010',
               borderRadius: 2, padding: '6px 10px', lineHeight: 1.5,
             }}>
@@ -301,10 +301,10 @@ export function QuoteUpload({ bid, onBack, onStartRun }: QuoteUploadProps) {
               borderRadius: 2, padding: '12px 14px',
             }}>
               <Lbl style={{ display: 'block', marginBottom: 10 }}>EVALUATION SCOPE</Lbl>
-              <div style={{ fontSize: 10, color: C.text, marginBottom: 4 }}>
+              <div style={{ fontSize: 14, color: C.text, marginBottom: 4 }}>
                 {selected.size} / {quotes.length} quotes selected
               </div>
-              <div style={{ fontSize: 9, color: '#3a3a3a', lineHeight: 1.6 }}>
+              <div style={{ fontSize: 13, color: '#3a3a3a', lineHeight: 1.6 }}>
                 Each quote will be reviewed by the Contract Risk Agent and ranked by Bid Recommender.
               </div>
               <div style={{ marginTop: 12 }}>

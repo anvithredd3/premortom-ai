@@ -36,11 +36,11 @@ const H = { width: 6, height: 6, background: '#111', border: '1px solid #252525'
 /* ── Section label (background text group) ───────────────────────────── */
 const LabelNode = memo(({ data }: { data: { text: string; sub?: string } }) => (
   <div style={{ pointerEvents: 'none', userSelect: 'none' }}>
-    <div style={{ fontSize: 7, letterSpacing: '0.24em', color: '#1e1e1e', fontFamily: FONT, textTransform: 'uppercase', fontWeight: 700 }}>
+    <div style={{ fontSize: 10, letterSpacing: '0.24em', color: '#1e1e1e', fontFamily: FONT, textTransform: 'uppercase', fontWeight: 700 }}>
       {data.text}
     </div>
     {data.sub && (
-      <div style={{ fontSize: 7, letterSpacing: '0.12em', color: '#161616', fontFamily: FONT, marginTop: 3 }}>
+      <div style={{ fontSize: 10, letterSpacing: '0.12em', color: '#161616', fontFamily: FONT, marginTop: 3 }}>
         {data.sub}
       </div>
     )}
@@ -62,15 +62,15 @@ const InputNode = memo(({ data }: { data: InputData }) => {
     }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 9 }}>
         <div style={{ width: 5, height: 5, borderRadius: '50%', background: active ? '#22d3ee' : '#1a4a5a', flexShrink: 0 }} />
-        <span style={{ fontSize: 9, letterSpacing: '0.14em', color: active ? '#22d3ee' : '#1e4a5a', textTransform: 'uppercase', fontWeight: 700 }}>
+        <span style={{ fontSize: 13, letterSpacing: '0.14em', color: active ? '#22d3ee' : '#1e4a5a', textTransform: 'uppercase', fontWeight: 700 }}>
           INPUT
         </span>
       </div>
-      <div style={{ fontSize: 11, color: active ? '#d8d8d8' : '#3a3a3a', fontWeight: 600, lineHeight: 1.4, marginBottom: 7 }}>
+      <div style={{ fontSize: 15, color: active ? '#d8d8d8' : '#3a3a3a', fontWeight: 600, lineHeight: 1.4, marginBottom: 7 }}>
         {data.title}
       </div>
-      <div style={{ fontSize: 8, color: '#333', lineHeight: 1.65, marginBottom: 9 }}>{data.desc}</div>
-      <div style={{ fontSize: 7, color: '#1e3a4a', letterSpacing: '0.1em', textTransform: 'uppercase' }}>{data.sub}</div>
+      <div style={{ fontSize: 11, color: '#333', lineHeight: 1.65, marginBottom: 9 }}>{data.desc}</div>
+      <div style={{ fontSize: 10, color: '#1e3a4a', letterSpacing: '0.1em', textTransform: 'uppercase' }}>{data.sub}</div>
       <Handle type="source" position={Position.Right} style={H} />
     </div>
   )
@@ -111,26 +111,26 @@ const AgentFlowNode = memo(({ data }: { data: AgentData }) => {
           background: isDone || isRun ? data.accentColor : '#2a2a2a',
           transition: 'background .25s',
         }} />
-        <span style={{ fontSize: 7, letterSpacing: '0.18em', color: isDone || isRun ? data.accentColor : '#2a2a2a', textTransform: 'uppercase', fontWeight: 700, transition: 'color .25s' }}>
+        <span style={{ fontSize: 10, letterSpacing: '0.18em', color: isDone || isRun ? data.accentColor : '#2a2a2a', textTransform: 'uppercase', fontWeight: 700, transition: 'color .25s' }}>
           {isRun ? 'RUNNING' : isDone ? 'COMPLETE' : 'WAITING'}
         </span>
         {isDone && data.score != null && (
-          <span style={{ marginLeft: 'auto', fontSize: 9, fontWeight: 700, color: st.dot }}>{data.score}</span>
+          <span style={{ marginLeft: 'auto', fontSize: 13, fontWeight: 700, color: st.dot }}>{data.score}</span>
         )}
       </div>
 
       {/* Plain-English title */}
-      <div style={{ fontSize: 11, color: isDone || isRun ? '#d8d8d8' : '#3a3a3a', fontWeight: 600, lineHeight: 1.4, marginBottom: 6, transition: 'color .25s' }}>
+      <div style={{ fontSize: 15, color: isDone || isRun ? '#d8d8d8' : '#3a3a3a', fontWeight: 600, lineHeight: 1.4, marginBottom: 6, transition: 'color .25s' }}>
         {data.title}
       </div>
 
       {/* Description — visible for HR */}
-      <div style={{ fontSize: 8, color: isDone || isRun ? '#555' : '#2a2a2a', lineHeight: 1.65, marginBottom: 8, transition: 'color .25s' }}>
+      <div style={{ fontSize: 11, color: isDone || isRun ? '#555' : '#2a2a2a', lineHeight: 1.65, marginBottom: 8, transition: 'color .25s' }}>
         {data.desc}
       </div>
 
       {/* Technical subtitle — for engineers */}
-      <div style={{ fontSize: 7, color: '#252525', letterSpacing: '0.09em', textTransform: 'uppercase' }}>
+      <div style={{ fontSize: 10, color: '#252525', letterSpacing: '0.09em', textTransform: 'uppercase' }}>
         {data.sub}
       </div>
 
@@ -151,18 +151,18 @@ const MemoryNode = memo(({ data }: { data: MemoryData }) => (
     <Handle type="source" position={Position.Top} style={H} />
     <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 7 }}>
       <div style={{ width: 5, height: 5, borderRadius: '50%', background: '#4a2a8a', flexShrink: 0 }} />
-      <span style={{ fontSize: 7, letterSpacing: '0.18em', color: '#4a2a8a', textTransform: 'uppercase', fontWeight: 700 }}>
+      <span style={{ fontSize: 10, letterSpacing: '0.18em', color: '#4a2a8a', textTransform: 'uppercase', fontWeight: 700 }}>
         KNOWLEDGE BASE
       </span>
       {data.rowCount != null && data.rowCount > 0 && (
-        <span style={{ marginLeft: 'auto', fontSize: 7, color: '#3a1a6a' }}>{data.rowCount} records</span>
+        <span style={{ marginLeft: 'auto', fontSize: 10, color: '#3a1a6a' }}>{data.rowCount} records</span>
       )}
     </div>
-    <div style={{ fontSize: 10, color: '#5a3a9a', fontWeight: 600, lineHeight: 1.4, marginBottom: 5 }}>
+    <div style={{ fontSize: 14, color: '#5a3a9a', fontWeight: 600, lineHeight: 1.4, marginBottom: 5 }}>
       {data.title}
     </div>
-    <div style={{ fontSize: 8, color: '#2a1a4a', lineHeight: 1.6, marginBottom: 6 }}>{data.desc}</div>
-    <div style={{ fontSize: 7, color: '#1e1030', letterSpacing: '0.09em', textTransform: 'uppercase' }}>{data.sub}</div>
+    <div style={{ fontSize: 11, color: '#2a1a4a', lineHeight: 1.6, marginBottom: 6 }}>{data.desc}</div>
+    <div style={{ fontSize: 10, color: '#1e1030', letterSpacing: '0.09em', textTransform: 'uppercase' }}>{data.sub}</div>
   </div>
 ))
 MemoryNode.displayName = 'MemoryNode'
@@ -187,22 +187,22 @@ const DecisionFlowNode = memo(({ data }: { data: DecisionData }) => {
 
       <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 10 }}>
         <div style={{ width: 5, height: 5, borderRadius: '50%', background: isDone || isRun ? st.dot : '#2a2a2a', flexShrink: 0 }} />
-        <span style={{ fontSize: 7, letterSpacing: '0.18em', color: isDone || isRun ? st.dot : '#2a2a2a', textTransform: 'uppercase', fontWeight: 700 }}>
+        <span style={{ fontSize: 10, letterSpacing: '0.18em', color: isDone || isRun ? st.dot : '#2a2a2a', textTransform: 'uppercase', fontWeight: 700 }}>
           DECISION ENGINE
         </span>
       </div>
 
-      <div style={{ fontSize: 12, color: isDone || isRun ? '#e8e8e8' : '#3a3a3a', fontWeight: 700, lineHeight: 1.3, marginBottom: 7 }}>
+      <div style={{ fontSize: 17, color: isDone || isRun ? '#e8e8e8' : '#3a3a3a', fontWeight: 700, lineHeight: 1.3, marginBottom: 7 }}>
         AI Decision Board
       </div>
 
-      <div style={{ fontSize: 8, color: isDone || isRun ? '#555' : '#2a2a2a', lineHeight: 1.65, marginBottom: 10 }}>
+      <div style={{ fontSize: 11, color: isDone || isRun ? '#555' : '#2a2a2a', lineHeight: 1.65, marginBottom: 10 }}>
         Weighs all agent findings and issues a GO / GO WITH CONDITIONS / NO-GO recommendation
       </div>
 
       {isDone && data.verdict && (
         <div style={{
-          fontSize: 9, fontWeight: 700, color: st.dot,
+          fontSize: 13, fontWeight: 700, color: st.dot,
           border: `1px solid ${st.dot}33`, borderRadius: 2,
           padding: '4px 10px', display: 'inline-block', letterSpacing: '0.1em',
         }}>
@@ -211,10 +211,10 @@ const DecisionFlowNode = memo(({ data }: { data: DecisionData }) => {
       )}
 
       {isRun && (
-        <div style={{ fontSize: 8, color: '#555', letterSpacing: '0.08em' }}>DELIBERATING...</div>
+        <div style={{ fontSize: 11, color: '#555', letterSpacing: '0.08em' }}>DELIBERATING...</div>
       )}
 
-      <div style={{ marginTop: 10, fontSize: 7, color: '#252525', letterSpacing: '0.09em', textTransform: 'uppercase' }}>
+      <div style={{ marginTop: 10, fontSize: 10, color: '#252525', letterSpacing: '0.09em', textTransform: 'uppercase' }}>
         decision_board.py · Rule-based weighted avg
       </div>
 
@@ -237,15 +237,15 @@ const OutputNode = memo(({ data }: { data: OutputData }) => (
     <Handle type="target" position={Position.Left} style={H} />
     <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 8 }}>
       <div style={{ width: 5, height: 5, borderRadius: '50%', background: data.ready ? data.accentColor : '#1e2a1e', flexShrink: 0 }} />
-      <span style={{ fontSize: 7, letterSpacing: '0.18em', color: data.ready ? data.accentColor : '#1e2a1e', textTransform: 'uppercase', fontWeight: 700 }}>
+      <span style={{ fontSize: 10, letterSpacing: '0.18em', color: data.ready ? data.accentColor : '#1e2a1e', textTransform: 'uppercase', fontWeight: 700 }}>
         OUTPUT
       </span>
     </div>
-    <div style={{ fontSize: 10, color: data.ready ? '#d8d8d8' : '#2a3a2a', fontWeight: 600, lineHeight: 1.4, marginBottom: 6 }}>
+    <div style={{ fontSize: 14, color: data.ready ? '#d8d8d8' : '#2a3a2a', fontWeight: 600, lineHeight: 1.4, marginBottom: 6 }}>
       {data.title}
     </div>
-    <div style={{ fontSize: 8, color: data.ready ? '#444' : '#1e2a1e', lineHeight: 1.65, marginBottom: 6 }}>{data.desc}</div>
-    <div style={{ fontSize: 7, color: '#1a241a', letterSpacing: '0.09em', textTransform: 'uppercase' }}>{data.sub}</div>
+    <div style={{ fontSize: 11, color: data.ready ? '#444' : '#1e2a1e', lineHeight: 1.65, marginBottom: 6 }}>{data.desc}</div>
+    <div style={{ fontSize: 10, color: '#1a241a', letterSpacing: '0.09em', textTransform: 'uppercase' }}>{data.sub}</div>
   </div>
 ))
 OutputNode.displayName = 'OutputNode'
@@ -473,7 +473,7 @@ export function SystemDesign({ agentStates, hasRun = false, dbRowCount = 0 }: Sy
       /* Infra → Financial (sequential dependency) */
       edge('e-infra-fin', 'infrastructure', 'financial',
         agentActive('infrastructure') ? amber : '#1e1e1e',
-        { label: 'delay est.', labelStyle: { fontSize: 7, fill: '#2a2a2a', fontFamily: FONT } }),
+        { label: 'delay est.', labelStyle: { fontSize: 10, fill: '#2a2a2a', fontFamily: FONT } }),
 
       /* Agents → Decision Board */
       edge('e-contract-dec',   'contract',       'decision', agentActive('contract')       ? white : '#1a1a1a'),
@@ -513,14 +513,14 @@ export function SystemDesign({ agentStates, hasRun = false, dbRowCount = 0 }: Sy
         display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap',
       }}>
         <div>
-          <div style={{ fontSize: 8, letterSpacing: '0.22em', color: '#2a2a2a', textTransform: 'uppercase', marginBottom: 4 }}>
+          <div style={{ fontSize: 11, letterSpacing: '0.22em', color: '#2a2a2a', textTransform: 'uppercase', marginBottom: 4 }}>
             SYSTEM DESIGN
           </div>
-          <div style={{ fontSize: 11, color: '#c8c8c8', fontWeight: 600 }}>
+          <div style={{ fontSize: 15, color: '#c8c8c8', fontWeight: 600 }}>
             How PreMortem AI Works
           </div>
         </div>
-        <div style={{ fontSize: 9, color: '#2e2e2e', lineHeight: 1.7, maxWidth: 500, borderLeft: '1px solid #1a1a1a', paddingLeft: 16 }}>
+        <div style={{ fontSize: 13, color: '#2e2e2e', lineHeight: 1.7, maxWidth: 500, borderLeft: '1px solid #1a1a1a', paddingLeft: 16 }}>
           Your procurement request flows through specialised AI agents that review contracts, site readiness,
           team availability, and financial risk — then a decision board weighs everything up and gives you a verdict.
         </div>
@@ -528,7 +528,7 @@ export function SystemDesign({ agentStates, hasRun = false, dbRowCount = 0 }: Sy
         {/* Live / idle badge */}
         <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 8 }}>
           <div style={{ width: 5, height: 5, borderRadius: '50%', background: hasRun ? '#22c55e' : '#1e1e1e', flexShrink: 0 }} />
-          <span style={{ fontSize: 7, letterSpacing: '0.16em', color: hasRun ? '#22c55e' : '#2a2a2a', textTransform: 'uppercase' }}>
+          <span style={{ fontSize: 10, letterSpacing: '0.16em', color: hasRun ? '#22c55e' : '#2a2a2a', textTransform: 'uppercase' }}>
             {hasRun ? 'LIVE RUN' : 'AWAITING RUN'}
           </span>
         </div>
@@ -570,18 +570,18 @@ export function SystemDesign({ agentStates, hasRun = false, dbRowCount = 0 }: Sy
         padding: '10px 24px', borderTop: '1px solid #111',
         display: 'flex', alignItems: 'center', gap: 20, flexWrap: 'wrap',
       }}>
-        <span style={{ fontSize: 7, letterSpacing: '0.16em', color: '#1e1e1e', textTransform: 'uppercase' }}>LEGEND</span>
+        <span style={{ fontSize: 10, letterSpacing: '0.16em', color: '#1e1e1e', textTransform: 'uppercase' }}>LEGEND</span>
         {legend.map(l => (
           <div key={l.label} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
             <div style={{ width: 20, height: 1, background: l.color }} />
-            <span style={{ fontSize: 7, color: '#2a2a2a', letterSpacing: '0.1em', textTransform: 'uppercase' }}>{l.label}</span>
+            <span style={{ fontSize: 10, color: '#2a2a2a', letterSpacing: '0.1em', textTransform: 'uppercase' }}>{l.label}</span>
           </div>
         ))}
         <div style={{ marginLeft: 'auto', display: 'flex', gap: 14 }}>
           {(['idle', 'running', 'green', 'amber', 'red'] as St[]).map(s => (
             <div key={s} style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
               <div style={{ width: 5, height: 5, borderRadius: '50%', background: S[s].dot }} />
-              <span style={{ fontSize: 7, color: '#252525', letterSpacing: '0.1em', textTransform: 'uppercase' }}>{s}</span>
+              <span style={{ fontSize: 10, color: '#252525', letterSpacing: '0.1em', textTransform: 'uppercase' }}>{s}</span>
             </div>
           ))}
         </div>

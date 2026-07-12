@@ -7,7 +7,7 @@ function Lbl({ children, color }: { children: string; color?: string }) {
   const { theme: C } = useTheme()
   return (
     <span style={{
-      fontSize: 8, letterSpacing: '0.18em', textTransform: 'uppercase',
+      fontSize: 11, letterSpacing: '0.18em', textTransform: 'uppercase',
       color: color ?? C.muted, fontWeight: 600, fontFamily: FONT,
     }}>
       {children}
@@ -26,14 +26,14 @@ function ComingSoon({ label, description }: { label: string; description: string
         <div style={{ width: 5, height: 5, borderRadius: '50%', background: '#1e2a2a', flexShrink: 0 }} />
         <Lbl>{label}</Lbl>
         <span style={{
-          marginLeft: 'auto', fontSize: 7, letterSpacing: '0.14em',
+          marginLeft: 'auto', fontSize: 10, letterSpacing: '0.14em',
           color: '#2a2a2a', fontFamily: FONT, border: `1px solid #1a1a1a`,
           borderRadius: 2, padding: '1px 6px',
         }}>
           BACKEND PENDING
         </span>
       </div>
-      <div style={{ fontSize: 9, color: '#2e2e2e', fontFamily: FONT, lineHeight: 1.6, paddingLeft: 15 }}>
+      <div style={{ fontSize: 13, color: '#2e2e2e', fontFamily: FONT, lineHeight: 1.6, paddingLeft: 15 }}>
         {description}
       </div>
     </div>
@@ -68,14 +68,14 @@ export function InvoiceMonitor() {
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
             <Lbl>Invoice Monitoring / Post-Award</Lbl>
             <span style={{
-              fontSize: 7, letterSpacing: '0.14em', fontFamily: FONT,
+              fontSize: 10, letterSpacing: '0.14em', fontFamily: FONT,
               color: '#1e3a3a', border: `1px solid #1a2a2a`,
               borderRadius: 2, padding: '2px 8px',
             }}>
               AGENT BACKEND PENDING
             </span>
           </div>
-          <div style={{ fontSize: 9, color: '#2a2a2a', fontFamily: FONT, marginTop: 6, lineHeight: 1.65, letterSpacing: '0.04em' }}>
+          <div style={{ fontSize: 13, color: '#2a2a2a', fontFamily: FONT, marginTop: 6, lineHeight: 1.65, letterSpacing: '0.04em' }}>
             Monitor vendor invoices, recurring charges, warranty coverage, and service commitments after award.
             Detect anomalies, contract non-compliance, and lifecycle cost drift.
           </div>
@@ -94,7 +94,7 @@ export function InvoiceMonitor() {
             placeholder="e.g. RUN-BID-001-001"
             style={{
               flex: 1, background: '#0a0a0a', border: `1px solid ${C.border}`,
-              borderRadius: 2, padding: '6px 10px', fontSize: 9,
+              borderRadius: 2, padding: '6px 10px', fontSize: 13,
               color: C.text, fontFamily: FONT, outline: 'none',
             }}
           />
@@ -102,7 +102,7 @@ export function InvoiceMonitor() {
             disabled
             style={{
               background: 'none', border: `1px solid ${C.border}`, borderRadius: 2,
-              padding: '6px 18px', fontSize: 8, letterSpacing: '0.14em',
+              padding: '6px 18px', fontSize: 11, letterSpacing: '0.14em',
               textTransform: 'uppercase', color: '#2a2a2a', fontFamily: FONT, cursor: 'not-allowed',
             }}
           >
@@ -117,10 +117,10 @@ export function InvoiceMonitor() {
             style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}
           >
             <Lbl>Expected Invoice Schedule</Lbl>
-            <span style={{ fontSize: 7, color: '#1e3a3a', fontFamily: FONT, border: `1px solid #1a2a2a`, borderRadius: 2, padding: '1px 6px' }}>
+            <span style={{ fontSize: 10, color: '#1e3a3a', fontFamily: FONT, border: `1px solid #1a2a2a`, borderRadius: 2, padding: '1px 6px' }}>
               PREVIEW — REQUIRES AWARDED CONTRACT
             </span>
-            <span style={{ marginLeft: 'auto', fontSize: 9, color: '#2a2a2a', fontFamily: FONT }}>
+            <span style={{ marginLeft: 'auto', fontSize: 13, color: '#2a2a2a', fontFamily: FONT }}>
               {showSchedule ? '▲' : '▼'}
             </span>
           </button>
@@ -131,7 +131,7 @@ export function InvoiceMonitor() {
               <div style={{
                 display: 'grid', gridTemplateColumns: '2fr 1fr 1.5fr 1fr 80px',
                 padding: '8px 16px', borderBottom: `1px solid ${C.border}`,
-                fontSize: 7, letterSpacing: '0.14em', color: C.muted, fontFamily: FONT,
+                fontSize: 10, letterSpacing: '0.14em', color: C.muted, fontFamily: FONT,
                 textTransform: 'uppercase', gap: 8,
               }}>
                 {['Milestone', 'Share', 'Timing', 'Amount', 'Status'].map(h => <div key={h}>{h}</div>)}
@@ -142,7 +142,7 @@ export function InvoiceMonitor() {
                   style={{
                     display: 'grid', gridTemplateColumns: '2fr 1fr 1.5fr 1fr 80px',
                     padding: '9px 16px', borderBottom: `1px solid ${C.border}`,
-                    fontSize: 9, color: '#666', fontFamily: FONT, gap: 8,
+                    fontSize: 13, color: '#666', fontFamily: FONT, gap: 8,
                     background: i % 2 === 0 ? 'transparent' : '#060606',
                   }}
                 >
@@ -152,7 +152,7 @@ export function InvoiceMonitor() {
                   <div style={{ color: '#666', fontWeight: 600 }}>{row.amount}</div>
                   <div>
                     <span style={{
-                      fontSize: 7, letterSpacing: '0.1em', textTransform: 'uppercase',
+                      fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase',
                       color: STATUS_COLORS[row.status] ?? '#2a2a2a',
                       border: `1px solid ${STATUS_COLORS[row.status] ?? '#1a1a1a'}33`,
                       borderRadius: 2, padding: '1px 6px', fontFamily: FONT,
@@ -162,7 +162,7 @@ export function InvoiceMonitor() {
                   </div>
                 </div>
               ))}
-              <div style={{ padding: '8px 16px', fontSize: 7, color: '#1e1e1e', fontFamily: FONT, letterSpacing: '0.08em' }}>
+              <div style={{ padding: '8px 16px', fontSize: 10, color: '#1e1e1e', fontFamily: FONT, letterSpacing: '0.08em' }}>
                 Illustrative only — actual schedule loads from awarded contract terms
               </div>
             </div>
@@ -213,8 +213,8 @@ export function InvoiceMonitor() {
               'Export compliance report for audit and vendor negotiation',
             ].map((item, i) => (
               <div key={i} style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
-                <span style={{ fontSize: 8, color: '#1e3a3a', fontFamily: FONT, flexShrink: 0, marginTop: 1 }}>{String(i + 1).padStart(2, '0')}</span>
-                <span style={{ fontSize: 9, color: '#2a4a4a', fontFamily: FONT, lineHeight: 1.5 }}>{item}</span>
+                <span style={{ fontSize: 11, color: '#1e3a3a', fontFamily: FONT, flexShrink: 0, marginTop: 1 }}>{String(i + 1).padStart(2, '0')}</span>
+                <span style={{ fontSize: 13, color: '#2a4a4a', fontFamily: FONT, lineHeight: 1.5 }}>{item}</span>
               </div>
             ))}
           </div>

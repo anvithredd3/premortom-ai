@@ -1,0 +1,285 @@
+{
+  "procurement_name": "GE Signa Explorer 1.5T MRI System",
+  "equipment_type": "MRI Machine. Medical Equipment",
+  "contract_value_cr": 8.5,
+  "overall_risk_score": 79.0,
+  "failure_probability_pct": 84.0,
+  "confidence_pct": 69.0,
+  "predicted_delay_months": 10.5,
+  "projected_financial_loss_cr": 0.694,
+  "predicted_failure_mode": "Equipment delivered before site readiness.",
+  "supporting_evidence": [
+    "Construction completion is only at 20%, indicating significant site readiness work is still required.",
+    "Warranty starts on delivery, which is risky given the pending site readiness and regulatory approval.",
+    "There is a gap of 1 technician between available and required personnel for operating the MRI machine.",
+    "\u20b91.275 Cr released as advance payment, which is 15% of the contract value.",
+    "Historical projects show significant delays when procurement occurs before site readiness and regulatory approvals."
+  ],
+  "predicted_outcomes": [
+    "Installation delay: 9.5-12.5 months",
+    "Projected financial loss: \u20b90.69 Cr",
+    "Idle asset exposure: \u20b90.68 Cr / year",
+    "Warranty loss: ~10 months of coverage consumed while idle",
+    "High probability of underutilisation"
+  ],
+  "recommended_decision": "NO-GO",
+  "conditions": [
+    "Facility readiness reaches 95%.",
+    "Electrical readiness completed and energised.",
+    "All regulatory/safety approvals completed.",
+    "Required technicians hired and certified.",
+    "Warranty revised to start at commissioning date."
+  ],
+  "agent_results": [
+    {
+      "agent": "Contract Risk Agent",
+      "status": "completed",
+      "risk_score": 50.0,
+      "risk_level": "MODERATE",
+      "findings": [
+        "Warranty starts on delivery, which is risky given the pending site readiness and regulatory approval.",
+        "Advance payment is 15%, which is reasonable and below the industry norm for MRI machines.",
+        "Vendor is responsible for installation, which reduces risk, but site readiness and regulatory approval are pending.",
+        "Training is included, which is favorable for operational readiness.",
+        "Electrical readiness is pending, which could delay installation and commissioning.",
+        "Regulatory approval has not started, posing a risk to the timeline."
+      ],
+      "evidence": [
+        "Warranty start: On Delivery",
+        "Advance payment: 15%",
+        "Installation responsibility: Vendor",
+        "Training included: true",
+        "Electrical readiness: Pending",
+        "Regulatory approval status: Not Started"
+      ],
+      "reasoning": "The warranty starting on delivery is a significant risk because the site is not yet ready, and regulatory approvals have not begun. This could lead to a situation where the warranty period is consumed before the MRI system is operational. However, the vendor's responsibility for installation and the inclusion of training are positive factors that mitigate some risks. The advance payment of 15% is below the typical industry norm, reducing financial exposure. The pending electrical readiness and regulatory approvals are critical risks that could delay the project.",
+      "recommendation": "Negotiate for the warranty to start upon commissioning rather than delivery to align with site readiness and regulatory approval timelines. Ensure that electrical readiness and regulatory approvals are prioritized to avoid delays. Consider securing a bank guarantee for the advance payment to further mitigate financial risk.",
+      "metrics": {
+        "advance_released_cr": 1.275,
+        "warranty_start": "On Delivery",
+        "vendor_emphasis": [
+          "Installation responsibility",
+          "Training inclusion"
+        ],
+        "missing_contract_information": [
+          "Specific acceptance criteria for installation",
+          "Details on regulatory approval process"
+        ],
+        "extra_contract_information": [
+          "ISO 13485 certification",
+          "5-year service contract"
+        ],
+        "unusual_terms": [
+          "Warranty starting on delivery despite pending site readiness"
+        ],
+        "evidence_quality": "medium",
+        "marketing_vs_specificity": "specific",
+        "implementation_specificity": "medium",
+        "follow_up_questions": [
+          "What are the specific acceptance criteria for installation?",
+          "What is the timeline and process for obtaining regulatory approval?",
+          "What measures are in place to ensure electrical readiness?"
+        ]
+      }
+    },
+    {
+      "agent": "Infrastructure Readiness Agent",
+      "status": "completed",
+      "risk_score": 95.0,
+      "risk_level": "CRITICAL",
+      "findings": [
+        "Construction completion is only at 20%, indicating significant site readiness work is still required.",
+        "Electrical readiness is pending, which is critical for MRI installation due to high power requirements.",
+        "Regulatory approval status is not started, which is essential for medical equipment installation.",
+        "There is a shortage of technicians, with only 3 available out of the 4 required."
+      ],
+      "evidence": [
+        "construction_completion_pct: 20.0",
+        "electrical_readiness: Pending",
+        "regulatory_approval_status: Not Started",
+        "technicians_available: 3",
+        "technicians_required: 4"
+      ],
+      "reasoning": "The installation of an MRI machine requires a highly controlled environment, including shielded rooms, medical gas lines, and specific regulatory approvals. With construction only 20% complete, the physical space is far from ready. The pending electrical readiness is a critical bottleneck, as MRI systems require stable and substantial power supply. Regulatory approvals are not started, which can significantly delay installation. The shortage of technicians further exacerbates the risk of delay. These factors collectively suggest a high risk of installation delay.",
+      "recommendation": "Ensure construction completion reaches at least 80% with all necessary shielding and infrastructure in place. Secure electrical readiness with stable power supply and redundancy. Obtain all necessary regulatory approvals before delivery. Hire or train additional technicians to meet the required number.",
+      "metrics": {
+        "readiness_pct": 20,
+        "construction_pct": 20,
+        "predicted_delay_months": 10.5,
+        "delay_range": "9.5-12.5 months"
+      }
+    },
+    {
+      "agent": "Workforce Readiness Agent",
+      "status": "completed",
+      "risk_score": 70.0,
+      "risk_level": "HIGH",
+      "findings": [
+        "There is a gap of 1 technician between available and required personnel for operating the MRI machine.",
+        "Training is included in the contract, which mitigates some risk.",
+        "Regulatory approval status is not started, which could delay operational readiness.",
+        "Electrical readiness is pending, which is critical for MRI installation and operation."
+      ],
+      "evidence": [
+        "technicians_available: 3",
+        "technicians_required: 4",
+        "training_included: true",
+        "regulatory_approval_status: Not Started",
+        "electrical_readiness: Pending"
+      ],
+      "reasoning": "The procurement of the GE Signa Explorer 1.5T MRI System requires specialized personnel to operate and maintain the equipment. With only 3 out of the required 4 technicians available, there is a significant gap that could impact the operational readiness of the MRI system. Although training is included in the contract, which helps to address skill gaps, the lack of regulatory approval and pending electrical readiness pose additional risks. These factors contribute to a high operational risk score, as the MRI system may not be usable upon arrival without addressing these issues.",
+      "recommendation": "Hire or train 1 additional technician with MRI operation and maintenance certification. Expedite regulatory approval processes and ensure electrical readiness is completed before delivery.",
+      "metrics": {
+        "staff_readiness_pct": 75,
+        "operator_gap": 1
+      }
+    },
+    {
+      "agent": "Financial Exposure Agent",
+      "status": "completed",
+      "risk_score": 85.0,
+      "risk_level": "CRITICAL",
+      "findings": [
+        "\u20b91.275 Cr released as advance payment, which is 15% of the contract value.",
+        "Idle cost due to predicted delay is \u20b90.595 Cr.",
+        "Warranty erosion due to delay is \u20b90.099 Cr.",
+        "Total projected financial loss is \u20b90.694 Cr."
+      ],
+      "evidence": [
+        "advance_cr = 8.5 \u00d7 15.0 / 100 = 1.275",
+        "idle_cost_cr = 8.5 \u00d7 0.08 \u00d7 (10.5 / 12) = 0.595",
+        "warranty_loss_cr = 8.5 \u00d7 (10.5 / 36) \u00d7 0.04 = 0.099",
+        "projected_loss_cr = 0.595 + 0.099 = 0.694",
+        "annual_idle_cost_cr = 8.5 \u00d7 0.08 = 0.68"
+      ],
+      "reasoning": "The advance payment of \u20b91.275 Cr exposes funds significantly ahead of value realization, especially given the predicted delay of 10.5 months. The idle cost is substantial due to the high capital nature of MRI machines, which require site readiness and regulatory approvals. The warranty erosion further adds to the financial risk as the warranty period effectively shortens due to the delay.",
+      "recommendation": "Implement financial safeguards such as performance bonds or bank guarantees to mitigate advance payment risk. Consider escrow arrangements to ensure funds are released only upon meeting specific milestones, such as site readiness and regulatory approvals. Additionally, negotiate extended warranty terms to cover the delay period.",
+      "metrics": {
+        "advance_cr": 1.275,
+        "idle_cost_cr": 0.595,
+        "warranty_loss_cr": 0.099,
+        "projected_loss_cr": 0.694,
+        "annual_idle_cost_cr": 0.68
+      }
+    },
+    {
+      "agent": "Historical Intelligence Agent",
+      "status": "completed",
+      "risk_score": 85.0,
+      "risk_level": "CRITICAL",
+      "findings": [
+        "Historical projects show significant delays when procurement occurs before site readiness and regulatory approvals.",
+        "MRI machines, like other high-tech medical equipment, require specialized installation and trained operators, which were lacking in past failures.",
+        "Projects with incomplete electrical and construction readiness have consistently faced delays and underutilization."
+      ],
+      "evidence": [
+        "AIIMS-MRI-2019: Equipment idle 9 months, warranty partially lost.",
+        "AIIMS-MRI-72CR-2017: Asset unused; landmark procurement failure.",
+        "STATE-CT-2020: 7-month delay, underutilised for first year."
+      ],
+      "reasoning": "The current procurement of the GE Signa Explorer 1.5T MRI System is at high risk of delay and failure due to several factors observed in historical benchmarks. The site is only 20% ready, with electrical readiness pending and regulatory approvals not started, similar to the AIIMS-MRI-2019 and AIIMS-MRI-72CR-2017 projects, which faced significant delays and underutilization. Additionally, the lack of sufficient trained technicians mirrors issues seen in the STATE-CT-2020 project. Given the specialized nature of MRI installations and the high demand for such equipment, these readiness issues are critical and historically lead to delays and failures.",
+      "recommendation": "Ensure site readiness, including electrical and construction completion, before delivery. Secure regulatory approvals and ensure all required technicians are trained and available. Consider a phased procurement approach, aligning delivery with site readiness milestones.",
+      "metrics": {
+        "avg_delay_months": 8.33,
+        "failure_probability_pct": 90,
+        "delay_probability_pct": 95,
+        "benchmark_ids": [
+          "AIIMS-MRI-2019",
+          "AIIMS-MRI-72CR-2017",
+          "STATE-CT-2020"
+        ]
+      }
+    }
+  ],
+  "debate": [
+    {
+      "agent": "Infrastructure Agent",
+      "statements": [
+        "Facility readiness is only 20%.",
+        "Installation is impossible until civil and electrical works close.",
+        "Predicted installation delay: 9.5-12.5 months."
+      ]
+    },
+    {
+      "agent": "Contract Agent",
+      "statements": [
+        "Warranty begins at On Delivery.",
+        "Coverage loss is expected while the asset sits idle."
+      ]
+    },
+    {
+      "agent": "Financial Agent",
+      "statements": [
+        "\u20b91.27 Crore released before a usable asset exists.",
+        "Projected loss of \u20b90.69 Crore."
+      ]
+    },
+    {
+      "agent": "Workforce Agent",
+      "statements": [
+        "1 operators short - no one to run the equipment.",
+        "Equipment likely idle even after installation."
+      ]
+    },
+    {
+      "agent": "Historical Agent",
+      "statements": [
+        "Comparable projects averaged 8.33 months of delay.",
+        "Failure probability from precedent: 90%."
+      ]
+    }
+  ],
+  "scenarios": [
+    {
+      "name": "Best Case",
+      "timeline_months": 4.2,
+      "financial_impact_cr": 0.24,
+      "operational_impact": "Fast-tracked readiness; limited idle period and high eventual utilisation.",
+      "probability_pct": 6.0
+    },
+    {
+      "name": "Expected Case",
+      "timeline_months": 10.5,
+      "financial_impact_cr": 0.6,
+      "operational_impact": "Installation delayed pending civil, electrical and regulatory closure; asset idle through the gap.",
+      "probability_pct": 84.0
+    },
+    {
+      "name": "Worst Case",
+      "timeline_months": 16.8,
+      "financial_impact_cr": 0.95,
+      "operational_impact": "Prolonged idleness, warranty expiry before go-live and chronic underutilisation of the asset.",
+      "probability_pct": 59.0
+    }
+  ],
+  "generated_at": "2026-07-10T14:07:38.418222+00:00",
+  "run_id": "PM-001",
+  "created_at": "2026-07-10T14:07:38.420006+00:00",
+  "input": {
+    "procurement_name": "GE Signa Explorer 1.5T MRI System",
+    "equipment_type": "MRI Machine. Medical Equipment",
+    "contract_value_cr": 8.5,
+    "advance_payment_pct": 15.0,
+    "delivery_timeline_months": 6.0,
+    "warranty_start": "On Delivery",
+    "installation_responsibility": "Vendor",
+    "training_included": true,
+    "construction_completion_pct": 20.0,
+    "electrical_readiness": "Pending",
+    "regulatory_approval_status": "Not Started",
+    "technicians_available": 3,
+    "technicians_required": 4,
+    "historical_delays_months": [
+      12.0,
+      24.0,
+      36.0
+    ],
+    "category": "medical_equipment",
+    "item_research_context": "Procuring an MRI system involves long lead times due to manufacturing and shipping. Key considerations include site readiness, regulatory approvals, and specialized installation. The market is characterized by a few major suppliers and high demand for advanced imaging capabilities.",
+    "extra_fields": {
+      "modality_type": "1.5T",
+      "iso_certification": "ISO 13485",
+      "service_contract_years": 5
+    }
+  }
+}

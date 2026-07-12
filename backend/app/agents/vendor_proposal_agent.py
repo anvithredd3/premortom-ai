@@ -373,7 +373,8 @@ def _llm_enrichment(quote: Dict[str, str], raw_text: str) -> Dict[str, object]:
         name=NAME,
         instructions=_build_instructions(),
         user_payload=json.dumps(payload),
-        temperature=0.1,
+        use_sonnet=True,
+        temperature=0,
     )
     return result or {}
 

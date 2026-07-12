@@ -114,7 +114,7 @@ function Label({ children, color }: { children: string; color?: string }) {
   const { theme: C } = useTheme()
   return (
     <span style={{
-      fontSize: 8, letterSpacing: '0.18em', textTransform: 'uppercase',
+      fontSize: 11, letterSpacing: '0.18em', textTransform: 'uppercase',
       color: color ?? C.muted, fontWeight: 600, fontFamily: FONT,
     }}>
       {children}
@@ -151,7 +151,7 @@ function SectionTitle({ label, badge, badgeColor }: {
       <Label>{label}</Label>
       {badge && (
         <span style={{
-          fontSize: 8, letterSpacing: '0.1em', textTransform: 'uppercase',
+          fontSize: 11, letterSpacing: '0.1em', textTransform: 'uppercase',
           background: `${badgeColor ?? C.accent}18`, border: `1px solid ${badgeColor ?? C.accent}44`,
           color: badgeColor ?? C.accent, borderRadius: 2, padding: '2px 7px', fontFamily: FONT,
         }}>
@@ -170,7 +170,7 @@ function Chip({ label, value, valueColor }: { label: string; value: string; valu
     }}>
       <Label>{label}</Label>
       <div style={{
-        fontSize: 13, fontWeight: 700, color: valueColor ?? C.text,
+        fontSize: 18, fontWeight: 700, color: valueColor ?? C.text,
         marginTop: 5, letterSpacing: '-0.02em', fontFamily: FONT,
       }}>
         {value}
@@ -187,19 +187,19 @@ function SourceLink({ item, isEvidence }: { item: ResearchItem; isEvidence?: boo
       borderRadius: 2, marginBottom: 6,
     }}>
       {isEvidence || !item.url ? (
-        <div style={{ fontSize: 9, color: '#666', fontFamily: FONT, lineHeight: 1.55 }}>
+        <div style={{ fontSize: 13, color: '#666', fontFamily: FONT, lineHeight: 1.55 }}>
           {item.title}
         </div>
       ) : (
         <>
           <a href={item.url} target="_blank" rel="noreferrer" style={{
-            fontSize: 9, color: '#4a7faa', textDecoration: 'none', display: 'block', marginBottom: 2,
+            fontSize: 13, color: '#4a7faa', textDecoration: 'none', display: 'block', marginBottom: 2,
             fontFamily: FONT,
           }}>
             ↗ {item.title || item.url}
           </a>
           {item.snippet && item.snippet !== item.title && (
-            <div style={{ fontSize: 8, color: '#3a3a3a', lineHeight: 1.55, fontFamily: FONT }}>
+            <div style={{ fontSize: 11, color: '#3a3a3a', lineHeight: 1.55, fontFamily: FONT }}>
               {item.snippet.slice(0, 140)}{item.snippet.length > 140 ? '…' : ''}
             </div>
           )}
@@ -217,7 +217,7 @@ function TelemetryRow({ state }: { state: AgentState }) {
   return (
     <div style={{
       display: 'flex', gap: 16, paddingTop: 10, borderTop: `1px solid ${C.border}`,
-      fontSize: 8, color: '#3a3a3a', letterSpacing: '0.08em', fontFamily: FONT,
+      fontSize: 11, color: '#3a3a3a', letterSpacing: '0.08em', fontFamily: FONT,
     }}>
       <span><Label>MODEL</Label>&nbsp;&nbsp;{model}</span>
       <span><Label>TOKENS</Label>&nbsp;&nbsp;{toks}</span>
@@ -235,7 +235,7 @@ function ChartSkeleton({ h }: { h: number }) {
   return (
     <div style={{
       height: h, display: 'flex', alignItems: 'center', justifyContent: 'center',
-      fontSize: 8, color: '#222', letterSpacing: '0.14em', fontFamily: FONT,
+      fontSize: 11, color: '#222', letterSpacing: '0.14em', fontFamily: FONT,
     }}>
       LOADING
     </div>
@@ -250,7 +250,7 @@ function EmptyState({ message }: { message: string }) {
       flexDirection: 'column', gap: 12, padding: 40,
     }}>
       <div style={{ width: 40, height: 1, background: C.border }} />
-      <div style={{ fontSize: 9, color: '#2a2a2a', letterSpacing: '0.18em', fontFamily: FONT }}>
+      <div style={{ fontSize: 13, color: '#2a2a2a', letterSpacing: '0.18em', fontFamily: FONT }}>
         {message}
       </div>
       <div style={{ width: 40, height: 1, background: C.border }} />
@@ -288,7 +288,7 @@ function ChartsSection({ agentStates }: { agentStates: Record<AgentId, AgentStat
       <div style={{ display: 'grid', gridTemplateColumns: '1.6fr 1fr', gap: 16, marginBottom: 16 }}>
         <div style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 2, padding: '14px 16px' }}>
           <Label>RISK SCORE BY AGENT</Label>
-          <div style={{ fontSize: 8, color: C.muted, fontFamily: FONT, marginBottom: 8, letterSpacing: '0.06em' }}>
+          <div style={{ fontSize: 11, color: C.muted, fontFamily: FONT, marginBottom: 8, letterSpacing: '0.06em' }}>
             {scores.every(s => s === 0) ? 'awaiting results' : '0 – 100'}
           </div>
           <Suspense fallback={<ChartSkeleton h={180} />}>
@@ -350,7 +350,7 @@ function ChartsSection({ agentStates }: { agentStates: Record<AgentId, AgentStat
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
         <div style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 2, padding: '14px 16px' }}>
           <Label>TOKENS BY AGENT</Label>
-          <div style={{ fontSize: 8, color: C.muted, fontFamily: FONT, marginBottom: 8, letterSpacing: '0.06em' }}>in + out</div>
+          <div style={{ fontSize: 11, color: C.muted, fontFamily: FONT, marginBottom: 8, letterSpacing: '0.06em' }}>in + out</div>
           <Suspense fallback={<ChartSkeleton h={150} />}>
             <Plot
               style={chartStyle}
@@ -374,7 +374,7 @@ function ChartsSection({ agentStates }: { agentStates: Record<AgentId, AgentStat
 
         <div style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 2, padding: '14px 16px' }}>
           <Label>LATENCY BY AGENT</Label>
-          <div style={{ fontSize: 8, color: C.muted, fontFamily: FONT, marginBottom: 8, letterSpacing: '0.06em' }}>seconds</div>
+          <div style={{ fontSize: 11, color: C.muted, fontFamily: FONT, marginBottom: 8, letterSpacing: '0.06em' }}>seconds</div>
           <Suspense fallback={<ChartSkeleton h={150} />}>
             <Plot
               style={chartStyle}
@@ -418,14 +418,14 @@ function ProfilerSection({ category, research, missingFields, confirmedInput }: 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 20 }}>
         <div style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 2, padding: '10px 14px' }}>
           <Label>INFERRED FROM RESEARCH</Label>
-          <div style={{ fontSize: 13, fontWeight: 700, color: C.green, marginTop: 5, fontFamily: FONT }}>
-            {inferred.length}<span style={{ fontSize: 9, color: C.textDim, fontWeight: 400, marginLeft: 6 }}>fields</span>
+          <div style={{ fontSize: 18, fontWeight: 700, color: C.green, marginTop: 5, fontFamily: FONT }}>
+            {inferred.length}<span style={{ fontSize: 13, color: C.textDim, fontWeight: 400, marginLeft: 6 }}>fields</span>
           </div>
           {inferred.length > 0 && (
             <div style={{ marginTop: 8, display: 'flex', flexWrap: 'wrap', gap: 4 }}>
               {inferred.slice(0, 8).map(k => (
                 <span key={k} style={{
-                  fontSize: 7, letterSpacing: '0.08em', color: C.textDim,
+                  fontSize: 10, letterSpacing: '0.08em', color: C.textDim,
                   background: C.green + '10', border: `1px solid ${C.green}33`,
                   borderRadius: 2, padding: '1px 5px', fontFamily: FONT,
                 }}>
@@ -433,7 +433,7 @@ function ProfilerSection({ category, research, missingFields, confirmedInput }: 
                 </span>
               ))}
               {inferred.length > 8 && (
-                <span style={{ fontSize: 7, color: C.muted, fontFamily: FONT, padding: '1px 4px' }}>
+                <span style={{ fontSize: 10, color: C.muted, fontFamily: FONT, padding: '1px 4px' }}>
                   +{inferred.length - 8}
                 </span>
               )}
@@ -443,14 +443,14 @@ function ProfilerSection({ category, research, missingFields, confirmedInput }: 
 
         <div style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 2, padding: '10px 14px' }}>
           <Label>PROVIDED BY USER</Label>
-          <div style={{ fontSize: 13, fontWeight: 700, color: C.amber, marginTop: 5, fontFamily: FONT }}>
-            {userProvided.length}<span style={{ fontSize: 9, color: C.textDim, fontWeight: 400, marginLeft: 6 }}>fields</span>
+          <div style={{ fontSize: 18, fontWeight: 700, color: C.amber, marginTop: 5, fontFamily: FONT }}>
+            {userProvided.length}<span style={{ fontSize: 13, color: C.textDim, fontWeight: 400, marginLeft: 6 }}>fields</span>
           </div>
           {userProvided.length > 0 && (
             <div style={{ marginTop: 8, display: 'flex', flexWrap: 'wrap', gap: 4 }}>
               {userProvided.map(k => (
                 <span key={k} style={{
-                  fontSize: 7, letterSpacing: '0.08em', color: C.amber,
+                  fontSize: 10, letterSpacing: '0.08em', color: C.amber,
                   background: C.amber + '10', border: `1px solid ${C.amber}33`,
                   borderRadius: 2, padding: '1px 5px', fontFamily: FONT,
                 }}>
@@ -465,7 +465,7 @@ function ProfilerSection({ category, research, missingFields, confirmedInput }: 
       {confirmedInput && (
         <details style={{ marginBottom: 16 }}>
           <summary style={{
-            cursor: 'pointer', fontSize: 8, letterSpacing: '0.14em', color: C.muted,
+            cursor: 'pointer', fontSize: 11, letterSpacing: '0.14em', color: C.muted,
             textTransform: 'uppercase', fontFamily: FONT, fontWeight: 600, userSelect: 'none',
             listStyle: 'none', display: 'flex', alignItems: 'center', gap: 6, marginBottom: 10,
           }}>
@@ -482,10 +482,10 @@ function ProfilerSection({ category, research, missingFields, confirmedInput }: 
                   background: C.surface2, border: `1px solid ${isMissing ? C.amber + '44' : C.border}`,
                   borderRadius: 2, padding: '6px 8px',
                 }}>
-                  <div style={{ fontSize: 7, letterSpacing: '0.1em', textTransform: 'uppercase', color: isMissing ? C.amber : C.muted, marginBottom: 3, fontFamily: FONT }}>
+                  <div style={{ fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', color: isMissing ? C.amber : C.muted, marginBottom: 3, fontFamily: FONT }}>
                     {label}
                   </div>
-                  <div style={{ fontSize: 9, color: isMissing ? C.amber : C.textDim, fontFamily: FONT }}>
+                  <div style={{ fontSize: 13, color: isMissing ? C.amber : C.textDim, fontFamily: FONT }}>
                     {Array.isArray(val) ? val.join(', ') : String(val)}
                   </div>
                 </div>
@@ -504,7 +504,7 @@ function ProfilerSection({ category, research, missingFields, confirmedInput }: 
         </>
       )}
       {research.length === 0 && (
-        <div style={{ fontSize: 9, color: C.muted, fontFamily: FONT }}>no web research (sample data or offline)</div>
+        <div style={{ fontSize: 13, color: C.muted, fontFamily: FONT }}>no web research (sample data or offline)</div>
       )}
     </SectionCard>
   )
@@ -533,14 +533,14 @@ function AgentSection({ id, state, sectionRef }: {
       >
         <div style={{ width: 5, height: 5, borderRadius: '50%', background: isDone ? vCol : C.muted, flexShrink: 0 }} />
         <span style={{
-          fontSize: 8, letterSpacing: '0.18em', textTransform: 'uppercase',
+          fontSize: 11, letterSpacing: '0.18em', textTransform: 'uppercase',
           color: isDone ? C.muted : C.muted, fontWeight: 600, fontFamily: FONT,
         }}>
           {AGENT_NAMES[id]}
         </span>
         {isDone && score > 0 && (
           <span style={{
-            fontSize: 8, letterSpacing: '0.1em', color: vCol, fontFamily: FONT,
+            fontSize: 11, letterSpacing: '0.1em', color: vCol, fontFamily: FONT,
             background: `${vCol}14`, border: `1px solid ${vCol}44`,
             borderRadius: 2, padding: '1px 6px',
           }}>
@@ -548,10 +548,10 @@ function AgentSection({ id, state, sectionRef }: {
           </span>
         )}
         {isRunning && (
-          <span style={{ fontSize: 8, color: C.muted, letterSpacing: '0.14em', fontFamily: FONT }}>RUNNING···</span>
+          <span style={{ fontSize: 11, color: C.muted, letterSpacing: '0.14em', fontFamily: FONT }}>RUNNING···</span>
         )}
         {isDone && (
-          <span style={{ fontSize: 9, color: C.muted, marginLeft: 'auto', fontFamily: FONT }}>
+          <span style={{ fontSize: 13, color: C.muted, marginLeft: 'auto', fontFamily: FONT }}>
             {open ? '▲' : '▼'}
           </span>
         )}
@@ -561,7 +561,7 @@ function AgentSection({ id, state, sectionRef }: {
         <div style={{ paddingLeft: 13 }}>
           {state.verdict && (
             <div style={{
-              fontSize: 11, color: vCol, fontWeight: 600, lineHeight: 1.5,
+              fontSize: 15, color: vCol, fontWeight: 600, lineHeight: 1.5,
               marginBottom: 14, fontFamily: FONT,
             }}>
               {state.verdict}
@@ -570,7 +570,7 @@ function AgentSection({ id, state, sectionRef }: {
           {state.summary && (
             <div style={{ marginBottom: 16 }}>
               <Label>REASONING</Label>
-              <div style={{ marginTop: 8, fontSize: 10, color: C.textDim, lineHeight: 1.7, fontFamily: FONT }}>
+              <div style={{ marginTop: 8, fontSize: 14, color: C.textDim, lineHeight: 1.7, fontFamily: FONT }}>
                 {state.summary}
               </div>
             </div>
@@ -609,12 +609,12 @@ function DecisionSection({
     <SectionCard sectionRef={sectionRef}>
       <SectionTitle label="DECISION" />
       {isRunning && (
-        <div style={{ fontSize: 10, color: '#555', fontFamily: FONT, letterSpacing: '0.1em' }}>ANALYZING···</div>
+        <div style={{ fontSize: 14, color: '#555', fontFamily: FONT, letterSpacing: '0.1em' }}>ANALYZING···</div>
       )}
       {runResult && (
         <>
           <div style={{
-            fontSize: 14, fontWeight: 700, color: dCol, lineHeight: 1.5,
+            fontSize: 19, fontWeight: 700, color: dCol, lineHeight: 1.5,
             marginBottom: 20, fontFamily: FONT, letterSpacing: '0.02em',
           }}>
             {decision}
@@ -627,7 +627,7 @@ function DecisionSection({
           {decisionState.summary && (
             <div style={{ marginBottom: 16 }}>
               <Label>PREDICTED FAILURE MODE</Label>
-              <div style={{ marginTop: 8, fontSize: 10, color: '#888', lineHeight: 1.7, fontFamily: FONT }}>
+              <div style={{ marginTop: 8, fontSize: 14, color: '#888', lineHeight: 1.7, fontFamily: FONT }}>
                 {decisionState.summary}
               </div>
             </div>
@@ -638,7 +638,7 @@ function DecisionSection({
               <div style={{ marginTop: 8, display: 'flex', flexDirection: 'column', gap: 8 }}>
                 {runResult.conditions.map((c, i) => (
                   <div key={i} style={{
-                    fontSize: 9, color: '#888', lineHeight: 1.65,
+                    fontSize: 13, color: '#888', lineHeight: 1.65,
                     paddingLeft: 10, borderLeft: `1px solid ${C.faint}`, fontFamily: FONT,
                   }}>
                     {c}
@@ -681,13 +681,13 @@ function AgentCard({ id, state }: { id: AgentId; state: AgentState }) {
           background: isDone ? col : isRunning ? C.textDim : C.faint,
         }} />
         <span style={{
-          fontSize: 9, letterSpacing: '0.18em', textTransform: 'uppercase',
+          fontSize: 13, letterSpacing: '0.18em', textTransform: 'uppercase',
           color: isDone ? C.text : C.muted, fontWeight: 700, fontFamily: FONT, flex: 1,
         }}>
           {AGENT_NAMES[id]}
         </span>
         <span style={{
-          fontSize: 7, letterSpacing: '0.12em', textTransform: 'uppercase',
+          fontSize: 10, letterSpacing: '0.12em', textTransform: 'uppercase',
           background: isDone ? `${col}18` : C.surface2,
           border: `1px solid ${isDone ? `${col}44` : C.border}`,
           color: isDone ? col : C.muted,
@@ -700,27 +700,27 @@ function AgentCard({ id, state }: { id: AgentId; state: AgentState }) {
       {/* Risk score */}
       {isDone && (
         <div style={{ display: 'flex', alignItems: 'baseline', gap: 6, marginBottom: 10 }}>
-          <span style={{ fontSize: 32, fontWeight: 700, color: col, fontFamily: FONT, lineHeight: 1 }}>
+          <span style={{ fontSize: 44, fontWeight: 700, color: col, fontFamily: FONT, lineHeight: 1 }}>
             {score}
           </span>
-          <span style={{ fontSize: 10, color: C.muted, fontFamily: FONT }}>/100</span>
+          <span style={{ fontSize: 14, color: C.muted, fontFamily: FONT }}>/100</span>
         </div>
       )}
 
       {isRunning && (
-        <div style={{ fontSize: 9, color: C.textDim, letterSpacing: '0.14em', marginBottom: 10, fontFamily: FONT }}>
+        <div style={{ fontSize: 13, color: C.textDim, letterSpacing: '0.14em', marginBottom: 10, fontFamily: FONT }}>
           ANALYZING···
         </div>
       )}
 
       {!isDone && !isRunning && (
-        <div style={{ fontSize: 9, color: C.muted, marginBottom: 10, fontFamily: FONT }}>—</div>
+        <div style={{ fontSize: 13, color: C.muted, marginBottom: 10, fontFamily: FONT }}>—</div>
       )}
 
       {/* Verdict */}
       {state.verdict && (
         <div style={{
-          fontSize: 9, color: col, lineHeight: 1.5, marginBottom: 10,
+          fontSize: 13, color: col, lineHeight: 1.5, marginBottom: 10,
           fontFamily: FONT, fontWeight: 600,
         }}>
           {state.verdict.slice(0, 100)}{state.verdict.length > 100 ? '…' : ''}
@@ -732,7 +732,7 @@ function AgentCard({ id, state }: { id: AgentId; state: AgentState }) {
         <div style={{ marginBottom: 8 }}>
           {evidence.slice(0, 2).map((e, i) => (
             <div key={i} style={{
-              fontSize: 8, color: C.textDim, lineHeight: 1.5,
+              fontSize: 11, color: C.textDim, lineHeight: 1.5,
               borderLeft: `1px solid ${C.border}`, paddingLeft: 8, marginBottom: 4,
               fontFamily: FONT,
             }}>
@@ -749,7 +749,7 @@ function AgentCard({ id, state }: { id: AgentId; state: AgentState }) {
           style={{
             background: 'none', border: `1px solid ${C.border}`,
             borderRadius: 2, padding: '3px 10px',
-            fontSize: 7, letterSpacing: '0.14em', textTransform: 'uppercase',
+            fontSize: 10, letterSpacing: '0.14em', textTransform: 'uppercase',
             color: C.muted, fontFamily: FONT, cursor: 'pointer', marginBottom: open ? 12 : 0,
           }}
         >
@@ -763,7 +763,7 @@ function AgentCard({ id, state }: { id: AgentId; state: AgentState }) {
           {state.summary && (
             <div style={{ marginBottom: 12 }}>
               <Label>REASONING</Label>
-              <div style={{ marginTop: 6, fontSize: 9, color: C.textDim, lineHeight: 1.7, fontFamily: FONT }}>
+              <div style={{ marginTop: 6, fontSize: 13, color: C.textDim, lineHeight: 1.7, fontFamily: FONT }}>
                 {state.summary}
               </div>
             </div>
@@ -816,7 +816,7 @@ export function InvestigationBoard({ agentStates, confirmedInput }: Investigatio
             position: 'absolute', inset: 0, display: 'flex', alignItems: 'center',
             justifyContent: 'center', pointerEvents: 'none',
           }}>
-            <span style={{ fontSize: 8, color: C.muted, fontFamily: FONT, letterSpacing: '0.18em' }}>
+            <span style={{ fontSize: 11, color: C.muted, fontFamily: FONT, letterSpacing: '0.18em' }}>
               RUN AN ANALYSIS TO ACTIVATE
             </span>
           </div>
@@ -840,7 +840,7 @@ export function InvestigationBoard({ agentStates, confirmedInput }: Investigatio
             }} />
             <Label>ORCHESTRATOR</Label>
           </div>
-          <span style={{ fontSize: 8, color: C.textDim, fontFamily: FONT, letterSpacing: '0.1em' }}>
+          <span style={{ fontSize: 11, color: C.textDim, fontFamily: FONT, letterSpacing: '0.1em' }}>
             {runningCount > 0
               ? `${runningCount} AGENT${runningCount > 1 ? 'S' : ''} RUNNING`
               : allDone
@@ -850,17 +850,17 @@ export function InvestigationBoard({ agentStates, confirmedInput }: Investigatio
               : 'WAITING FOR RUN'}
           </span>
           <div style={{ display: 'flex', gap: 10, marginLeft: 'auto', flexWrap: 'wrap' }}>
-            <span style={{ fontSize: 8, color: C.muted, fontFamily: FONT }}>
+            <span style={{ fontSize: 11, color: C.muted, fontFamily: FONT }}>
               WORKFLOW <span style={{ color: C.green }}>PREMORTEM ANALYSIS</span>
             </span>
             {doneCount > 0 && (
-              <span style={{ fontSize: 8, color: C.textDim, fontFamily: FONT }}>
+              <span style={{ fontSize: 11, color: C.textDim, fontFamily: FONT }}>
                 AVG RISK <span style={{ color: avgScore >= 75 ? C.red : avgScore >= 50 ? C.amber : C.green }}>{avgScore}</span>
               </span>
             )}
             {highRiskCount > 0 && (
               <span style={{
-                fontSize: 7, color: C.red, fontFamily: FONT, border: `1px solid ${C.red}44`,
+                fontSize: 10, color: C.red, fontFamily: FONT, border: `1px solid ${C.red}44`,
                 borderRadius: 2, padding: '1px 6px', letterSpacing: '0.1em',
               }}>
                 {highRiskCount} HIGH RISK
@@ -872,7 +872,7 @@ export function InvestigationBoard({ agentStates, confirmedInput }: Investigatio
         <div style={{ marginBottom: 20 }}>
           <Label>INVESTIGATION BOARD</Label>
           {procName && (
-            <div style={{ fontSize: 9, color: C.muted, fontFamily: FONT, marginTop: 4 }}>
+            <div style={{ fontSize: 13, color: C.muted, fontFamily: FONT, marginTop: 4 }}>
               {procName}
             </div>
           )}
@@ -899,14 +899,14 @@ export function InvestigationBoard({ agentStates, confirmedInput }: Investigatio
             </div>
             {agentStates.decision.verdict && (
               <div style={{
-                fontSize: 12, fontWeight: 700, color: decisionColor(agentStates.decision.verdict ?? '', C),
+                fontSize: 17, fontWeight: 700, color: decisionColor(agentStates.decision.verdict ?? '', C),
                 fontFamily: FONT, lineHeight: 1.4, marginBottom: 8,
               }}>
                 {agentStates.decision.verdict}
               </div>
             )}
             {agentStates.decision.summary && (
-              <div style={{ fontSize: 9, color: C.textDim, lineHeight: 1.7, fontFamily: FONT }}>
+              <div style={{ fontSize: 13, color: C.textDim, lineHeight: 1.7, fontFamily: FONT }}>
                 {agentStates.decision.summary}
               </div>
             )}
@@ -935,16 +935,16 @@ export function InvestigationBoard({ agentStates, confirmedInput }: Investigatio
                     width: 4, height: 4, borderRadius: '50%', flexShrink: 0,
                     background: check.pass ? C.cyan : C.amber,
                   }} />
-                  <span style={{ fontSize: 8, color: check.pass ? C.textDim : C.amber, fontFamily: FONT, letterSpacing: '0.06em' }}>
+                  <span style={{ fontSize: 11, color: check.pass ? C.textDim : C.amber, fontFamily: FONT, letterSpacing: '0.06em' }}>
                     {check.label}
                   </span>
-                  <span style={{ marginLeft: 'auto', fontSize: 7, color: check.pass ? C.muted : C.amber, fontFamily: FONT, letterSpacing: '0.1em' }}>
+                  <span style={{ marginLeft: 'auto', fontSize: 10, color: check.pass ? C.muted : C.amber, fontFamily: FONT, letterSpacing: '0.1em' }}>
                     {check.pass ? 'PASS' : 'REVIEW'}
                   </span>
                 </div>
               ))}
             </div>
-            <div style={{ marginTop: 12, fontSize: 8, color: C.muted, fontFamily: FONT, lineHeight: 1.6 }}>
+            <div style={{ marginTop: 12, fontSize: 11, color: C.muted, fontFamily: FONT, lineHeight: 1.6 }}>
               Full evaluator agent (quality scoring, consistency check, confidence estimation) requires backend implementation.
             </div>
           </div>
@@ -1036,7 +1036,7 @@ export function DebateRoom({ debate, runResult }: DebateRoomProps) {
               background: `${dColor}0a`, border: `1px solid ${dColor}33`,
               borderRadius: 2,
             }}>
-              <span style={{ fontSize: 11, fontWeight: 700, color: dColor, fontFamily: FONT }}>
+              <span style={{ fontSize: 15, fontWeight: 700, color: dColor, fontFamily: FONT }}>
                 {runResult.decision}
               </span>
             </div>
@@ -1054,7 +1054,7 @@ export function DebateRoom({ debate, runResult }: DebateRoomProps) {
                 padding: '14px 18px',
               }}>
                 <div style={{
-                  fontSize: 8, letterSpacing: '0.18em', color: col,
+                  fontSize: 11, letterSpacing: '0.18em', color: col,
                   fontWeight: 700, fontFamily: FONT, marginBottom: 10,
                 }}>
                   {turn.agent.toUpperCase()}
@@ -1062,7 +1062,7 @@ export function DebateRoom({ debate, runResult }: DebateRoomProps) {
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
                   {(turn.statements ?? []).map((stmt, j) => (
                     <div key={j} style={{
-                      fontSize: 10, color: C.textDim, lineHeight: 1.65,
+                      fontSize: 14, color: C.textDim, lineHeight: 1.65,
                       paddingLeft: 10, borderLeft: `1px solid ${C.border}`,
                       fontFamily: FONT,
                     }}>
@@ -1084,7 +1084,7 @@ export function DebateRoom({ debate, runResult }: DebateRoomProps) {
             <div style={{ width: 5, height: 5, borderRadius: '50%', background: C.cyan }} />
             <Label color={C.cyan}>HUMAN REVIEW</Label>
           </div>
-          <div style={{ fontSize: 8, color: C.muted, marginBottom: 14, fontFamily: FONT, letterSpacing: '0.08em', lineHeight: 1.6 }}>
+          <div style={{ fontSize: 11, color: C.muted, marginBottom: 14, fontFamily: FONT, letterSpacing: '0.08em', lineHeight: 1.6 }}>
             Add comments, objections, or approval conditions. Routed to UI Guidance Agent and stored in agent history.
           </div>
 
@@ -1093,17 +1093,17 @@ export function DebateRoom({ debate, runResult }: DebateRoomProps) {
               padding: '12px 14px', background: C.green + '10', border: `1px solid ${C.green}33`,
               borderRadius: 2,
             }}>
-              <div style={{ fontSize: 9, color: C.cyan, fontFamily: FONT, marginBottom: 4 }}>
+              <div style={{ fontSize: 13, color: C.cyan, fontFamily: FONT, marginBottom: 4 }}>
                 REVIEW SUBMITTED · {submitted}
               </div>
-              <div style={{ fontSize: 8, color: C.muted, fontFamily: FONT }}>
+              <div style={{ fontSize: 11, color: C.muted, fontFamily: FONT }}>
                 Your comments have been routed to the UI Guidance Agent.
               </div>
               <button
                 onClick={() => setSubmitted(null)}
                 style={{
                   marginTop: 10, background: 'none', border: `1px solid ${C.green}44`,
-                  borderRadius: 2, padding: '3px 12px', fontSize: 7,
+                  borderRadius: 2, padding: '3px 12px', fontSize: 10,
                   letterSpacing: '0.12em', color: C.muted, fontFamily: FONT, cursor: 'pointer',
                 }}
               >
@@ -1121,13 +1121,13 @@ export function DebateRoom({ debate, runResult }: DebateRoomProps) {
                   width: '100%', boxSizing: 'border-box',
                   background: C.surface, border: `1px solid ${C.border}`,
                   borderRadius: 2, padding: '8px 10px',
-                  fontSize: 9, color: C.text, fontFamily: FONT,
+                  fontSize: 13, color: C.text, fontFamily: FONT,
                   outline: 'none', resize: 'vertical', lineHeight: 1.6,
                   marginBottom: 10,
                 }}
               />
               {submitError && (
-                <div style={{ fontSize: 8, color: C.accent, fontFamily: FONT, marginBottom: 8 }}>
+                <div style={{ fontSize: 11, color: C.accent, fontFamily: FONT, marginBottom: 8 }}>
                   ERROR: {submitError}
                 </div>
               )}
@@ -1139,7 +1139,7 @@ export function DebateRoom({ debate, runResult }: DebateRoomProps) {
                   color: reviewText.trim() && !submitting ? C.bg : C.muted,
                   border: `1px solid ${reviewText.trim() && !submitting ? C.cyan : C.green + '44'}`,
                   borderRadius: 2, padding: '5px 18px',
-                  fontSize: 8, letterSpacing: '0.14em', textTransform: 'uppercase',
+                  fontSize: 11, letterSpacing: '0.14em', textTransform: 'uppercase',
                   fontFamily: FONT, cursor: reviewText.trim() && !submitting ? 'pointer' : 'not-allowed',
                   fontWeight: 700,
                 }}
@@ -1172,26 +1172,26 @@ function ScenarioCard({ scenario }: { scenario: ScenarioOutcome }) {
         <div style={{ width: 5, height: 5, borderRadius: '50%', background: col }} />
         <Label color={col}>{scenario.name}</Label>
         <span style={{
-          marginLeft: 'auto', fontSize: 7, color: '#3a3a3a', fontFamily: FONT, letterSpacing: '0.1em',
+          marginLeft: 'auto', fontSize: 10, color: '#3a3a3a', fontFamily: FONT, letterSpacing: '0.1em',
         }}>
           {Math.round(scenario.probability_pct)}% PROB
         </span>
       </div>
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 10 }}>
         <div>
-          <div style={{ fontSize: 7, color: '#2a2a2a', letterSpacing: '0.14em', fontFamily: FONT, marginBottom: 3 }}>DELAY</div>
+          <div style={{ fontSize: 10, color: '#2a2a2a', letterSpacing: '0.14em', fontFamily: FONT, marginBottom: 3 }}>DELAY</div>
           <div style={{ fontSize: 16, fontWeight: 700, color: col, fontFamily: FONT }}>
             {scenario.timeline_months}mo
           </div>
         </div>
         <div>
-          <div style={{ fontSize: 7, color: '#2a2a2a', letterSpacing: '0.14em', fontFamily: FONT, marginBottom: 3 }}>LOSS</div>
+          <div style={{ fontSize: 10, color: '#2a2a2a', letterSpacing: '0.14em', fontFamily: FONT, marginBottom: 3 }}>LOSS</div>
           <div style={{ fontSize: 16, fontWeight: 700, color: col, fontFamily: FONT }}>
             ₹{scenario.financial_impact_cr.toFixed(1)} Cr
           </div>
         </div>
       </div>
-      <div style={{ fontSize: 8, color: '#555', lineHeight: 1.6, fontFamily: FONT }}>
+      <div style={{ fontSize: 11, color: '#555', lineHeight: 1.6, fontFamily: FONT }}>
         {scenario.operational_impact}
       </div>
     </div>
@@ -1228,7 +1228,7 @@ export function ExecutiveDashboard({ agentStates, runResult, fullReport, confirm
           borderRadius: 2, padding: '20px 24px', marginBottom: 24,
         }}>
           {procName && (
-            <div style={{ fontSize: 8, color: '#3a3a3a', fontFamily: FONT, letterSpacing: '0.12em', marginBottom: 8 }}>
+            <div style={{ fontSize: 11, color: '#3a3a3a', fontFamily: FONT, letterSpacing: '0.12em', marginBottom: 8 }}>
               {procName}
             </div>
           )}
@@ -1236,7 +1236,7 @@ export function ExecutiveDashboard({ agentStates, runResult, fullReport, confirm
             {runResult.decision}
           </div>
           {fullReport?.predicted_failure_mode && (
-            <div style={{ marginTop: 10, fontSize: 10, color: '#666', fontFamily: FONT, lineHeight: 1.65 }}>
+            <div style={{ marginTop: 10, fontSize: 14, color: '#666', fontFamily: FONT, lineHeight: 1.65 }}>
               {fullReport.predicted_failure_mode}
             </div>
           )}
@@ -1250,15 +1250,15 @@ export function ExecutiveDashboard({ agentStates, runResult, fullReport, confirm
             borderRadius: 2,
           }}>
             <div style={{ width: 5, height: 5, borderRadius: '50%', background: '#22d3ee' }} />
-            <span style={{ fontSize: 8, color: '#2a4a4a', fontFamily: FONT, letterSpacing: '0.1em' }}>
+            <span style={{ fontSize: 11, color: '#2a4a4a', fontFamily: FONT, letterSpacing: '0.1em' }}>
               EVALUATOR
             </span>
-            <span style={{ fontSize: 8, color: '#1e3a3a', fontFamily: FONT }}>
+            <span style={{ fontSize: 11, color: '#1e3a3a', fontFamily: FONT }}>
               {fullReport.confidence_pct > 0
                 ? `${Math.round(fullReport.confidence_pct)}% CONFIDENCE`
                 : 'CONFIDENCE NOT AVAILABLE'}
             </span>
-            <span style={{ marginLeft: 'auto', fontSize: 7, color: '#1e2a2a', fontFamily: FONT, letterSpacing: '0.1em' }}>
+            <span style={{ marginLeft: 'auto', fontSize: 10, color: '#1e2a2a', fontFamily: FONT, letterSpacing: '0.1em' }}>
               FULL EVALUATOR AGENT REQUIRES BACKEND IMPLEMENTATION
             </span>
           </div>
@@ -1335,13 +1335,13 @@ export function ReportView({ runResult, fullReport, confirmedInput, onExport }: 
 
         {/* Report header */}
         <div style={{ marginBottom: 28 }}>
-          <div style={{ fontSize: 8, color: '#2a2a2a', letterSpacing: '0.1em', fontFamily: FONT, marginBottom: 4 }}>
+          <div style={{ fontSize: 11, color: '#2a2a2a', letterSpacing: '0.1em', fontFamily: FONT, marginBottom: 4 }}>
             PREMORTEM REPORT  ·  {generatedAt}
           </div>
-          <div style={{ fontSize: 14, fontWeight: 700, color: C.text, fontFamily: FONT, letterSpacing: '0.02em' }}>
+          <div style={{ fontSize: 19, fontWeight: 700, color: C.text, fontFamily: FONT, letterSpacing: '0.02em' }}>
             {procName ?? fullReport.procurement_name}
           </div>
-          <div style={{ fontSize: 9, color: '#3a3a3a', fontFamily: FONT, marginTop: 4 }}>
+          <div style={{ fontSize: 13, color: '#3a3a3a', fontFamily: FONT, marginTop: 4 }}>
             {fullReport.equipment_type}  ·  ₹{fullReport.contract_value_cr} Cr
           </div>
         </div>
@@ -1370,9 +1370,9 @@ export function ReportView({ runResult, fullReport, confirmedInput, onExport }: 
               {runResult.conditions.map((c, i) => (
                 <div key={i} style={{
                   padding: '10px 14px', background: `${C.amber}0a`, border: `1px solid ${C.amber}33`,
-                  borderRadius: 2, fontSize: 10, color: '#aaa', lineHeight: 1.65, fontFamily: FONT,
+                  borderRadius: 2, fontSize: 14, color: '#aaa', lineHeight: 1.65, fontFamily: FONT,
                 }}>
-                  <span style={{ color: C.amber, fontSize: 8, fontWeight: 700, letterSpacing: '0.1em' }}>
+                  <span style={{ color: C.amber, fontSize: 11, fontWeight: 700, letterSpacing: '0.1em' }}>
                     CONDITION {i + 1} &nbsp;
                   </span>
                   {c}
@@ -1389,7 +1389,7 @@ export function ReportView({ runResult, fullReport, confirmedInput, onExport }: 
             <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
               {fullReport.predicted_outcomes.map((o, i) => (
                 <div key={i} style={{
-                  fontSize: 9, color: '#888', lineHeight: 1.65,
+                  fontSize: 13, color: '#888', lineHeight: 1.65,
                   paddingLeft: 10, borderLeft: `1px solid ${C.faint}`, fontFamily: FONT,
                 }}>
                   {o}
@@ -1407,7 +1407,7 @@ export function ReportView({ runResult, fullReport, confirmedInput, onExport }: 
               {fullReport.supporting_evidence.map((e, i) => (
                 <div key={i} style={{
                   padding: '8px 12px', background: C.surface, border: `1px solid ${C.border}`,
-                  borderRadius: 2, fontSize: 9, color: '#888', lineHeight: 1.6, fontFamily: FONT,
+                  borderRadius: 2, fontSize: 13, color: '#888', lineHeight: 1.6, fontFamily: FONT,
                 }}>
                   {e}
                 </div>
@@ -1420,7 +1420,7 @@ export function ReportView({ runResult, fullReport, confirmedInput, onExport }: 
         {fullReport.predicted_failure_mode && (
           <div style={{ borderTop: `1px solid ${C.border}`, paddingTop: 20, marginBottom: 24 }}>
             <SectionTitle label="PREDICTED FAILURE MODE" />
-            <div style={{ fontSize: 10, color: '#888', lineHeight: 1.7, fontFamily: FONT }}>
+            <div style={{ fontSize: 14, color: '#888', lineHeight: 1.7, fontFamily: FONT }}>
               {fullReport.predicted_failure_mode}
             </div>
           </div>
@@ -1434,10 +1434,10 @@ export function ReportView({ runResult, fullReport, confirmedInput, onExport }: 
               {fullReport.conditions.map((c, i) => (
                 <div key={i} style={{
                   padding: '9px 13px', background: '#040e04', border: `1px solid #1a2a1a`,
-                  borderRadius: 2, fontSize: 9, color: '#2a5a3a', lineHeight: 1.6, fontFamily: FONT,
+                  borderRadius: 2, fontSize: 13, color: '#2a5a3a', lineHeight: 1.6, fontFamily: FONT,
                   display: 'flex', gap: 10,
                 }}>
-                  <span style={{ color: '#1e3a2a', fontSize: 8, flexShrink: 0, paddingTop: 1 }}>
+                  <span style={{ color: '#1e3a2a', fontSize: 11, flexShrink: 0, paddingTop: 1 }}>
                     Q{i + 1}
                   </span>
                   {c}
@@ -1450,7 +1450,7 @@ export function ReportView({ runResult, fullReport, confirmedInput, onExport }: 
         {/* Human approval actions */}
         <div style={{ borderTop: `1px solid ${C.border}`, paddingTop: 20, marginBottom: 24 }}>
           <SectionTitle label="HUMAN DECISION" />
-          <div style={{ fontSize: 8, color: '#2a2a2a', fontFamily: FONT, marginBottom: 14, lineHeight: 1.6 }}>
+          <div style={{ fontSize: 11, color: '#2a2a2a', fontFamily: FONT, marginBottom: 14, lineHeight: 1.6 }}>
             Record your decision on this procurement. Stored to decision history when backend is connected.
           </div>
           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
@@ -1466,7 +1466,7 @@ export function ReportView({ runResult, fullReport, confirmedInput, onExport }: 
                 style={{
                   background: 'none', border: `1px solid ${action.border}`,
                   borderRadius: 2, padding: '6px 16px',
-                  fontSize: 8, letterSpacing: '0.12em', textTransform: 'uppercase',
+                  fontSize: 11, letterSpacing: '0.12em', textTransform: 'uppercase',
                   color: action.col, fontFamily: FONT, cursor: 'pointer',
                 }}
                 onClick={() => alert(`Human approval (${action.label}) — requires decision history backend integration`)}
@@ -1475,7 +1475,7 @@ export function ReportView({ runResult, fullReport, confirmedInput, onExport }: 
               </button>
             ))}
           </div>
-          <div style={{ marginTop: 8, fontSize: 7, color: '#1e1e1e', fontFamily: FONT, letterSpacing: '0.08em' }}>
+          <div style={{ marginTop: 8, fontSize: 10, color: '#1e1e1e', fontFamily: FONT, letterSpacing: '0.08em' }}>
             Full approval workflow stores human decision and override to database — requires backend implementation
           </div>
         </div>
@@ -1491,7 +1491,7 @@ export function ReportView({ runResult, fullReport, confirmedInput, onExport }: 
                 style={{
                   background: 'none', border: `1px solid ${C.border}`,
                   borderRadius: 2, padding: '6px 18px',
-                  fontSize: 9, letterSpacing: '0.14em', textTransform: 'uppercase',
+                  fontSize: 13, letterSpacing: '0.14em', textTransform: 'uppercase',
                   color: C.muted, fontFamily: FONT, cursor: 'pointer',
                 }}
               >
@@ -1547,11 +1547,11 @@ export function AnalysisPage({
     <div style={{ flex: 1, overflowY: 'auto', background: C.bg }}>
       <div style={{ maxWidth: 880, margin: '0 auto', padding: '28px 28px 60px' }}>
         <div style={{ marginBottom: 28 }}>
-          <div style={{ fontSize: 9, color: '#2a2a2a', letterSpacing: '0.1em', fontFamily: FONT, marginBottom: 4 }}>
+          <div style={{ fontSize: 13, color: '#2a2a2a', letterSpacing: '0.1em', fontFamily: FONT, marginBottom: 4 }}>
             {procName ?? 'ANALYSIS'}
           </div>
           {!hasAnyData && (
-            <div style={{ fontSize: 10, color: '#333', fontFamily: FONT }}>
+            <div style={{ fontSize: 14, color: '#333', fontFamily: FONT }}>
               Run an analysis to see results here.
             </div>
           )}

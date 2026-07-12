@@ -9,7 +9,7 @@ function Lbl({ children, style }: { children: React.ReactNode; style?: React.CSS
   const { theme: C } = useTheme()
   return (
     <span style={{
-      fontSize: 8, letterSpacing: '0.18em', textTransform: 'uppercase',
+      fontSize: 11, letterSpacing: '0.18em', textTransform: 'uppercase',
       color: C.muted, fontWeight: 600, fontFamily: FONT, ...style,
     }}>
       {children}
@@ -22,7 +22,7 @@ function Chip({ children, color }: { children: React.ReactNode; color?: string }
   const col = color ?? C.muted
   return (
     <span style={{
-      fontSize: 7, letterSpacing: '0.14em', textTransform: 'uppercase',
+      fontSize: 10, letterSpacing: '0.14em', textTransform: 'uppercase',
       color: col, border: `1px solid ${col}33`, borderRadius: 2,
       padding: '2px 7px', fontFamily: FONT,
     }}>
@@ -54,11 +54,11 @@ function QuoteDetail({ review, onClose }: { review: QuoteReview; onClose: () => 
         {/* Header */}
         <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 20 }}>
           <div>
-            <div style={{ fontSize: 13, fontWeight: 700, color: C.text, letterSpacing: '0.04em' }}>
+            <div style={{ fontSize: 18, fontWeight: 700, color: C.text, letterSpacing: '0.04em' }}>
               {review.vendor_name || review.quote_id}
             </div>
             {review.vendor_name && (
-              <div style={{ fontSize: 8, color: C.muted, marginTop: 3, letterSpacing: '0.1em' }}>
+              <div style={{ fontSize: 11, color: C.muted, marginTop: 3, letterSpacing: '0.1em' }}>
                 {review.quote_id}
               </div>
             )}
@@ -68,7 +68,7 @@ function QuoteDetail({ review, onClose }: { review: QuoteReview; onClose: () => 
               <div style={{ fontSize: 22, fontWeight: 700, color: rc, letterSpacing: '-0.02em' }}>
                 {review.risk_score.toFixed(0)}
               </div>
-              <div style={{ fontSize: 7, color: C.muted, letterSpacing: '0.12em' }}>/100 RISK</div>
+              <div style={{ fontSize: 10, color: C.muted, letterSpacing: '0.12em' }}>/100 RISK</div>
             </div>
             <Chip color={rc}>{review.risk_level}</Chip>
             <button onClick={onClose} style={{
@@ -84,7 +84,7 @@ function QuoteDetail({ review, onClose }: { review: QuoteReview; onClose: () => 
           borderRadius: 2, padding: '12px 14px', marginBottom: 18,
         }}>
           <Lbl style={{ display: 'block', marginBottom: 8, color: rc }}>RECOMMENDATION</Lbl>
-          <div style={{ fontSize: 10, color: C.text, lineHeight: 1.65 }}>
+          <div style={{ fontSize: 14, color: C.text, lineHeight: 1.65 }}>
             {review.recommendation}
           </div>
         </div>
@@ -97,10 +97,10 @@ function QuoteDetail({ review, onClose }: { review: QuoteReview; onClose: () => 
               display: 'flex', gap: 10, paddingBottom: 8,
               borderBottom: `1px solid ${C.border}`,
             }}>
-              <span style={{ fontSize: 8, color: C.muted, flexShrink: 0, paddingTop: 2, minWidth: 14 }}>
+              <span style={{ fontSize: 11, color: C.muted, flexShrink: 0, paddingTop: 2, minWidth: 14 }}>
                 {String(i + 1).padStart(2, '0')}
               </span>
-              <div style={{ fontSize: 10, color: C.muted, lineHeight: 1.65 }}>{f}</div>
+              <div style={{ fontSize: 14, color: C.muted, lineHeight: 1.65 }}>{f}</div>
             </div>
           ))}
         </div>
@@ -126,7 +126,7 @@ function VendorComparison({ quotes, winnerId }: { quotes: QuoteReview[]; winnerI
         }}
       >
         <Lbl>VENDOR COMPARISON — SIDE BY SIDE ({quotes.length})</Lbl>
-        <span style={{ marginLeft: 'auto', fontSize: 9, color: C.muted, fontFamily: FONT }}>
+        <span style={{ marginLeft: 'auto', fontSize: 13, color: C.muted, fontFamily: FONT }}>
           {open ? '▲ COLLAPSE' : '▼ EXPAND'}
         </span>
       </button>
@@ -140,7 +140,7 @@ function VendorComparison({ quotes, winnerId }: { quotes: QuoteReview[]; winnerI
             <thead>
               <tr>
                 <th style={{
-                  textAlign: 'left', padding: '8px 14px', fontSize: 7,
+                  textAlign: 'left', padding: '8px 14px', fontSize: 10,
                   letterSpacing: '0.16em', color: C.muted, fontWeight: 600,
                   borderBottom: `1px solid ${C.border}`, textTransform: 'uppercase',
                   background: C.surface2, whiteSpace: 'nowrap',
@@ -158,15 +158,15 @@ function VendorComparison({ quotes, winnerId }: { quotes: QuoteReview[]; winnerI
                       borderTop: isWinner ? `1px solid ${C.green}44` : 'none',
                       minWidth: 140,
                     }}>
-                      <div style={{ fontSize: 9, fontWeight: 700, color: C.text, marginBottom: 3 }}>
+                      <div style={{ fontSize: 13, fontWeight: 700, color: C.text, marginBottom: 3 }}>
                         {q.vendor_name || q.quote_id}
                       </div>
                       <div style={{ display: 'flex', justifyContent: 'center', gap: 6 }}>
-                        <span style={{ fontSize: 14, fontWeight: 700, color: rc }}>{q.risk_score.toFixed(0)}</span>
-                        <span style={{ fontSize: 7, color: C.muted, alignSelf: 'flex-end', paddingBottom: 2 }}>/100</span>
+                        <span style={{ fontSize: 19, fontWeight: 700, color: rc }}>{q.risk_score.toFixed(0)}</span>
+                        <span style={{ fontSize: 10, color: C.muted, alignSelf: 'flex-end', paddingBottom: 2 }}>/100</span>
                         {isWinner && (
                           <span style={{
-                            fontSize: 7, color: C.green, border: `1px solid ${C.green}44`,
+                            fontSize: 10, color: C.green, border: `1px solid ${C.green}44`,
                             borderRadius: 2, padding: '1px 5px', alignSelf: 'center',
                           }}>
                             WINNER
@@ -181,28 +181,28 @@ function VendorComparison({ quotes, winnerId }: { quotes: QuoteReview[]; winnerI
             <tbody>
               {/* Risk level row */}
               <tr>
-                <td style={{ padding: '8px 14px', fontSize: 8, color: C.muted, borderBottom: `1px solid ${C.border}`, whiteSpace: 'nowrap' }}>
+                <td style={{ padding: '8px 14px', fontSize: 11, color: C.muted, borderBottom: `1px solid ${C.border}`, whiteSpace: 'nowrap' }}>
                   RISK LEVEL
                 </td>
                 {quotes.map(q => {
                   const rc = riskColor(q.risk_level, q.risk_score, C)
                   return (
                     <td key={q.quote_id} style={{ textAlign: 'center', padding: '8px 14px', borderBottom: `1px solid ${C.border}` }}>
-                      <span style={{ fontSize: 8, color: rc, fontFamily: FONT, fontWeight: 600 }}>{q.risk_level}</span>
+                      <span style={{ fontSize: 11, color: rc, fontFamily: FONT, fontWeight: 600 }}>{q.risk_level}</span>
                     </td>
                   )
                 })}
               </tr>
               {/* Findings count */}
               <tr style={{ background: C.surface2 }}>
-                <td style={{ padding: '8px 14px', fontSize: 8, color: C.muted, borderBottom: `1px solid ${C.border}`, whiteSpace: 'nowrap' }}>
+                <td style={{ padding: '8px 14px', fontSize: 11, color: C.muted, borderBottom: `1px solid ${C.border}`, whiteSpace: 'nowrap' }}>
                   FINDINGS COUNT
                 </td>
                 {quotes.map(q => {
                   const best = q.findings.length === Math.min(...quotes.map(x => x.findings.length))
                   return (
                     <td key={q.quote_id} style={{ textAlign: 'center', padding: '8px 14px', borderBottom: `1px solid ${C.border}` }}>
-                      <span style={{ fontSize: 9, color: best ? C.green : '#888', fontFamily: FONT, fontWeight: best ? 700 : 400 }}>
+                      <span style={{ fontSize: 13, color: best ? C.green : '#888', fontFamily: FONT, fontWeight: best ? 700 : 400 }}>
                         {q.findings.length}
                       </span>
                     </td>
@@ -211,12 +211,12 @@ function VendorComparison({ quotes, winnerId }: { quotes: QuoteReview[]; winnerI
               </tr>
               {/* Top finding per vendor */}
               <tr>
-                <td style={{ padding: '8px 14px', fontSize: 8, color: C.muted, borderBottom: `1px solid ${C.border}`, whiteSpace: 'nowrap', verticalAlign: 'top' }}>
+                <td style={{ padding: '8px 14px', fontSize: 11, color: C.muted, borderBottom: `1px solid ${C.border}`, whiteSpace: 'nowrap', verticalAlign: 'top' }}>
                   TOP FINDING
                 </td>
                 {quotes.map(q => (
                   <td key={q.quote_id} style={{ padding: '8px 14px', borderBottom: `1px solid ${C.border}`, verticalAlign: 'top', maxWidth: 200 }}>
-                    <div style={{ fontSize: 8, color: '#666', fontFamily: FONT, lineHeight: 1.55 }}>
+                    <div style={{ fontSize: 11, color: '#666', fontFamily: FONT, lineHeight: 1.55 }}>
                       {q.findings[0]?.slice(0, 100)}{(q.findings[0]?.length ?? 0) > 100 ? '…' : ''}
                     </div>
                   </td>
@@ -224,12 +224,12 @@ function VendorComparison({ quotes, winnerId }: { quotes: QuoteReview[]; winnerI
               </tr>
               {/* Recommendation summary */}
               <tr style={{ background: C.surface2 }}>
-                <td style={{ padding: '8px 14px', fontSize: 8, color: C.muted, whiteSpace: 'nowrap', verticalAlign: 'top' }}>
+                <td style={{ padding: '8px 14px', fontSize: 11, color: C.muted, whiteSpace: 'nowrap', verticalAlign: 'top' }}>
                   RECOMMENDATION
                 </td>
                 {quotes.map(q => (
                   <td key={q.quote_id} style={{ padding: '8px 14px', verticalAlign: 'top', maxWidth: 200 }}>
-                    <div style={{ fontSize: 8, color: '#555', fontFamily: FONT, lineHeight: 1.55 }}>
+                    <div style={{ fontSize: 11, color: '#555', fontFamily: FONT, lineHeight: 1.55 }}>
                       {q.recommendation.slice(0, 120)}{q.recommendation.length > 120 ? '…' : ''}
                     </div>
                   </td>
@@ -276,29 +276,29 @@ function RankedCard({
           background: isWinner ? `${C.green}18` : 'transparent',
           border: `1px solid ${isWinner ? `${C.green}44` : C.border}`,
           display: 'flex', alignItems: 'center', justifyContent: 'center',
-          fontSize: 9, color: isWinner ? C.green : C.textDim, fontWeight: 700,
+          fontSize: 13, color: isWinner ? C.green : C.textDim, fontWeight: 700,
         }}>
           {rank}
         </div>
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
-            <span style={{ fontSize: 11, fontWeight: 600, color: C.text }}>
+            <span style={{ fontSize: 15, fontWeight: 600, color: C.text }}>
               {review.vendor_name || review.quote_id}
             </span>
             {isWinner && <Chip color={C.green}>WINNER</Chip>}
             <Chip color={rc}>{review.risk_level}</Chip>
           </div>
           {review.vendor_name && (
-            <div style={{ fontSize: 8, color: C.muted, marginBottom: 6 }}>{review.quote_id}</div>
+            <div style={{ fontSize: 11, color: C.muted, marginBottom: 6 }}>{review.quote_id}</div>
           )}
-          <div style={{ fontSize: 9, color: '#555', lineHeight: 1.5, marginBottom: 8 }}>
+          <div style={{ fontSize: 13, color: '#555', lineHeight: 1.5, marginBottom: 8 }}>
             {review.findings.slice(0, 2).map((f, i) => (
               <div key={i} style={{ paddingLeft: 8, borderLeft: `1px solid ${C.faint}`, marginBottom: 4 }}>
                 {f.length > 120 ? f.slice(0, 120) + '…' : f}
               </div>
             ))}
           </div>
-          <div style={{ fontSize: 8, color: C.muted, letterSpacing: '0.1em' }}>
+          <div style={{ fontSize: 11, color: C.muted, letterSpacing: '0.1em' }}>
             {review.findings.length} FINDINGS · CLICK FOR FULL REVIEW →
           </div>
         </div>
@@ -306,7 +306,7 @@ function RankedCard({
           <div style={{ fontSize: 20, fontWeight: 700, color: rc, letterSpacing: '-0.02em' }}>
             {review.risk_score.toFixed(0)}
           </div>
-          <div style={{ fontSize: 7, color: C.muted, letterSpacing: '0.1em' }}>/100</div>
+          <div style={{ fontSize: 10, color: C.muted, letterSpacing: '0.1em' }}>/100</div>
         </div>
       </div>
     </div>
@@ -354,7 +354,7 @@ export function BidResults({ runId, bidId, bidName, onBack, onNewBid, onGoNegoti
     return (
       <div style={{
         flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center',
-        fontFamily: FONT, fontSize: 9, color: C.muted, letterSpacing: '0.18em',
+        fontFamily: FONT, fontSize: 13, color: C.muted, letterSpacing: '0.18em',
       }}>
         LOADING RESULTS···
       </div>
@@ -367,17 +367,17 @@ export function BidResults({ runId, bidId, bidName, onBack, onNewBid, onGoNegoti
       <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 28 }}>
         <button onClick={onBack} style={{
           background: 'none', border: 'none', color: C.textDim,
-          fontFamily: FONT, fontSize: 9, letterSpacing: '0.14em',
+          fontFamily: FONT, fontSize: 13, letterSpacing: '0.14em',
           textTransform: 'uppercase', cursor: 'pointer', padding: 0,
         }}>
           ← MONITOR
         </button>
         <div style={{ width: 1, height: 12, background: C.border }} />
         <div>
-          <div style={{ fontSize: 12, fontWeight: 700, color: C.text, letterSpacing: '0.05em' }}>
+          <div style={{ fontSize: 17, fontWeight: 700, color: C.text, letterSpacing: '0.05em' }}>
             BID RESULTS
           </div>
-          <div style={{ fontSize: 8, color: C.muted, letterSpacing: '0.1em', marginTop: 2 }}>
+          <div style={{ fontSize: 11, color: C.muted, letterSpacing: '0.1em', marginTop: 2 }}>
             {bidName || bidId} · {runId}
           </div>
         </div>
@@ -385,7 +385,7 @@ export function BidResults({ runId, bidId, bidName, onBack, onNewBid, onGoNegoti
           {onGoNegotiation && (
             <button onClick={onGoNegotiation} style={{
               background: 'none', border: `1px solid #22d3ee44`, borderRadius: 2,
-              color: C.cyan, fontFamily: FONT, fontSize: 9, letterSpacing: '0.14em',
+              color: C.cyan, fontFamily: FONT, fontSize: 13, letterSpacing: '0.14em',
               textTransform: 'uppercase', cursor: 'pointer', padding: '5px 14px',
             }}>
               NEGOTIATE →
@@ -393,7 +393,7 @@ export function BidResults({ runId, bidId, bidName, onBack, onNewBid, onGoNegoti
           )}
           <button onClick={onNewBid} style={{
             background: 'none', border: `1px solid ${C.border}`, borderRadius: 2,
-            color: C.muted, fontFamily: FONT, fontSize: 9, letterSpacing: '0.14em',
+            color: C.muted, fontFamily: FONT, fontSize: 13, letterSpacing: '0.14em',
             textTransform: 'uppercase', cursor: 'pointer', padding: '5px 14px',
           }}>
             NEW BID
@@ -403,7 +403,7 @@ export function BidResults({ runId, bidId, bidName, onBack, onNewBid, onGoNegoti
 
       {error && (
         <div style={{
-          fontSize: 9, color: C.accent, background: C.accent + '12',
+          fontSize: 13, color: C.accent, background: C.accent + '12',
           border: `1px solid ${C.accent}44`, borderRadius: 2,
           padding: '10px 14px', marginBottom: 16,
         }}>
@@ -432,7 +432,7 @@ export function BidResults({ runId, bidId, bidName, onBack, onNewBid, onGoNegoti
                     {result.winner.vendor_name || result.winner.quote_id}
                   </div>
                   {result.winner.vendor_name && (
-                    <div style={{ fontSize: 9, color: C.textDim, marginBottom: 12 }}>
+                    <div style={{ fontSize: 13, color: C.textDim, marginBottom: 12 }}>
                       {result.winner.quote_id}
                     </div>
                   )}
@@ -445,12 +445,12 @@ export function BidResults({ runId, bidId, bidName, onBack, onNewBid, onGoNegoti
                 </div>
                 <div style={{ textAlign: 'right', flexShrink: 0 }}>
                   <div style={{
-                    fontSize: 36, fontWeight: 700, letterSpacing: '-0.04em',
+                    fontSize: 48, fontWeight: 700, letterSpacing: '-0.04em',
                     color: riskColor(result.winner.risk_level, result.winner.risk_score, C),
                   }}>
                     {result.winner.risk_score.toFixed(0)}
                   </div>
-                  <div style={{ fontSize: 8, color: C.muted, letterSpacing: '0.12em' }}>RISK SCORE / 100</div>
+                  <div style={{ fontSize: 11, color: C.muted, letterSpacing: '0.12em' }}>RISK SCORE / 100</div>
                 </div>
               </div>
 
@@ -458,7 +458,7 @@ export function BidResults({ runId, bidId, bidName, onBack, onNewBid, onGoNegoti
               {result.rationale && (
                 <div style={{
                   marginTop: 16, paddingTop: 14, borderTop: `1px solid ${C.border}`,
-                  fontSize: 10, color: '#888', lineHeight: 1.7,
+                  fontSize: 14, color: '#888', lineHeight: 1.7,
                 }}>
                   {result.rationale}
                 </div>
@@ -471,7 +471,7 @@ export function BidResults({ runId, bidId, bidName, onBack, onNewBid, onGoNegoti
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
                     {result.negotiation_points.map((pt, i) => (
                       <div key={i} style={{
-                        fontSize: 9, color: C.amber, paddingLeft: 10,
+                        fontSize: 13, color: C.amber, paddingLeft: 10,
                         borderLeft: `1px solid ${C.amber}44`, lineHeight: 1.5,
                       }}>
                         {pt}
@@ -488,7 +488,7 @@ export function BidResults({ runId, bidId, bidName, onBack, onNewBid, onGoNegoti
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
                     {result.feedback.map((f, i) => (
                       <div key={i} style={{
-                        fontSize: 9, color: '#555', paddingLeft: 10,
+                        fontSize: 13, color: '#555', paddingLeft: 10,
                         borderLeft: `1px solid ${C.faint}`, lineHeight: 1.5,
                       }}>
                         {f}
@@ -511,7 +511,7 @@ export function BidResults({ runId, bidId, bidName, onBack, onNewBid, onGoNegoti
               }}>
                 <Lbl style={{ display: 'block', marginBottom: 10 }}>MARKET RESEARCH</Lbl>
                 {mr.market_price_range?.summary && (
-                  <div style={{ fontSize: 10, color: '#888', lineHeight: 1.65, marginBottom: 10 }}>
+                  <div style={{ fontSize: 14, color: '#888', lineHeight: 1.65, marginBottom: 10 }}>
                     {mr.market_price_range.summary}
                   </div>
                 )}
@@ -528,7 +528,7 @@ export function BidResults({ runId, bidId, bidName, onBack, onNewBid, onGoNegoti
                     <Lbl style={{ display: 'block', marginBottom: 6 }}>MARKET RISK SIGNALS</Lbl>
                     {mr.key_risk_signals.slice(0, 3).map((s, i) => (
                       <div key={i} style={{
-                        fontSize: 9, color: C.amber, paddingLeft: 8,
+                        fontSize: 13, color: C.amber, paddingLeft: 8,
                         borderLeft: `1px solid ${C.amber}44`, lineHeight: 1.5, marginBottom: 4,
                       }}>{s}</div>
                     ))}

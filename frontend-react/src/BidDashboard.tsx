@@ -12,7 +12,7 @@ function Lbl({ children }: { children: string }) {
   const { theme: C } = useTheme()
   return (
     <span style={{
-      fontSize: 8, letterSpacing: '0.18em', textTransform: 'uppercase',
+      fontSize: 11, letterSpacing: '0.18em', textTransform: 'uppercase',
       color: C.muted, fontWeight: 600, fontFamily: FONT,
     }}>
       {children}
@@ -31,7 +31,7 @@ function Btn({
       background: variant === 'accent' ? C.accent : 'transparent',
       color: disabled ? C.red : variant === 'accent' ? C.bg : C.muted,
       border: `1px solid ${disabled ? C.red : variant === 'accent' ? C.accent : C.border}`,
-      borderRadius: 2, padding: '5px 14px', fontSize: 9,
+      borderRadius: 2, padding: '5px 14px', fontSize: 13,
       letterSpacing: '0.14em', textTransform: 'uppercase',
       fontFamily: FONT, fontWeight: variant === 'accent' ? 700 : 400,
       cursor: disabled ? 'not-allowed' : 'pointer',
@@ -140,7 +140,7 @@ export function BidDashboard({ onSelectBid, onUpload }: BidDashboardProps) {
       onKeyDown={e => e.key === 'Enter' && handleCreate()}
       style={{
         background: C.bg, border: `1px solid ${C.border}`, borderRadius: 2,
-        padding: '6px 10px', fontSize: 10, color: C.text, fontFamily: FONT,
+        padding: '6px 10px', fontSize: 14, color: C.text, fontFamily: FONT,
         outline: 'none', width: '100%', boxSizing: 'border-box',
       }}
     />
@@ -154,10 +154,10 @@ export function BidDashboard({ onSelectBid, onUpload }: BidDashboardProps) {
       {/* Title row */}
       <div style={{ display: 'flex', alignItems: 'flex-start', gap: 16, marginBottom: 28 }}>
         <div>
-          <div style={{ fontSize: 13, fontWeight: 700, letterSpacing: '0.06em', color: C.text }}>
+          <div style={{ fontSize: 18, fontWeight: 700, letterSpacing: '0.06em', color: C.text }}>
             BID EVALUATION
           </div>
-          <div style={{ fontSize: 9, color: C.textDim, letterSpacing: '0.12em', marginTop: 2 }}>
+          <div style={{ fontSize: 13, color: C.textDim, letterSpacing: '0.12em', marginTop: 2 }}>
             SELECT A BID TO UPLOAD QUOTES AND RUN EVALUATION
           </div>
         </div>
@@ -171,7 +171,7 @@ export function BidDashboard({ onSelectBid, onUpload }: BidDashboardProps) {
             </Btn>
           </div>
           {/* Folder path hint */}
-          <div style={{ fontSize: 8, color: C.muted, letterSpacing: '0.08em', textAlign: 'right' }}>
+          <div style={{ fontSize: 11, color: C.muted, letterSpacing: '0.08em', textAlign: 'right' }}>
             scans: <span style={{ color: C.textDim }}>{SCAN_FOLDER}</span>
           </div>
         </div>
@@ -180,7 +180,7 @@ export function BidDashboard({ onSelectBid, onUpload }: BidDashboardProps) {
       {/* Scan result banner */}
       {scanResult !== null && (
         <div style={{
-          fontSize: 9, background: C.surface, border: `1px solid ${C.border}`,
+          fontSize: 13, background: C.surface, border: `1px solid ${C.border}`,
           borderRadius: 2, padding: '10px 14px', marginBottom: 16,
           display: 'grid', gridTemplateColumns: 'repeat(4, auto)', gap: '0 20px',
           justifyContent: 'start', alignItems: 'center',
@@ -192,11 +192,11 @@ export function BidDashboard({ onSelectBid, onUpload }: BidDashboardProps) {
             { l: 'NEW QUOTES',    v: `+${scanResult.newQuotes}` },
           ].map(({ l, v }) => (
             <div key={l}>
-              <div style={{ fontSize: 7, color: C.muted, letterSpacing: '0.14em', marginBottom: 2 }}>{l}</div>
-              <div style={{ fontSize: 12, fontWeight: 700, color: C.text }}>{v}</div>
+              <div style={{ fontSize: 10, color: C.muted, letterSpacing: '0.14em', marginBottom: 2 }}>{l}</div>
+              <div style={{ fontSize: 17, fontWeight: 700, color: C.text }}>{v}</div>
             </div>
           ))}
-          <div style={{ gridColumn: '1/-1', marginTop: 8, fontSize: 8, color: C.muted, letterSpacing: '0.1em' }}>
+          <div style={{ gridColumn: '1/-1', marginTop: 8, fontSize: 11, color: C.muted, letterSpacing: '0.1em' }}>
             folder: {SCAN_FOLDER}
           </div>
         </div>
@@ -209,7 +209,7 @@ export function BidDashboard({ onSelectBid, onUpload }: BidDashboardProps) {
         }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
             <Lbl>NEW BID</Lbl>
-            <span style={{ fontSize: 8, color: C.muted, letterSpacing: '0.08em' }}>
+            <span style={{ fontSize: 11, color: C.muted, letterSpacing: '0.08em' }}>
               you'll be taken straight to quote upload
             </span>
           </div>
@@ -230,7 +230,7 @@ export function BidDashboard({ onSelectBid, onUpload }: BidDashboardProps) {
 
       {error && (
         <div style={{
-          fontSize: 9, color: C.accent, background: C.accent + '12',
+          fontSize: 13, color: C.accent, background: C.accent + '12',
           border: `1px solid ${C.accent}44`, borderRadius: 2,
           padding: '8px 12px', marginBottom: 16, lineHeight: 1.6,
         }}>
@@ -239,10 +239,10 @@ export function BidDashboard({ onSelectBid, onUpload }: BidDashboardProps) {
       )}
 
       {loading ? (
-        <div style={{ fontSize: 9, color: C.muted, letterSpacing: '0.18em' }}>LOADING···</div>
+        <div style={{ fontSize: 13, color: C.muted, letterSpacing: '0.18em' }}>LOADING···</div>
       ) : bids.length === 0 ? (
         <div style={{
-          fontSize: 10, color: C.muted, textAlign: 'center',
+          fontSize: 14, color: C.muted, textAlign: 'center',
           padding: '60px 0', letterSpacing: '0.1em',
         }}>
           NO BIDS — SCAN FOLDER OR CREATE ONE
@@ -266,15 +266,15 @@ export function BidDashboard({ onSelectBid, onUpload }: BidDashboardProps) {
               >
                 <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 8 }}>
                   <div style={{ flex: 1 }}>
-                    <div style={{ fontSize: 10, color: C.text, fontWeight: 600, lineHeight: 1.4 }}>
+                    <div style={{ fontSize: 14, color: C.text, fontWeight: 600, lineHeight: 1.4 }}>
                       {bid.procurement_name || bid.bid_id}
                     </div>
                     {bid.equipment_type && (
-                      <div style={{ fontSize: 9, color: C.textDim, marginTop: 3 }}>{bid.equipment_type}</div>
+                      <div style={{ fontSize: 13, color: C.textDim, marginTop: 3 }}>{bid.equipment_type}</div>
                     )}
                   </div>
                   <span style={{
-                    fontSize: 7, letterSpacing: '0.15em', color: statusColor(bid.status, C),
+                    fontSize: 10, letterSpacing: '0.15em', color: statusColor(bid.status, C),
                     border: `1px solid ${statusColor(bid.status, C)}22`, borderRadius: 2,
                     padding: '2px 6px', flexShrink: 0, marginTop: 1,
                   }}>
@@ -285,11 +285,11 @@ export function BidDashboard({ onSelectBid, onUpload }: BidDashboardProps) {
                   display: 'flex', alignItems: 'center', justifyContent: 'space-between',
                   marginTop: 14,
                 }}>
-                  <div style={{ fontSize: 9, color: C.muted }}>
+                  <div style={{ fontSize: 13, color: C.muted }}>
                     <span style={{ color: C.textDim }}>{bid.quote_count}</span>
                     {' '}QUOTE{bid.quote_count !== 1 ? 'S' : ''}
                   </div>
-                  <span style={{ fontSize: 8, color: C.muted, letterSpacing: '0.1em' }}>
+                  <span style={{ fontSize: 11, color: C.muted, letterSpacing: '0.1em' }}>
                     {bid.bid_id}
                   </span>
                 </div>
@@ -304,7 +304,7 @@ export function BidDashboard({ onSelectBid, onUpload }: BidDashboardProps) {
                   onClick={() => onSelectBid(bid)}
                   style={{
                     background: 'none', border: 'none', borderRight: `1px solid ${C.border}`,
-                    padding: '8px 0', fontSize: 8, letterSpacing: '0.12em',
+                    padding: '8px 0', fontSize: 11, letterSpacing: '0.12em',
                     textTransform: 'uppercase', color: C.muted, fontFamily: FONT,
                     cursor: 'pointer',
                   }}
@@ -315,7 +315,7 @@ export function BidDashboard({ onSelectBid, onUpload }: BidDashboardProps) {
                   onClick={e => { e.stopPropagation(); onUpload(bid) }}
                   style={{
                     background: 'none', border: 'none',
-                    padding: '8px 0', fontSize: 8, letterSpacing: '0.12em',
+                    padding: '8px 0', fontSize: 11, letterSpacing: '0.12em',
                     textTransform: 'uppercase', color: C.accent, fontFamily: FONT,
                     cursor: 'pointer',
                   }}

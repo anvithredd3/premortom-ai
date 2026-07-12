@@ -127,7 +127,7 @@ const inputBase = (missing: boolean, theme: Theme): React.CSSProperties => ({
   border: `1px solid ${missing ? theme.amber : theme.border}`,
   borderRadius: 2,
   padding: '7px 9px',
-  fontSize: 10,
+  fontSize: 14,
   color: missing ? theme.muted : theme.text,
   fontFamily: FONT,
   outline: 'none',
@@ -174,7 +174,7 @@ function CurrencyField({
 
   const selStyle: React.CSSProperties = {
     background: C.surface, border: `1px solid ${C.border}`, borderRadius: 2,
-    padding: '7px 10px', fontSize: 9, color: C.muted, fontFamily: FONT,
+    padding: '7px 10px', fontSize: 13, color: C.muted, fontFamily: FONT,
     outline: 'none', cursor: 'pointer', flexShrink: 0,
     WebkitAppearance: 'none', appearance: 'none',
   }
@@ -185,7 +185,7 @@ function CurrencyField({
         <div style={{ position: 'relative', flex: 1 }}>
           <span style={{
             position: 'absolute', left: 9, top: '50%', transform: 'translateY(-50%)',
-            fontSize: 12, color: C.textDim, fontFamily: FONT, pointerEvents: 'none', lineHeight: 1,
+            fontSize: 17, color: C.textDim, fontFamily: FONT, pointerEvents: 'none', lineHeight: 1,
           }}>
             {curr.symbol}
           </span>
@@ -201,7 +201,7 @@ function CurrencyField({
         </select>
       </div>
       {showConv && (
-        <div style={{ marginTop: 4, fontSize: 8, color: C.textDim, letterSpacing: '0.1em' }}>
+        <div style={{ marginTop: 4, fontSize: 11, color: C.textDim, letterSpacing: '0.1em' }}>
           = ₹ {crNum.toFixed(1)} Cr  ·  approx rate
         </div>
       )}
@@ -225,7 +225,7 @@ function FieldInput({ def, value, missing, onChange }: {
           return (
             <button key={v} onClick={() => onChange(v)} style={{
               flex: 1, cursor: 'pointer', fontFamily: FONT, borderRadius: 2,
-              padding: '6px 0', fontSize: 9, letterSpacing: '0.12em',
+              padding: '6px 0', fontSize: 13, letterSpacing: '0.12em',
               textTransform: 'uppercase',
               background: active ? (isYes ? C.green + '18' : C.accent + '18') : C.surface,
               border: `1px solid ${active ? (isYes ? C.green : C.accent) : C.border}`,
@@ -278,7 +278,7 @@ function ExtraFieldInput({ def, value, onChange }: {
           return (
             <button key={v} onClick={() => onChange(v)} style={{
               flex: 1, cursor: 'pointer', fontFamily: FONT, borderRadius: 2,
-              padding: '6px 0', fontSize: 9, letterSpacing: '0.12em',
+              padding: '6px 0', fontSize: 13, letterSpacing: '0.12em',
               textTransform: 'uppercase',
               background: active ? (isYes ? C.green + '18' : C.accent + '18') : C.surface,
               border: `1px solid ${active ? (isYes ? C.green : C.accent) : C.border}`,
@@ -348,28 +348,28 @@ function ResearchPanel({ result }: { result: ItemResearchResult }) {
     }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10 }}>
         <span style={{
-          fontSize: 7, letterSpacing: '0.2em', fontFamily: FONT, fontWeight: 700,
+          fontSize: 10, letterSpacing: '0.2em', fontFamily: FONT, fontWeight: 700,
           padding: '3px 8px', borderRadius: 2,
           background: col.border + '33', border: `1px solid ${col.border}`,
           color: col.text,
         }}>
           {result.category_label.toUpperCase()}
         </span>
-        <span style={{ fontSize: 8, color: C.textDim, fontFamily: FONT, letterSpacing: '0.12em' }}>
+        <span style={{ fontSize: 11, color: C.textDim, fontFamily: FONT, letterSpacing: '0.12em' }}>
           ITEM RESEARCHED
         </span>
       </div>
-      <div style={{ fontSize: 10, color: C.muted, fontFamily: FONT, lineHeight: 1.65, marginBottom: 12 }}>
+      <div style={{ fontSize: 14, color: C.muted, fontFamily: FONT, lineHeight: 1.65, marginBottom: 12 }}>
         {result.procurement_context}
       </div>
       {result.risk_factors.length > 0 && (
         <div>
-          <div style={{ fontSize: 7, letterSpacing: '0.18em', color: C.muted, fontFamily: FONT, fontWeight: 600, marginBottom: 6 }}>
+          <div style={{ fontSize: 10, letterSpacing: '0.18em', color: C.muted, fontFamily: FONT, fontWeight: 600, marginBottom: 6 }}>
             KEY RISK FACTORS
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
             {result.risk_factors.map((r, i) => (
-              <div key={i} style={{ fontSize: 9, color: C.textDim, fontFamily: FONT, lineHeight: 1.5 }}>
+              <div key={i} style={{ fontSize: 13, color: C.textDim, fontFamily: FONT, lineHeight: 1.5 }}>
                 · {r}
               </div>
             ))}
@@ -385,7 +385,7 @@ function SectionHeader({ label }: { label: string }) {
   const { theme: C } = useTheme()
   return (
     <div style={{
-      fontSize: 7, letterSpacing: '0.2em', color: C.muted, fontFamily: FONT, fontWeight: 600,
+      fontSize: 10, letterSpacing: '0.2em', color: C.muted, fontFamily: FONT, fontWeight: 600,
       textTransform: 'uppercase', marginBottom: 10, marginTop: 4,
       borderBottom: `1px solid ${C.border}`, paddingBottom: 6,
     }}>
@@ -410,7 +410,7 @@ function FieldCell({ def, form, missing, research, onChange }: {
     <div style={wide ? { gridColumn: '1 / -1' } : {}}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
         <span style={{
-          fontSize: 8, letterSpacing: '0.14em', textTransform: 'uppercase',
+          fontSize: 11, letterSpacing: '0.14em', textTransform: 'uppercase',
           color: isMissing ? C.amber : C.muted, fontFamily: FONT, fontWeight: 600,
         }}>
           {label}
@@ -452,32 +452,32 @@ function RfqGuidance({ guidance }: { guidance: UiGuidanceResult }) {
         display: 'flex', alignItems: 'center', gap: 8,
         background: 'none', border: 'none', cursor: 'pointer', padding: 0, marginBottom: open ? 10 : 0,
       }}>
-        <span style={{ fontSize: 8, letterSpacing: '0.18em', color: C.muted, fontFamily: FONT, fontWeight: 600 }}>RFQ GUIDANCE</span>
-        <span style={{ fontSize: 9, color: C.faint, fontFamily: FONT }}>{open ? '▲' : '▼'}</span>
+        <span style={{ fontSize: 11, letterSpacing: '0.18em', color: C.muted, fontFamily: FONT, fontWeight: 600 }}>RFQ GUIDANCE</span>
+        <span style={{ fontSize: 13, color: C.faint, fontFamily: FONT }}>{open ? '▲' : '▼'}</span>
       </button>
       {open && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
           {rfq.missing_inputs && rfq.missing_inputs.length > 0 && (
             <div style={{ padding: '10px 12px', background: C.amber + '12', border: `1px solid ${C.amber}44`, borderRadius: 2 }}>
-              <div style={{ fontSize: 7, letterSpacing: '0.16em', color: C.amber, fontWeight: 600, fontFamily: FONT, marginBottom: 6 }}>MISSING INPUTS</div>
+              <div style={{ fontSize: 10, letterSpacing: '0.16em', color: C.amber, fontWeight: 600, fontFamily: FONT, marginBottom: 6 }}>MISSING INPUTS</div>
               {rfq.missing_inputs.map((m, i) => (
-                <div key={i} style={{ fontSize: 9, color: C.muted, fontFamily: FONT, lineHeight: 1.4 }}>· {m}</div>
+                <div key={i} style={{ fontSize: 13, color: C.muted, fontFamily: FONT, lineHeight: 1.4 }}>· {m}</div>
               ))}
             </div>
           )}
           {rfq.suggested_requirements && rfq.suggested_requirements.length > 0 && (
             <div style={{ padding: '10px 12px', background: C.surface, border: `1px solid ${C.border}`, borderRadius: 2 }}>
-              <div style={{ fontSize: 7, letterSpacing: '0.16em', color: C.muted, fontWeight: 600, fontFamily: FONT, marginBottom: 6 }}>SUGGESTED REQUIREMENTS</div>
+              <div style={{ fontSize: 10, letterSpacing: '0.16em', color: C.muted, fontWeight: 600, fontFamily: FONT, marginBottom: 6 }}>SUGGESTED REQUIREMENTS</div>
               {rfq.suggested_requirements.map((r, i) => (
-                <div key={i} style={{ fontSize: 9, color: C.textDim, fontFamily: FONT, lineHeight: 1.4 }}>· {r}</div>
+                <div key={i} style={{ fontSize: 13, color: C.textDim, fontFamily: FONT, lineHeight: 1.4 }}>· {r}</div>
               ))}
             </div>
           )}
           {signals.length > 0 && (
             <div style={{ padding: '8px 12px', background: C.accent + '12', border: `1px solid ${C.accent}44`, borderRadius: 2 }}>
-              <div style={{ fontSize: 7, letterSpacing: '0.16em', color: C.accent, fontWeight: 600, fontFamily: FONT, marginBottom: 5 }}>RISK SIGNALS</div>
+              <div style={{ fontSize: 10, letterSpacing: '0.16em', color: C.accent, fontWeight: 600, fontFamily: FONT, marginBottom: 5 }}>RISK SIGNALS</div>
               {signals.slice(0, 3).map((s, i) => (
-                <div key={i} style={{ fontSize: 9, color: C.textDim, fontFamily: FONT, lineHeight: 1.4 }}>· {s}</div>
+                <div key={i} style={{ fontSize: 13, color: C.textDim, fontFamily: FONT, lineHeight: 1.4 }}>· {s}</div>
               ))}
             </div>
           )}
@@ -627,7 +627,7 @@ export function IntakeView({ onConfirm, onLoadSample }: IntakeViewProps) {
   /* ── Styles ─────────────────────────────────────────────────────── */
   const ghostBtn = (active = false): React.CSSProperties => ({
     background: 'none', border: `1px solid ${active ? C.muted : C.border}`,
-    borderRadius: 2, padding: '5px 14px', fontSize: 9,
+    borderRadius: 2, padding: '5px 14px', fontSize: 13,
     letterSpacing: '0.14em', textTransform: 'uppercase', fontFamily: FONT,
     color: active ? C.text : C.muted, cursor: 'pointer',
   })
@@ -646,7 +646,7 @@ export function IntakeView({ onConfirm, onLoadSample }: IntakeViewProps) {
 
         {/* ── Step 1: Item Name + Research ── */}
         <div style={{ marginBottom: 20 }}>
-          <div style={{ fontSize: 8, letterSpacing: '0.18em', color: C.muted, fontFamily: FONT, fontWeight: 600, marginBottom: 6 }}>
+          <div style={{ fontSize: 11, letterSpacing: '0.18em', color: C.muted, fontFamily: FONT, fontWeight: 600, marginBottom: 6 }}>
             WHAT ARE YOU PROCURING?
           </div>
           <div style={{ display: 'flex', gap: 8 }}>
@@ -657,7 +657,7 @@ export function IntakeView({ onConfirm, onLoadSample }: IntakeViewProps) {
               placeholder="e.g.  Boeing 737 MAX  ·  MRI Machine  ·  SAP ERP System  ·  3 Ton Crane"
               style={{
                 flex: 1, background: C.surface, border: `1px solid ${C.border}`,
-                borderRadius: 2, padding: '9px 12px', fontSize: 10, color: C.text,
+                borderRadius: 2, padding: '9px 12px', fontSize: 14, color: C.text,
                 fontFamily: FONT, outline: 'none',
               }}
             />
@@ -669,7 +669,7 @@ export function IntakeView({ onConfirm, onLoadSample }: IntakeViewProps) {
                 color: researchBusy ? C.muted : C.purple,
                 border: `1px solid ${researchBusy ? C.border : C.purple + '88'}`,
                 borderRadius: 2, padding: '9px 18px',
-                fontSize: 9, letterSpacing: '0.16em', textTransform: 'uppercase',
+                fontSize: 13, letterSpacing: '0.16em', textTransform: 'uppercase',
                 fontFamily: FONT, fontWeight: 700, cursor: researchBusy ? 'not-allowed' : 'pointer',
                 whiteSpace: 'nowrap', flexShrink: 0,
               }}
@@ -688,10 +688,10 @@ export function IntakeView({ onConfirm, onLoadSample }: IntakeViewProps) {
             display: 'flex', alignItems: 'center', gap: 8,
             background: 'none', border: 'none', cursor: 'pointer', padding: 0, marginBottom: docOpen ? 12 : 0,
           }}>
-            <span style={{ fontSize: 8, letterSpacing: '0.18em', color: C.muted, fontFamily: FONT, fontWeight: 600 }}>
+            <span style={{ fontSize: 11, letterSpacing: '0.18em', color: C.muted, fontFamily: FONT, fontWeight: 600 }}>
               DOCUMENT / PASTE TEXT
             </span>
-            <span style={{ fontSize: 9, color: C.faint, fontFamily: FONT }}>{docOpen ? '▲' : '▼'}</span>
+            <span style={{ fontSize: 13, color: C.faint, fontFamily: FONT }}>{docOpen ? '▲' : '▼'}</span>
           </button>
           {docOpen && (
             <>
@@ -704,7 +704,7 @@ export function IntakeView({ onConfirm, onLoadSample }: IntakeViewProps) {
                   width: '100%', boxSizing: 'border-box',
                   background: C.surface, border: `1px solid ${C.border}`,
                   borderRadius: 2, padding: '10px 12px',
-                  fontSize: 10, color: C.text, fontFamily: FONT,
+                  fontSize: 14, color: C.text, fontFamily: FONT,
                   outline: 'none', resize: 'vertical', lineHeight: 1.6, marginBottom: 8,
                 }}
               />
@@ -722,12 +722,12 @@ export function IntakeView({ onConfirm, onLoadSample }: IntakeViewProps) {
                   transition: 'border-color 0.2s, background 0.2s',
                 }}
               >
-                <span style={{ fontSize: 9, color: C.muted, letterSpacing: '0.1em', textTransform: 'uppercase', fontFamily: FONT }}>
+                <span style={{ fontSize: 13, color: C.muted, letterSpacing: '0.1em', textTransform: 'uppercase', fontFamily: FONT }}>
                   {fileName ? `↑ ${fileName}` : 'DROP FILE  /  BROWSE'}
                 </span>
                 {fileName && (
                   <button onClick={e => { e.stopPropagation(); setFileName(null); setStage('input') }}
-                    style={{ ...ghostBtn(), marginLeft: 'auto', padding: '2px 8px', fontSize: 8 }}>
+                    style={{ ...ghostBtn(), marginLeft: 'auto', padding: '2px 8px', fontSize: 11 }}>
                     ✕
                   </button>
                 )}
@@ -742,7 +742,7 @@ export function IntakeView({ onConfirm, onLoadSample }: IntakeViewProps) {
                     color: busy ? '#5a2a2a' : '#080808',
                     border: `1px solid ${busy ? '#3a1010' : C.accent}`,
                     borderRadius: 2, padding: '7px 20px',
-                    fontSize: 9, letterSpacing: '0.16em', textTransform: 'uppercase',
+                    fontSize: 13, letterSpacing: '0.16em', textTransform: 'uppercase',
                     fontFamily: FONT, fontWeight: 700,
                     cursor: busy ? 'not-allowed' : 'pointer',
                   }}
@@ -776,8 +776,8 @@ export function IntakeView({ onConfirm, onLoadSample }: IntakeViewProps) {
         {/* ── Error ── */}
         {stage === 'error' && (
           <div style={{ border: `1px solid ${C.accent}44`, borderRadius: 2, background: C.accent + '12', padding: '14px 16px', marginBottom: 20 }}>
-            <div style={{ fontSize: 8, letterSpacing: '0.18em', color: C.accent, marginBottom: 6, fontFamily: FONT, fontWeight: 700 }}>ERROR</div>
-            <div style={{ fontSize: 10, color: C.accent, fontFamily: FONT, lineHeight: 1.6 }}>{errMsg}</div>
+            <div style={{ fontSize: 11, letterSpacing: '0.18em', color: C.accent, marginBottom: 6, fontFamily: FONT, fontWeight: 700 }}>ERROR</div>
+            <div style={{ fontSize: 14, color: C.accent, fontFamily: FONT, lineHeight: 1.6 }}>{errMsg}</div>
           </div>
         )}
 
@@ -789,16 +789,16 @@ export function IntakeView({ onConfirm, onLoadSample }: IntakeViewProps) {
             <div style={{ borderTop: `1px solid ${C.border}`, marginBottom: 20 }} />
 
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 18 }}>
-              <span style={{ fontSize: 8, letterSpacing: '0.18em', color: C.muted, fontFamily: FONT, fontWeight: 600 }}>
+              <span style={{ fontSize: 11, letterSpacing: '0.18em', color: C.muted, fontFamily: FONT, fontWeight: 600 }}>
                 PROCUREMENT FIELDS
               </span>
               {researchResult && (
-                <span style={{ fontSize: 8, letterSpacing: '0.14em', color: C.purple, fontFamily: FONT }}>
+                <span style={{ fontSize: 11, letterSpacing: '0.14em', color: C.purple, fontFamily: FONT }}>
                   PRE-FILLED FROM RESEARCH
                 </span>
               )}
               {missing.size > 0 && (
-                <span style={{ fontSize: 8, color: C.amber, letterSpacing: '0.1em', fontFamily: FONT }}>
+                <span style={{ fontSize: 11, color: C.amber, letterSpacing: '0.1em', fontFamily: FONT }}>
                   {missing.size} NEEDS INPUT
                 </span>
               )}
@@ -871,7 +871,7 @@ export function IntakeView({ onConfirm, onLoadSample }: IntakeViewProps) {
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 20 }}>
                   {extraFields.map(ef => (
                     <div key={ef.key}>
-                      <div style={{ fontSize: 8, letterSpacing: '0.14em', textTransform: 'uppercase', color: C.muted, fontFamily: FONT, fontWeight: 600, marginBottom: 4 }}>
+                      <div style={{ fontSize: 11, letterSpacing: '0.14em', textTransform: 'uppercase', color: C.muted, fontFamily: FONT, fontWeight: 600, marginBottom: 4 }}>
                         {ef.label}
                       </div>
                       <ExtraFieldInput
@@ -891,7 +891,7 @@ export function IntakeView({ onConfirm, onLoadSample }: IntakeViewProps) {
               style={{
                 width: '100%', background: C.accent, color: C.bg,
                 border: `1px solid ${C.accent}`, borderRadius: 2,
-                padding: '10px 0', fontSize: 10, letterSpacing: '0.18em',
+                padding: '10px 0', fontSize: 14, letterSpacing: '0.18em',
                 textTransform: 'uppercase', fontFamily: FONT, fontWeight: 700,
                 cursor: 'pointer',
               }}

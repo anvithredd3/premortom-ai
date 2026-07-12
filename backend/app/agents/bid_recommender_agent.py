@@ -171,7 +171,8 @@ def _llm_enrichment(
         name=NAME,
         instructions=instructions,
         user_payload=json.dumps(payload),
-        temperature=0.1,
+        use_sonnet=True,
+        temperature=0,
     )
     return result or {}
 

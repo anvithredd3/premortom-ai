@@ -1,0 +1,24 @@
+run_id,procurement_name,equipment_type,overall_risk_score,recommended_decision,failure_probability_pct,created_at,report_path
+PM-001,GE Signa Explorer 1.5T MRI System,MRI Machine. Medical Equipment,79.0,NO-GO,84.0,2026-07-10T14:07:38.420006+00:00,files/output/premortem_runs/PM-001/report.json
+PM-002,GE Signa Explorer 1.5T MRI System,MRI System,77.0,NO-GO,83.0,2026-07-10T16:44:04.357056+00:00,files/output/premortem_runs/PM-002/report.json
+PM-003,AIIMS MRI Scanner,MRI Machine,85.0,NO-GO,87.0,2026-07-10T16:56:07.637821+00:00,files/output/premortem_runs/PM-003/report.json
+PM-004,AIIMS MRI Scanner,MRI Machine,85.0,NO-GO,87.0,2026-07-10T17:03:35.067212+00:00,files/output/premortem_runs/PM-004/report.json
+PM-005,AIIMS MRI Scanner,MRI Machine,86.0,NO-GO,88.0,2026-07-10T17:08:52.948044+00:00,files/output/premortem_runs/PM-005/report.json
+PM-006,AIIMS MRI Scanner,MRI Machine,84.0,NO-GO,87.0,2026-07-10T17:12:03.428026+00:00,files/output/premortem_runs/PM-006/report.json
+PM-007,AIIMS MRI Scanner,MRI Machine,86.0,NO-GO,88.0,2026-07-10T17:16:47.904248+00:00,files/output/premortem_runs/PM-007/report.json
+PM-008,AIIMS MRI Scanner,MRI Machine,85.0,NO-GO,87.0,2026-07-10T17:20:43.186049+00:00,files/output/premortem_runs/PM-008/report.json
+PM-009,AIIMS MRI Scanner,MRI Machine,86.0,NO-GO,88.0,2026-07-10T17:22:29.677911+00:00,files/output/premortem_runs/PM-009/report.json
+PM-010,AIIMS MRI Scanner,MRI Machine,85.0,NO-GO,87.0,2026-07-10T17:28:15.842076+00:00,files/output/premortem_runs/PM-010/report.json
+PM-011,AIIMS MRI Scanner,MRI Machine,85.0,NO-GO,87.0,2026-07-10T17:44:31.198156+00:00,files/output/premortem_runs/PM-011/report.json
+PM-012,AIIMS MRI Scanner,MRI Machine,85.0,NO-GO,87.0,2026-07-10T17:48:29.596044+00:00,files/output/premortem_runs/PM-012/report.json
+PM-013,AIIMS MRI Scanner,MRI Machine,85.0,NO-GO,87.0,2026-07-10T17:52:31.561818+00:00,files/output/premortem_runs/PM-013/report.json
+PM-014,AIIMS MRI Scanner,MRI Machine,85.0,NO-GO,87.0,2026-07-10T18:01:44.837728+00:00,files/output/premortem_runs/PM-014/report.json
+PM-015,AIIMS MRI Scanner,MRI Machine,85.0,NO-GO,87.0,2026-07-10T18:03:28.263943+00:00,files/output/premortem_runs/PM-015/report.json
+PM-016,AIIMS MRI Scanner,MRI Machine,85.0,NO-GO,87.0,2026-07-10T18:22:12.693794+00:00,files/output/premortem_runs/PM-016/report.json
+PM-017,AIIMS MRI Scanner,MRI Machine,86.0,NO-GO,88.0,2026-07-10T18:54:33.975075+00:00,files/output/premortem_runs/PM-017/report.json
+PM-018,AIIMS MRI Scanner,MRI Machine,86.0,NO-GO,88.0,2026-07-10T18:55:19.765833+00:00,files/output/premortem_runs/PM-018/report.json
+PM-019,AIIMS MRI Scanner,MRI Machine,86.0,NO-GO,88.0,2026-07-10T18:57:46.194417+00:00,files/output/premortem_runs/PM-019/report.json
+PM-020,AIIMS MRI Scanner,MRI Machine,86.0,NO-GO,88.0,2026-07-10T19:00:47.179663+00:00,files/output/premortem_runs/PM-020/report.json
+PM-021,AIIMS MRI Scanner,MRI Machine,85.0,NO-GO,87.0,2026-07-10T19:04:48.907408+00:00,files/output/premortem_runs/PM-021/report.json
+PM-022,AIIMS MRI Scanner,MRI Machine,85.0,NO-GO,87.0,2026-07-10T19:12:09.593588+00:00,files/output/premortem_runs/PM-022/report.json
+PM-023,AIIMS MRI Scanner,MRI Machine,85.0,NO-GO,87.0,2026-07-10T19:14:06.791776+00:00,files/output/premortem_runs/PM-023/report.json

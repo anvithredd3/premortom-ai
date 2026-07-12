@@ -7,7 +7,8 @@ preserving identical behaviour.
 """
 from __future__ import annotations
 
-from concurrent.futures import ThreadPoolExecutor
+import threading
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timezone
 from typing import List
 
@@ -82,81 +83,80 @@ def run_premortem(data: ProcurementInput) -> PreMortemReport:
     )
 
 
-def run_bid_evaluation(run_id: str, bid_id: str, quote_ids: List[str]) -> None:
-    """Evaluate a bid run and persist status for the UI.
+_bid_state_lock = threading.Lock()
 
-    This is the first backend skeleton for the bid workflow. It uses the
-    existing Contract Risk Agent for per-quote review, then asks the Bid
-    Recommender Agent to rank quotes and produce the decision artifact.
-    """
+
+def _process_one_quote(quote: dict, bid_id: str) -> tuple[dict, dict]:
+    """Extract proposal + run contract review for a single quote (runs in thread pool)."""
+    pdf_path = input_bids.SAMPLES_DIR / quote["pdf_path"]
+    content = pdf_path.read_bytes()
+    text = document_parser.extract_text(pdf_path.name, content)
+    vp = vendor_proposal_agent.analyze_quote(
+        quote=quote,
+        raw_text=text,
+        source_pdf_path=str(pdf_path),
+    )
+    data = ProcurementInput(
+        procurement_name=quote.get("procurement_name") or bid_id,
+        equipment_type=quote.get("equipment_type") or "Medical Equipment",
+        raw_document_text=text,
+    )
+    result = contract_agent.analyze(data)
+    review = {
+        "quote_id": quote["quote_id"],
+        "vendor_name": quote.get("vendor_name", ""),
+        "risk_score": result.risk_score,
+        "risk_level": result.risk_level.value,
+        "findings": result.findings,
+        "recommendation": result.recommendation,
+    }
+    return vp, review
+
+
+def run_bid_evaluation(run_id: str, bid_id: str, quote_ids: List[str]) -> None:
+    """Evaluate a bid run — all quotes processed in parallel, then ranked."""
     try:
         bid_outputs.set_running(run_id)
-        bid_outputs.update_agent(
-            run_id,
-            "bid_recommender",
-            "running",
-            "Preparing quote review plan",
-        )
         quote_rows = input_bids.get_quote_rows(bid_id, quote_ids)
-        reviews = []
-        vendor_proposals = []
+        n = len(quote_rows)
+        reviews: list[dict] = []
+        vendor_proposals: list[dict] = []
 
+        # Mark all quotes running and signal agents upfront
         for quote in quote_rows:
-            quote_id = quote["quote_id"]
-            bid_outputs.update_quote(run_id, quote_id, "running")
-            bid_outputs.update_agent(
-                run_id,
-                "vendor_proposal",
-                "running",
-                f"Extracting proposal text for {quote_id}",
-            )
-            bid_outputs.update_agent(
-                run_id,
-                "contract_review",
-                "running",
-                f"Reviewing {quote_id}",
-            )
-            pdf_path = input_bids.SAMPLES_DIR / quote["pdf_path"]
-            content = pdf_path.read_bytes()
-            text = document_parser.extract_text(pdf_path.name, content)
-            vendor_proposals.append(
-                vendor_proposal_agent.analyze_quote(
-                    quote=quote,
-                    raw_text=text,
-                    source_pdf_path=str(pdf_path),
-                )
-            )
-            bid_outputs.write_vendor_proposals(run_id, vendor_proposals)
-            bid_outputs.update_agent(
-                run_id,
-                "vendor_proposal",
-                "completed",
-                f"Proposal text extracted for {quote_id}",
-            )
-            data = ProcurementInput(
-                procurement_name=quote.get("procurement_name") or bid_id,
-                equipment_type=quote.get("equipment_type") or "Medical Equipment",
-                raw_document_text=text,
-            )
-            result = contract_agent.analyze(data)
-            review = {
-                "quote_id": quote_id,
-                "vendor_name": quote.get("vendor_name", ""),
-                "risk_score": result.risk_score,
-                "risk_level": result.risk_level.value,
-                "findings": result.findings,
-                "recommendation": result.recommendation,
-            }
-            reviews.append(review)
-            bid_outputs.write_contract_reviews(run_id, reviews)
-            bid_outputs.update_quote(
-                run_id,
-                quote_id,
-                "completed",
-                vendor_name=quote.get("vendor_name", ""),
-                risk_score=result.risk_score,
-            )
+            bid_outputs.update_quote(run_id, quote["quote_id"], "running")
+        bid_outputs.update_agent(run_id, "vendor_proposal", "running",
+                                 f"Extracting {n} proposals in parallel")
+        bid_outputs.update_agent(run_id, "contract_review", "running",
+                                 f"Reviewing {n} quotes in parallel")
 
+        # Process all quotes concurrently
+        with ThreadPoolExecutor(max_workers=n) as executor:
+            futures = {
+                executor.submit(_process_one_quote, quote, bid_id): quote
+                for quote in quote_rows
+            }
+            for future in as_completed(futures):
+                quote = futures[future]
+                quote_id = quote["quote_id"]
+                try:
+                    vp, review = future.result()
+                    with _bid_state_lock:
+                        vendor_proposals.append(vp)
+                        reviews.append(review)
+                        bid_outputs.write_vendor_proposals(run_id, vendor_proposals)
+                        bid_outputs.write_contract_reviews(run_id, reviews)
+                        bid_outputs.update_quote(
+                            run_id, quote_id, "completed",
+                            vendor_name=quote.get("vendor_name", ""),
+                            risk_score=review["risk_score"],
+                        )
+                except Exception as exc:
+                    with _bid_state_lock:
+                        bid_outputs.update_quote(run_id, quote_id, "failed")
+
+        bid_outputs.update_agent(run_id, "vendor_proposal", "completed", "All proposals extracted")
+        bid_outputs.update_agent(run_id, "contract_review", "completed", "All quotes reviewed")
         bid_outputs.update_agent(
             run_id,
             "bid_recommender",

@@ -101,10 +101,10 @@ function HoverCard({ anchorEl, id, title, state, onClose, cardRef }: HoverCardPr
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, flex: 1, minWidth: 0 }}>
           <div style={{ width: 6, height: 6, borderRadius: '50%', background: sc.dot, flexShrink: 0 }} />
-          <span style={{ fontSize: 8, letterSpacing: '0.2em', color: sc.accent, textTransform: 'uppercase', fontWeight: 700, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+          <span style={{ fontSize: 11, letterSpacing: '0.2em', color: sc.accent, textTransform: 'uppercase', fontWeight: 700, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
             {title}
           </span>
-          <span style={{ fontSize: 7, color: C.muted, letterSpacing: '0.1em', textTransform: 'uppercase', flexShrink: 0 }}>
+          <span style={{ fontSize: 10, color: C.muted, letterSpacing: '0.1em', textTransform: 'uppercase', flexShrink: 0 }}>
             {RISK_LABELS[state.status]}
           </span>
         </div>
@@ -113,7 +113,7 @@ function HoverCard({ anchorEl, id, title, state, onClose, cardRef }: HoverCardPr
           style={{
             background: 'none', border: `1px solid ${C.border}`, borderRadius: 2,
             color: C.textDim, cursor: 'pointer', fontFamily: FONT,
-            fontSize: 9, padding: '2px 8px', letterSpacing: '0.1em', flexShrink: 0, marginLeft: 8,
+            fontSize: 13, padding: '2px 8px', letterSpacing: '0.1em', flexShrink: 0, marginLeft: 8,
           }}
         >
           ✕ CLOSE
@@ -122,7 +122,7 @@ function HoverCard({ anchorEl, id, title, state, onClose, cardRef }: HoverCardPr
 
       {/* Agent ID badge */}
       <div style={{ padding: '6px 14px', borderBottom: `1px solid ${C.border}` }}>
-        <span style={{ fontSize: 7, color: C.muted, letterSpacing: '0.1em', textTransform: 'uppercase' }}>
+        <span style={{ fontSize: 10, color: C.muted, letterSpacing: '0.1em', textTransform: 'uppercase' }}>
           {id === 'profiler' ? 'profiler_node' : `${id}_agent`} · {shortModel(state.model)}
         </span>
       </div>
@@ -133,29 +133,29 @@ function HoverCard({ anchorEl, id, title, state, onClose, cardRef }: HoverCardPr
           <span style={{ fontSize: 28, fontWeight: 700, color: sc.accent, lineHeight: 1 }}>
             {Math.round(state.risk_score)}
           </span>
-          <span style={{ fontSize: 8, color: C.textDim }}>/ 100 RISK SCORE</span>
+          <span style={{ fontSize: 11, color: C.textDim }}>/ 100 RISK SCORE</span>
         </div>
       )}
 
       {/* Verdict */}
       {state.verdict && (
         <div style={{ padding: '10px 14px', borderBottom: `1px solid ${C.border}` }}>
-          <div style={{ fontSize: 7, letterSpacing: '0.16em', color: C.muted, textTransform: 'uppercase', marginBottom: 5 }}>VERDICT</div>
-          <div style={{ fontSize: 9, color: sc.accent, fontWeight: 600, lineHeight: 1.6 }}>{state.verdict}</div>
+          <div style={{ fontSize: 10, letterSpacing: '0.16em', color: C.muted, textTransform: 'uppercase', marginBottom: 5 }}>VERDICT</div>
+          <div style={{ fontSize: 13, color: sc.accent, fontWeight: 600, lineHeight: 1.6 }}>{state.verdict}</div>
         </div>
       )}
 
       {/* Reasoning / Summary */}
       {state.summary && (
         <div style={{ padding: '10px 14px', borderBottom: `1px solid ${C.border}` }}>
-          <div style={{ fontSize: 7, letterSpacing: '0.16em', color: C.muted, textTransform: 'uppercase', marginBottom: 5 }}>REASONING</div>
-          <div style={{ fontSize: 9, color: C.muted, lineHeight: 1.7 }}>{state.summary}</div>
+          <div style={{ fontSize: 10, letterSpacing: '0.16em', color: C.muted, textTransform: 'uppercase', marginBottom: 5 }}>REASONING</div>
+          <div style={{ fontSize: 13, color: C.muted, lineHeight: 1.7 }}>{state.summary}</div>
         </div>
       )}
 
       {/* Performance metrics */}
       <div style={{ padding: '10px 14px', borderBottom: state.research?.length ? `1px solid ${C.border}` : 'none' }}>
-        <div style={{ fontSize: 7, letterSpacing: '0.16em', color: C.muted, textTransform: 'uppercase', marginBottom: 8 }}>PERFORMANCE</div>
+        <div style={{ fontSize: 10, letterSpacing: '0.16em', color: C.muted, textTransform: 'uppercase', marginBottom: 8 }}>PERFORMANCE</div>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
           {[
             { label: 'MODEL',  value: shortModel(state.model) },
@@ -164,8 +164,8 @@ function HoverCard({ anchorEl, id, title, state, onClose, cardRef }: HoverCardPr
             { label: 'STATUS', value: RISK_LABELS[state.status] },
           ].map(({ label, value }) => (
             <div key={label}>
-              <div style={{ fontSize: 7, color: C.muted, letterSpacing: '0.12em', marginBottom: 2 }}>{label}</div>
-              <div style={{ fontSize: 8, color: C.textDim }}>{value}</div>
+              <div style={{ fontSize: 10, color: C.muted, letterSpacing: '0.12em', marginBottom: 2 }}>{label}</div>
+              <div style={{ fontSize: 11, color: C.textDim }}>{value}</div>
             </div>
           ))}
         </div>
@@ -174,16 +174,16 @@ function HoverCard({ anchorEl, id, title, state, onClose, cardRef }: HoverCardPr
       {/* Research sources */}
       {state.research && state.research.length > 0 && (
         <div style={{ padding: '10px 14px' }}>
-          <div style={{ fontSize: 7, letterSpacing: '0.16em', color: C.muted, textTransform: 'uppercase', marginBottom: 6 }}>
+          <div style={{ fontSize: 10, letterSpacing: '0.16em', color: C.muted, textTransform: 'uppercase', marginBottom: 6 }}>
             SOURCES ({state.research.length})
           </div>
           {state.research.map((r, i) => (
             <div key={i} style={{ marginBottom: 8 }}>
               {r.url
-                ? <a href={r.url} target="_blank" rel="noreferrer" style={{ fontSize: 8, color: C.cyan, textDecoration: 'none', display: 'block', marginBottom: 2 }}>↗ {r.title || r.url}</a>
-                : <div style={{ fontSize: 8, color: C.textDim, marginBottom: 2 }}>{r.title}</div>
+                ? <a href={r.url} target="_blank" rel="noreferrer" style={{ fontSize: 11, color: C.cyan, textDecoration: 'none', display: 'block', marginBottom: 2 }}>↗ {r.title || r.url}</a>
+                : <div style={{ fontSize: 11, color: C.textDim, marginBottom: 2 }}>{r.title}</div>
               }
-              {r.snippet && <div style={{ fontSize: 7, color: C.muted, lineHeight: 1.5 }}>{r.snippet.slice(0, 120)}…</div>}
+              {r.snippet && <div style={{ fontSize: 10, color: C.muted, lineHeight: 1.5 }}>{r.snippet.slice(0, 120)}…</div>}
             </div>
           ))}
         </div>
@@ -257,27 +257,27 @@ const LiveAgentNode = memo(({ data }: { data: AgentNodeData }) => {
           transition: 'background .2s',
         }} />
         <span style={{
-          fontSize: 7, letterSpacing: '0.16em', textTransform: 'uppercase', fontWeight: 700,
+          fontSize: 10, letterSpacing: '0.16em', textTransform: 'uppercase', fontWeight: 700,
           color: isDone || isRun ? accentColor : C.muted,
           transition: 'color .2s', flex: 1,
         }}>
           {isRun ? 'PROCESSING...' : isDone ? RISK_LABELS[state.status] : 'WAITING'}
         </span>
         {isDone && state.risk_score != null && (
-          <span style={{ fontSize: 10, fontWeight: 700, color: st.dot }}>{Math.round(state.risk_score)}</span>
+          <span style={{ fontSize: 14, fontWeight: 700, color: st.dot }}>{Math.round(state.risk_score)}</span>
         )}
       </div>
 
       {/* Plain-English label */}
       <div style={{
-        fontSize: 11, fontWeight: 600, lineHeight: 1.35, marginBottom: 6,
+        fontSize: 15, fontWeight: 600, lineHeight: 1.35, marginBottom: 6,
         color: isDone || isRun ? C.text : C.muted, transition: 'color .2s',
       }}>
         {title}
       </div>
 
       {/* Technical subtitle */}
-      <div style={{ fontSize: 7, color: C.muted, letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: isDone ? 8 : 0 }}>
+      <div style={{ fontSize: 10, color: C.muted, letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: isDone ? 8 : 0 }}>
         {subtitle}
       </div>
 
@@ -290,7 +290,7 @@ const LiveAgentNode = memo(({ data }: { data: AgentNodeData }) => {
           <MetricBadge label="TIME"   value={fmtSec(state.time_ms)} color={accentColor} />
           <MetricBadge label="TOKENS" value={fmtTok(state.tokens)}  color={accentColor} />
           {state.model && (
-            <span style={{ fontSize: 6, color: C.muted, letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+            <span style={{ fontSize: 9, color: C.muted, letterSpacing: '0.08em', textTransform: 'uppercase' }}>
               {shortModel(state.model)}
             </span>
           )}
@@ -304,13 +304,13 @@ const LiveAgentNode = memo(({ data }: { data: AgentNodeData }) => {
             width: 4, height: 4, borderRadius: '50%', background: accentColor,
             animation: 'pulse 1s ease-in-out infinite',
           }} />
-          <span style={{ fontSize: 7, color: C.textDim, letterSpacing: '0.1em' }}>CALLING LLM</span>
+          <span style={{ fontSize: 10, color: C.textDim, letterSpacing: '0.1em' }}>CALLING LLM</span>
         </div>
       )}
 
       {/* Hint */}
       {isDone && (
-        <div style={{ marginTop: 4, fontSize: 6, color: isPinned ? C.textDim : C.muted, letterSpacing: '0.1em' }}>
+        <div style={{ marginTop: 4, fontSize: 9, color: isPinned ? C.textDim : C.muted, letterSpacing: '0.1em' }}>
           {isPinned ? 'CLICK TO DISMISS' : 'CLICK FOR DETAILS'}
         </div>
       )}
@@ -380,8 +380,8 @@ function MetricBadge({ label, value, color }: { label: string; value: string; co
   const { theme: C } = useTheme()
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 3 }}>
-      <span style={{ fontSize: 6, color: C.muted, letterSpacing: '0.1em', textTransform: 'uppercase' }}>{label}</span>
-      <span style={{ fontSize: 7, color, fontWeight: 600 }}>{value}</span>
+      <span style={{ fontSize: 9, color: C.muted, letterSpacing: '0.1em', textTransform: 'uppercase' }}>{label}</span>
+      <span style={{ fontSize: 10, color, fontWeight: 600 }}>{value}</span>
     </div>
   )
 }
@@ -425,21 +425,21 @@ const LiveDecisionNode = memo(({ data }: { data: DecisionNodeData }) => {
 
       <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 9 }}>
         <div style={{ width: 5, height: 5, borderRadius: '50%', background: isDone || isRun ? st.dot : C.muted, flexShrink: 0 }} />
-        <span style={{ fontSize: 7, letterSpacing: '0.18em', color: isDone || isRun ? st.dot : C.muted, textTransform: 'uppercase', fontWeight: 700 }}>
+        <span style={{ fontSize: 10, letterSpacing: '0.18em', color: isDone || isRun ? st.dot : C.muted, textTransform: 'uppercase', fontWeight: 700 }}>
           DECISION ENGINE
         </span>
         {isDone && state.risk_score != null && (
-          <span style={{ marginLeft: 'auto', fontSize: 10, fontWeight: 700, color: st.dot }}>{Math.round(state.risk_score)}</span>
+          <span style={{ marginLeft: 'auto', fontSize: 14, fontWeight: 700, color: st.dot }}>{Math.round(state.risk_score)}</span>
         )}
       </div>
 
-      <div style={{ fontSize: 12, fontWeight: 700, color: isDone || isRun ? C.text : C.muted, marginBottom: 6, lineHeight: 1.3 }}>
+      <div style={{ fontSize: 17, fontWeight: 700, color: isDone || isRun ? C.text : C.muted, marginBottom: 6, lineHeight: 1.3 }}>
         AI Decision Board
       </div>
 
       {isDone && state.verdict && (
         <div style={{
-          fontSize: 8, fontWeight: 700, color: st.dot, letterSpacing: '0.1em',
+          fontSize: 11, fontWeight: 700, color: st.dot, letterSpacing: '0.1em',
           border: `1px solid ${st.dot}33`, borderRadius: 2,
           padding: '4px 10px', display: 'inline-block', marginBottom: 8,
         }}>
@@ -448,23 +448,23 @@ const LiveDecisionNode = memo(({ data }: { data: DecisionNodeData }) => {
       )}
 
       {isRun && (
-        <div style={{ fontSize: 8, color: C.textDim, marginBottom: 8 }}>DELIBERATING ACROSS ALL AGENTS...</div>
+        <div style={{ fontSize: 11, color: C.textDim, marginBottom: 8 }}>DELIBERATING ACROSS ALL AGENTS...</div>
       )}
 
       {!isDone && !isRun && (
-        <div style={{ fontSize: 8, color: C.muted, marginBottom: 8 }}>Awaiting agent findings</div>
+        <div style={{ fontSize: 11, color: C.muted, marginBottom: 8 }}>Awaiting agent findings</div>
       )}
 
       {isDone && (
         <div style={{ paddingTop: 7, borderTop: `1px solid ${C.border}`, display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
           <MetricBadge label="TIME" value={fmtSec(state.time_ms)} color={st.dot} />
           <MetricBadge label="TOKENS" value={fmtTok(state.tokens)} color={st.dot} />
-          {state.model && <span style={{ fontSize: 6, color: C.muted, textTransform: 'uppercase', letterSpacing: '0.08em' }}>{shortModel(state.model)}</span>}
+          {state.model && <span style={{ fontSize: 9, color: C.muted, textTransform: 'uppercase', letterSpacing: '0.08em' }}>{shortModel(state.model)}</span>}
         </div>
       )}
 
       {isDone && (
-        <div style={{ marginTop: 4, fontSize: 6, color: isPinned ? C.textDim : C.muted, letterSpacing: '0.1em' }}>
+        <div style={{ marginTop: 4, fontSize: 9, color: isPinned ? C.textDim : C.muted, letterSpacing: '0.1em' }}>
           {isPinned ? 'CLICK TO DISMISS' : 'CLICK FOR DETAILS'}
         </div>
       )}
@@ -503,14 +503,14 @@ const ProfilerLiveNode = memo(({ data }: { data: ProfilerData }) => {
     }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 7 }}>
         <div style={{ width: 5, height: 5, borderRadius: '50%', background: data.hasStarted ? cyan : C.muted, flexShrink: 0, transition: 'background .3s' }} />
-        <span style={{ fontSize: 7, letterSpacing: '0.16em', color: data.hasStarted ? cyan : C.muted, textTransform: 'uppercase', fontWeight: 700 }}>
+        <span style={{ fontSize: 10, letterSpacing: '0.16em', color: data.hasStarted ? cyan : C.muted, textTransform: 'uppercase', fontWeight: 700 }}>
           INPUT
         </span>
       </div>
-      <div style={{ fontSize: 11, fontWeight: 600, color: data.hasStarted ? C.text : C.muted, marginBottom: 5, transition: 'color .3s' }}>
+      <div style={{ fontSize: 15, fontWeight: 600, color: data.hasStarted ? C.text : C.muted, marginBottom: 5, transition: 'color .3s' }}>
         Procurement Request
       </div>
-      <div style={{ fontSize: 8, color: data.hasStarted ? C.textDim : C.muted, lineHeight: 1.6 }}>
+      <div style={{ fontSize: 11, color: data.hasStarted ? C.textDim : C.muted, lineHeight: 1.6 }}>
         {data.hasStarted
           ? (data.category ? `Category: ${data.category}` : 'Analysis started')
           : 'Waiting for submission'}
@@ -525,7 +525,7 @@ ProfilerLiveNode.displayName = 'ProfilerLiveNode'
 const GroupLabelNode = memo(({ data }: { data: { text: string } }) => {
   const { theme: C } = useTheme()
   return (
-    <div style={{ pointerEvents: 'none', userSelect: 'none', fontSize: 7, letterSpacing: '0.22em', color: C.muted, fontFamily: FONT, textTransform: 'uppercase', fontWeight: 700 }}>
+    <div style={{ pointerEvents: 'none', userSelect: 'none', fontSize: 10, letterSpacing: '0.22em', color: C.muted, fontFamily: FONT, textTransform: 'uppercase', fontWeight: 700 }}>
       {data.text}
     </div>
   )
@@ -553,17 +553,17 @@ const AGENT_CFG: Record<AgentId, { title: string; subtitle: string; accent: stri
 }
 
 const POSITIONS: Record<string, { x: number; y: number }> = {
-  lblInput:       { x: 18,  y: 8   },
-  profiler:       { x: 18,  y: 162 },
-  lblParallel:    { x: 273, y: 8   },
-  contract:       { x: 273, y: 25  },
-  infrastructure: { x: 273, y: 143 },
-  workforce:      { x: 273, y: 261 },
-  historical:     { x: 273, y: 379 },
-  lblFinancial:   { x: 530, y: 8   },
-  financial:      { x: 530, y: 143 },
-  lblDecision:    { x: 796, y: 8   },
-  decision:       { x: 796, y: 195 },
+  lblInput:       { x: 20,  y: 8   },
+  profiler:       { x: 20,  y: 210 },
+  lblParallel:    { x: 325, y: 8   },
+  contract:       { x: 325, y: 28  },
+  infrastructure: { x: 325, y: 178 },
+  workforce:      { x: 325, y: 328 },
+  historical:     { x: 325, y: 478 },
+  lblFinancial:   { x: 640, y: 8   },
+  financial:      { x: 640, y: 248 },
+  lblDecision:    { x: 960, y: 8   },
+  decision:       { x: 960, y: 268 },
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
@@ -672,7 +672,7 @@ export function InvestigationCanvas({ agentStates, confirmedInput }: Investigati
 
     e('infra-fin', 'infrastructure', 'financial',
       active('infrastructure') ? '#f59e0b' : dim,
-      { label: 'delay estimate', labelStyle: { fontSize: 6, fill: C.muted, fontFamily: FONT } }
+      { label: 'delay estimate', labelStyle: { fontSize: 9, fill: C.muted, fontFamily: FONT } }
     ),
 
     e('con-dec', 'contract',       'decision', active('contract')       ? C.muted : dim),
@@ -702,22 +702,22 @@ export function InvestigationCanvas({ agentStates, confirmedInput }: Investigati
             background: running > 0 ? C.textDim : hasStarted ? '#22c55e' : C.muted,
             animation: running > 0 ? 'pulse 1s ease-in-out infinite' : 'none',
           }} />
-          <span style={{ fontSize: 7, letterSpacing: '0.18em', color: running > 0 ? C.muted : hasStarted ? '#22c55e' : C.muted, fontFamily: FONT, textTransform: 'uppercase' }}>
+          <span style={{ fontSize: 10, letterSpacing: '0.18em', color: running > 0 ? C.muted : hasStarted ? '#22c55e' : C.muted, fontFamily: FONT, textTransform: 'uppercase' }}>
             {running > 0 ? `${running} AGENT${running > 1 ? 'S' : ''} RUNNING` : hasStarted ? `${done.length} / 6 COMPLETE` : 'AWAITING RUN'}
           </span>
         </div>
 
         {totalTokens > 0 && (
-          <span style={{ fontSize: 7, color: C.muted, fontFamily: FONT, letterSpacing: '0.1em' }}>
+          <span style={{ fontSize: 10, color: C.muted, fontFamily: FONT, letterSpacing: '0.1em' }}>
             TOTAL TOKENS <span style={{ color: C.textDim }}>{totalTokens.toLocaleString()}</span>
           </span>
         )}
         {totalMs > 0 && (
-          <span style={{ fontSize: 7, color: C.muted, fontFamily: FONT, letterSpacing: '0.1em' }}>
+          <span style={{ fontSize: 10, color: C.muted, fontFamily: FONT, letterSpacing: '0.1em' }}>
             ELAPSED <span style={{ color: C.textDim }}>{(totalMs / 1000).toFixed(1)}s</span>
           </span>
         )}
-        <span style={{ fontSize: 7, color: C.muted, fontFamily: FONT, letterSpacing: '0.1em', marginLeft: 'auto' }}>
+        <span style={{ fontSize: 10, color: C.muted, fontFamily: FONT, letterSpacing: '0.1em', marginLeft: 'auto' }}>
           HOVER OR CLICK A NODE FOR DETAILS
         </span>
       </div>

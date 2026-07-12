@@ -28,6 +28,7 @@ from .services import (
     db_status,
     document_parser,
     input_bids,
+    premortem_outputs,
     report as report_service,
 )
 from .services.llm import has_api_key
@@ -128,7 +129,17 @@ def research_item(payload: ResearchItemRequest):
 def analyze(data: ProcurementInput):
     if data.raw_document_text:
         data, _ = extraction_agent.extract(data.raw_document_text)
-    return run_premortem(data)
+    report = run_premortem(data)
+    try:
+        input_dict = data.model_dump(exclude={"raw_document_text"})
+        run_id = premortem_outputs.save_run(report.model_dump(), input_dict)
+        # Attach run_id so the frontend can reference it
+        report_dict = report.model_dump()
+        report_dict["run_id"] = run_id
+        return report_dict
+    except Exception:
+        pass
+    return report
 
 
 @app.post("/upload")
@@ -283,28 +294,41 @@ def export_report(fmt: str, report: PreMortemReport):
 
 @app.get("/output-files")
 def list_output_files():
-    """List all run folders and their JSON/JSONL output files."""
-    output_dir = Path("files/output/bid_runs")
-    if not output_dir.exists():
-        return {"runs": []}
+    """List all run folders (bid + premortem) and their JSON/JSONL output files."""
     runs = []
-    for run_dir in sorted(output_dir.iterdir(), reverse=True):
-        if not run_dir.is_dir():
-            continue
-        files = sorted(
-            f.name for f in run_dir.iterdir()
-            if f.is_file() and f.suffix in (".json", ".jsonl")
-        )
-        if files:
-            runs.append({"run_id": run_dir.name, "files": files})
+
+    # Bid runs
+    bid_dir = Path("files/output/bid_runs")
+    if bid_dir.exists():
+        for run_dir in sorted(bid_dir.iterdir(), reverse=True):
+            if not run_dir.is_dir():
+                continue
+            files = sorted(
+                f.name for f in run_dir.iterdir()
+                if f.is_file() and f.suffix in (".json", ".jsonl")
+            )
+            if files:
+                runs.append({"run_id": run_dir.name, "type": "bid", "files": files})
+
+    # PreMortem runs
+    runs.extend(premortem_outputs.list_output_files())
+
+    # Sort newest first (RUN-031 > RUN-001, PM-005 > PM-001)
+    runs.sort(key=lambda r: r["run_id"], reverse=True)
     return {"runs": runs}
 
 
 @app.get("/output-files/{run_id}/{filename}")
 def get_output_file(run_id: str, filename: str):
-    """Return parsed content of a specific run output file."""
+    """Return parsed content of a specific run output file (bid or premortem)."""
     if ".." in run_id or ".." in filename or "/" in run_id or "/" in filename:
         raise HTTPException(status_code=400, detail="Invalid path")
+    # PreMortem runs use PM- prefix
+    if run_id.startswith("PM-"):
+        try:
+            return premortem_outputs.get_file(run_id, filename)
+        except FileNotFoundError:
+            raise HTTPException(status_code=404, detail="File not found")
     path = Path("files/output/bid_runs") / run_id / filename
     if not path.exists() or not path.is_file():
         raise HTTPException(status_code=404, detail="File not found")

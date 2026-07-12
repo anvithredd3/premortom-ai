@@ -1,14 +1,14 @@
-"""LLM service wrapper — dual-provider (Anthropic Claude or OpenAI).
+"""LLM service wrapper — OpenAI primary, Anthropic fallback.
 
 Provider selection (in priority order):
-  1. LLM_PROVIDER env var ("anthropic" or "openai") — explicit override
-  2. ANTHROPIC_API_KEY present → anthropic
-  3. OPENAI_API_KEY present    → openai
+  1. LLM_PROVIDER env var ("openai" or "anthropic") — explicit override
+  2. OPENAI_API_KEY present    → openai
+  3. ANTHROPIC_API_KEY present → anthropic
   4. Neither                   → offline rule-based fallback
 
 Model env vars:
-  CLAUDE_MODEL  (default: claude-haiku-4-5-20251001; sonnet used for Decision Board)
   OPENAI_MODEL  (default: gpt-4o)
+  CLAUDE_MODEL  (default: claude-sonnet-4-6; fallback only)
 """
 from __future__ import annotations
 
@@ -19,7 +19,7 @@ from typing import Optional
 # --- Anthropic models ---
 CLAUDE_HAIKU = "claude-haiku-4-5-20251001"
 CLAUDE_SONNET = "claude-sonnet-4-6"
-CLAUDE_MODEL = os.getenv("CLAUDE_MODEL", CLAUDE_HAIKU)
+CLAUDE_MODEL = os.getenv("CLAUDE_MODEL", CLAUDE_SONNET)
 
 # --- OpenAI models ---
 OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-4o")
@@ -30,10 +30,10 @@ def _provider() -> str:
     explicit = os.getenv("LLM_PROVIDER", "").lower()
     if explicit in ("anthropic", "openai"):
         return explicit
-    if os.getenv("ANTHROPIC_API_KEY"):
-        return "anthropic"
     if os.getenv("OPENAI_API_KEY"):
         return "openai"
+    if os.getenv("ANTHROPIC_API_KEY"):
+        return "anthropic"
     return "offline"
 
 

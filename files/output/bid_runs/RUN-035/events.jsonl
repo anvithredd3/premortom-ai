@@ -1,0 +1,22 @@
+{"id": 1, "timestamp": "2026-07-10T17:13:07.579439+00:00", "type": "run_queued", "bid_id": "BID-001"}
+{"id": 2, "timestamp": "2026-07-10T17:13:07.584491+00:00", "type": "run_started", "bid_id": "BID-001"}
+{"id": 3, "timestamp": "2026-07-10T17:13:07.586063+00:00", "type": "quote_running", "quote_id": "BID-001-Q01"}
+{"id": 4, "timestamp": "2026-07-10T17:13:07.587242+00:00", "type": "quote_running", "quote_id": "BID-001-Q02"}
+{"id": 5, "timestamp": "2026-07-10T17:13:07.588522+00:00", "type": "quote_running", "quote_id": "BID-001-Q03"}
+{"id": 6, "timestamp": "2026-07-10T17:13:07.589597+00:00", "type": "quote_running", "quote_id": "BID-001-Q04"}
+{"id": 7, "timestamp": "2026-07-10T17:13:07.590528+00:00", "type": "quote_running", "quote_id": "BID-001-Q05"}
+{"id": 8, "timestamp": "2026-07-10T17:13:07.591434+00:00", "type": "agent_status", "agent": "vendor_proposal", "status": "running"}
+{"id": 9, "timestamp": "2026-07-10T17:13:07.592344+00:00", "type": "agent_status", "agent": "contract_review", "status": "running"}
+{"id": 10, "timestamp": "2026-07-10T17:13:25.759738+00:00", "type": "quote_completed", "quote_id": "BID-001-Q03", "vendor_name": "", "risk_score": 45.0}
+{"id": 11, "timestamp": "2026-07-10T17:13:26.679307+00:00", "type": "quote_completed", "quote_id": "BID-001-Q02", "vendor_name": "", "risk_score": 55.0}
+{"id": 12, "timestamp": "2026-07-10T17:13:27.704294+00:00", "type": "quote_completed", "quote_id": "BID-001-Q01", "vendor_name": "", "risk_score": 65.0}
+{"id": 13, "timestamp": "2026-07-10T17:13:28.216923+00:00", "type": "quote_completed", "quote_id": "BID-001-Q05", "vendor_name": "", "risk_score": 55.0}
+{"id": 14, "timestamp": "2026-07-10T17:13:28.730858+00:00", "type": "quote_completed", "quote_id": "BID-001-Q04", "vendor_name": "", "risk_score": 60.0}
+{"id": 15, "timestamp": "2026-07-10T17:13:28.734267+00:00", "type": "agent_status", "agent": "vendor_proposal", "status": "completed"}
+{"id": 16, "timestamp": "2026-07-10T17:13:28.736187+00:00", "type": "agent_status", "agent": "contract_review", "status": "completed"}
+{"id": 17, "timestamp": "2026-07-10T17:13:28.737809+00:00", "type": "agent_status", "agent": "bid_recommender", "status": "running"}
+{"id": 18, "timestamp": "2026-07-10T17:13:28.739756+00:00", "type": "agent_status", "agent": "market_research", "status": "completed"}
+{"id": 19, "timestamp": "2026-07-10T17:13:28.740715+00:00", "type": "agent_status", "agent": "bid_recommender", "status": "running"}
+{"id": 20, "timestamp": "2026-07-10T17:13:42.270019+00:00", "type": "agent_status", "agent": "decision_logic", "status": "completed"}
+{"id": 21, "timestamp": "2026-07-10T17:13:42.276014+00:00", "type": "run_completed", "winner": {"quote_id": "BID-001-Q03", "vendor_name": "", "risk_score": 45.0, "risk_level": "MODERATE", "findings": ["The raw document text indicates the warranty starts on installation, conflicting with the fixed fields stating warranty starts on delivery.", "Advance payment is 60%, which is high and increases financial exposure, especially without mention of a bank guarantee.", "Installation responsibility is shared according to the raw document, but the fixed fields state it is the buyer's responsibility, creating ambiguity.", "Training is included according to the raw document, conflicting with the fixed fields that state training is not included.", "Service response time is specified as 96 hours, which is reasonable for medical equipment.", "Regulatory approval is pending, which could delay deployment and affect compliance."], "recommendation": "Clarify and confirm the warranty start, installation responsibility, and training inclusion terms to ensure they align with the vendor's quote. Negotiate for a bank guarantee to secure the advance payment. Ensure regulatory approval is prioritized to avoid delays."}}
+{"id": 22, "timestamp": "2026-07-10T17:13:42.388967+00:00", "type": "decision_history_stored", "table": "decision_history"}

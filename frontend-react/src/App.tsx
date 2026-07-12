@@ -12,6 +12,7 @@ import { RfqNegotiation } from './RfqNegotiation'
 import { InvoiceMonitor } from './InvoiceMonitor'
 import { SystemDesign } from './SystemDesign'
 import { RunLogs } from './RunLogs'
+import { LandingPage } from './LandingPage'
 import { useTheme, DARK } from './theme'
 
 // Lazy-load analysis views (contain Plotly which is ~4.8 MB)
@@ -65,8 +66,9 @@ const AVAIL_COLOR: Record<Avail, string> = {
 
 /* ── Screen type ────────────────────────────────────────────────────── */
 type Screen =
-  | 'rfq'       // 00 — RFQ / Negotiation Guidance
-  | 'intake'    // 01 — Procurement Input
+  | 'home'      // 00 — Landing page
+  | 'rfq'       // 01 — RFQ / Negotiation Guidance
+  | 'intake'    // 02 — Procurement Input
   | 'board'     // 02 — Investigation Board
   | 'debate'    // 03 — Debate Room
   | 'dashboard' // 04 — Executive Dashboard
@@ -152,7 +154,7 @@ function LoadingFallback() {
   return (
     <div style={{
       flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center',
-      fontSize: 8, color: C.muted, letterSpacing: '0.18em', fontFamily: FONT, background: C.bg,
+      fontSize: 11, color: C.muted, letterSpacing: '0.18em', fontFamily: FONT, background: C.bg,
     }}>
       LOADING
     </div>
@@ -177,15 +179,22 @@ function Sidebar({
       width: 210, flexShrink: 0, background: SB.navBg, borderRight: `1px solid ${SB.border}`,
       display: 'flex', flexDirection: 'column', overflowY: 'auto',
     }}>
-      {/* Brand */}
-      <div style={{ padding: '18px 16px 14px', borderBottom: `1px solid ${SB.border}` }}>
-        <div style={{ fontSize: 10, letterSpacing: '0.22em', color: SB.brand, fontWeight: 700, fontFamily: FONT }}>
+      {/* Brand — click to go home */}
+      <button
+        onClick={() => onChange('home')}
+        style={{
+          padding: '18px 16px 14px',
+          background: 'none', border: 'none', borderBottom: `1px solid ${SB.border}`,
+          cursor: 'pointer', textAlign: 'left', width: '100%',
+        }}
+      >
+        <div style={{ fontSize: 14, letterSpacing: '0.22em', color: SB.brand, fontWeight: 700, fontFamily: FONT }}>
           PREMORTEM
         </div>
-        <div style={{ fontSize: 7, color: SB.navFuture, letterSpacing: '0.14em', fontFamily: FONT, marginTop: 2 }}>
+        <div style={{ fontSize: 10, color: SB.navFuture, letterSpacing: '0.14em', fontFamily: FONT, marginTop: 2 }}>
           AGENTIC DECISION REVIEW PLATFORM
         </div>
-      </div>
+      </button>
 
       {/* Nav groups */}
       <div style={{ flex: 1, padding: '8px 0', overflowY: 'auto' }}>
@@ -193,7 +202,7 @@ function Sidebar({
           <div key={group.section}>
             <div style={{
               padding: '12px 16px 4px',
-              fontSize: 7, letterSpacing: '0.18em', color: SB.navSection,
+              fontSize: 10, letterSpacing: '0.18em', color: SB.navSection,
               fontWeight: 600, fontFamily: FONT, textTransform: 'uppercase',
             }}>
               {group.section}
@@ -224,13 +233,13 @@ function Sidebar({
                     boxShadow: item.avail === 'live' && !dimmed ? `0 0 4px ${dotColor}66` : 'none',
                   }} />
                   <span style={{
-                    fontSize: 7, color: active ? SB.brand : dimmed ? '#2a2a2a' : SB.navSection,
+                    fontSize: 10, color: active ? SB.brand : dimmed ? '#2a2a2a' : SB.navSection,
                     fontFamily: FONT, letterSpacing: '0.08em', flexShrink: 0, width: 14,
                   }}>
                     {item.num}
                   </span>
                   <span style={{
-                    fontSize: 8, letterSpacing: '0.1em', textTransform: 'uppercase',
+                    fontSize: 11, letterSpacing: '0.1em', textTransform: 'uppercase',
                     color: active ? SB.navItemActive : dimmed ? '#2a2a2a' : SB.navItem,
                     fontFamily: FONT, fontWeight: active ? 600 : 400,
                   }}>
@@ -249,7 +258,7 @@ function Sidebar({
         <div>
           <div style={{
             padding: '12px 16px 4px',
-            fontSize: 7, letterSpacing: '0.18em', color: '#252525',
+            fontSize: 10, letterSpacing: '0.18em', color: '#252525',
             fontWeight: 600, fontFamily: FONT, textTransform: 'uppercase',
           }}>
             FUTURE WORKFLOWS
@@ -257,8 +266,8 @@ function Sidebar({
           {FUTURE_WORKFLOWS.map(fw => (
             <div key={fw.label} title={fw.desc} style={{ display: 'flex', alignItems: 'center', gap: 9, padding: '6px 16px', cursor: 'default' }}>
               <div style={{ width: 4, height: 4, borderRadius: '50%', background: '#1e1e1e', flexShrink: 0 }} />
-              <span style={{ fontSize: 7, color: '#222', fontFamily: FONT, letterSpacing: '0.08em', width: 14 }}>—</span>
-              <span style={{ fontSize: 8, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#252525', fontFamily: FONT }}>
+              <span style={{ fontSize: 10, color: '#222', fontFamily: FONT, letterSpacing: '0.08em', width: 14 }}>—</span>
+              <span style={{ fontSize: 11, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#252525', fontFamily: FONT }}>
                 {fw.label}
               </span>
             </div>
@@ -275,7 +284,7 @@ function Sidebar({
         ] as const).map(([col, lbl]) => (
           <div key={lbl} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
             <div style={{ width: 4, height: 4, borderRadius: '50%', background: col }} />
-            <span style={{ fontSize: 6, color: SB.navLegend, fontFamily: FONT, letterSpacing: '0.1em' }}>{lbl}</span>
+            <span style={{ fontSize: 9, color: SB.navLegend, fontFamily: FONT, letterSpacing: '0.1em' }}>{lbl}</span>
           </div>
         ))}
 
@@ -289,13 +298,13 @@ function Sidebar({
             padding: '5px 10px', cursor: 'pointer', width: '100%',
           }}
         >
-          <span style={{ fontSize: 12, lineHeight: 1 }}>{mode === 'dark' ? '☀' : '🌙'}</span>
-          <span style={{ fontSize: 7, color: SB.navLegend, fontFamily: FONT, letterSpacing: '0.12em' }}>
+          <span style={{ fontSize: 17, lineHeight: 1 }}>{mode === 'dark' ? '☀' : '🌙'}</span>
+          <span style={{ fontSize: 10, color: SB.navLegend, fontFamily: FONT, letterSpacing: '0.12em' }}>
             {mode === 'dark' ? 'LIGHT MODE' : 'DARK MODE'}
           </span>
         </button>
 
-        <div style={{ marginTop: 4, fontSize: 6, color: '#252525', fontFamily: FONT, letterSpacing: '0.08em' }}>
+        <div style={{ marginTop: 4, fontSize: 9, color: '#252525', fontFamily: FONT, letterSpacing: '0.08em' }}>
           PREMORTEM AI v1.0
         </div>
       </div>
@@ -320,6 +329,7 @@ function Header({
 }) {
   const { theme: C } = useTheme()
   const titles: Record<Screen, string> = {
+    home:      'PREMORTEM AI',
     rfq:       'RFQ / NEGOTIATION GUIDANCE',
     intake:    'PROCUREMENT INPUT',
     board:     'INVESTIGATION BOARD',
@@ -345,7 +355,7 @@ function Header({
 
   const btnStyle = (active = false): CSSProperties => ({
     background: 'none', border: `1px solid ${active ? C.muted : C.border}`,
-    borderRadius: 2, padding: '4px 12px', fontSize: 8,
+    borderRadius: 2, padding: '4px 12px', fontSize: 11,
     letterSpacing: '0.14em', textTransform: 'uppercase', fontFamily: FONT,
     color: active ? C.text : C.muted, cursor: 'pointer',
   })
@@ -355,7 +365,7 @@ function Header({
       display: 'flex', alignItems: 'center', padding: '0 20px', height: 44, gap: 12,
       borderBottom: `1px solid ${C.border}`, flexShrink: 0, background: C.surface,
     }}>
-      <div style={{ fontSize: 8, color: C.textDim, letterSpacing: '0.1em', fontFamily: FONT }}>
+      <div style={{ fontSize: 11, color: C.textDim, letterSpacing: '0.1em', fontFamily: FONT }}>
         {crumb}
         {procName && !['intake', 'bid', 'rfq', 'invoice'].includes(screen) && (
           <span style={{ color: C.muted }}> · {procName}</span>
@@ -368,7 +378,7 @@ function Header({
             width: 5, height: 5, borderRadius: '50%', background: C.textDim,
             animation: 'pulse 1.2s ease-in-out infinite',
           }} />
-          <span style={{ fontSize: 8, color: C.textDim, letterSpacing: '0.14em', fontFamily: FONT }}>
+          <span style={{ fontSize: 11, color: C.textDim, letterSpacing: '0.14em', fontFamily: FONT }}>
             ANALYZING
           </span>
         </div>
@@ -388,7 +398,7 @@ function Header({
           <button onClick={onAllBids} style={btnStyle()}>ALL BIDS</button>
         )}
         {screen === 'bid' && runId && (
-          <span style={{ fontSize: 7, color: C.muted, fontFamily: FONT, letterSpacing: '0.1em' }}>
+          <span style={{ fontSize: 10, color: C.muted, fontFamily: FONT, letterSpacing: '0.1em' }}>
             {runId}
           </span>
         )}
@@ -406,7 +416,7 @@ export default function App() {
   const { agentStates, runResult, fullReport, isRunning, error, startAnalysis, reset } = useAnalysisStream()
   const { theme: C } = useTheme()
 
-  const [screen, setScreen] = useState<Screen>('intake')
+  const [screen, setScreen] = useState<Screen>('home')
 
   // PreMortem shared state
   const [confirmedInput, setConfirmedInput] = useState<Record<string, unknown> | null>(null)
@@ -541,7 +551,7 @@ export default function App() {
         {error && (
           <div style={{
             padding: '8px 20px', background: C.accent + '12', borderBottom: `1px solid ${C.accent}44`,
-            fontSize: 9, color: C.accent, letterSpacing: '0.06em', fontFamily: FONT, flexShrink: 0,
+            fontSize: 13, color: C.accent, letterSpacing: '0.06em', fontFamily: FONT, flexShrink: 0,
           }}>
             ERROR: {error}
           </div>
@@ -550,7 +560,15 @@ export default function App() {
         {/* ── Screen router ── */}
         <div style={{ flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
 
-          {/* 00 — RFQ / Negotiation Guidance */}
+          {/* 00 — Landing page */}
+          {screen === 'home' && (
+            <LandingPage
+              onProcurement={() => setScreen('intake')}
+              onBidEvaluation={() => { setScreen('bid'); setBidView('bid-dashboard') }}
+            />
+          )}
+
+          {/* 01 — RFQ / Negotiation Guidance */}
           {screen === 'rfq' && <RfqNegotiation />}
 
           {/* 01 — Procurement Input */}

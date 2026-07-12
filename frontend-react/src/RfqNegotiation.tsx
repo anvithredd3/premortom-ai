@@ -9,7 +9,7 @@ function Lbl({ children, color }: { children: string; color?: string }) {
   const { theme: C } = useTheme()
   return (
     <span style={{
-      fontSize: 8, letterSpacing: '0.18em', textTransform: 'uppercase',
+      fontSize: 11, letterSpacing: '0.18em', textTransform: 'uppercase',
       color: color ?? C.muted, fontWeight: 600, fontFamily: FONT,
     }}>
       {children}
@@ -26,7 +26,7 @@ function GhostBtn(props: React.ButtonHTMLAttributes<HTMLButtonElement> & { activ
       style={{
         background: active ? C.surface2 : 'none',
         border: `1px solid ${active ? C.borderMid : C.border}`,
-        borderRadius: 2, padding: '5px 14px', fontSize: 9,
+        borderRadius: 2, padding: '5px 14px', fontSize: 13,
         letterSpacing: '0.14em', textTransform: 'uppercase', fontFamily: FONT,
         color: active ? C.text : C.muted, cursor: 'pointer',
         ...style,
@@ -103,7 +103,7 @@ function CriteriaSection({
       <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14 }}>
         <Lbl>Decision Criteria Weights</Lbl>
         <span style={{
-          fontSize: 8, fontFamily: FONT, letterSpacing: '0.1em',
+          fontSize: 11, fontFamily: FONT, letterSpacing: '0.1em',
           color: ok ? C.cyan : C.orange,
           background: ok ? '#001a1a' : '#1a0c00',
           border: `1px solid ${ok ? '#003333' : '#3a1800'}`,
@@ -120,18 +120,18 @@ function CriteriaSection({
               background: '#050505', border: `1px solid ${C.border}`, borderRadius: 2, padding: '10px 12px',
             }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 5 }}>
-                <span style={{ fontSize: 9, color: C.text, fontFamily: FONT, flex: 1 }}>{c.label}</span>
+                <span style={{ fontSize: 13, color: C.text, fontFamily: FONT, flex: 1 }}>{c.label}</span>
                 <input
                   type="number" min={0} max={100} value={w}
                   onChange={e => onChange({ ...weights, [c.key]: parseFloat(e.target.value) || 0 })}
                   style={{
                     width: 52, textAlign: 'right',
                     background: '#0a0a0a', border: `1px solid ${C.border}`,
-                    borderRadius: 2, padding: '3px 6px', fontSize: 10, fontWeight: 700,
+                    borderRadius: 2, padding: '3px 6px', fontSize: 14, fontWeight: 700,
                     color: C.text, fontFamily: FONT, outline: 'none',
                   }}
                 />
-                <span style={{ fontSize: 8, color: C.muted, fontFamily: FONT }}>%</span>
+                <span style={{ fontSize: 11, color: C.muted, fontFamily: FONT }}>%</span>
               </div>
               <div style={{ height: 2, background: C.border, borderRadius: 1, overflow: 'hidden', marginBottom: 5 }}>
                 <div style={{
@@ -141,7 +141,7 @@ function CriteriaSection({
                   transition: 'width 0.2s',
                 }} />
               </div>
-              <div style={{ fontSize: 7, color: '#2e2e2e', fontFamily: FONT }}>{c.description}</div>
+              <div style={{ fontSize: 10, color: '#2e2e2e', fontFamily: FONT }}>{c.description}</div>
             </div>
           )
         })}
@@ -177,17 +177,17 @@ function CriteriaList({
             background: '#050505', border: `1px solid ${C.border}`,
             borderRadius: 2, padding: '6px 10px',
           }}>
-            <span style={{ flex: 1, fontSize: 9, color: '#888', fontFamily: FONT, lineHeight: 1.4 }}>{item}</span>
+            <span style={{ flex: 1, fontSize: 13, color: '#888', fontFamily: FONT, lineHeight: 1.4 }}>{item}</span>
             <button
               onClick={() => onChange(items.filter((_, j) => j !== i))}
-              style={{ background: 'none', border: 'none', color: '#3a3a3a', cursor: 'pointer', fontSize: 12, lineHeight: 1, padding: 0 }}
+              style={{ background: 'none', border: 'none', color: '#3a3a3a', cursor: 'pointer', fontSize: 17, lineHeight: 1, padding: 0 }}
             >
               ×
             </button>
           </div>
         ))}
         {items.length === 0 && (
-          <div style={{ fontSize: 8, color: '#2a2a2a', fontFamily: FONT, fontStyle: 'italic' }}>
+          <div style={{ fontSize: 11, color: '#2a2a2a', fontFamily: FONT, fontStyle: 'italic' }}>
             No {label.toLowerCase()} added yet
           </div>
         )}
@@ -200,7 +200,7 @@ function CriteriaList({
           placeholder={`Add ${label.toLowerCase()}…`}
           style={{
             flex: 1, background: '#0a0a0a', border: `1px solid ${C.border}`,
-            borderRadius: 2, padding: '6px 10px', fontSize: 9,
+            borderRadius: 2, padding: '6px 10px', fontSize: 13,
             color: C.text, fontFamily: FONT, outline: 'none',
           }}
         />
@@ -223,7 +223,7 @@ function GuidanceOutput({ result, mode }: { result: UiGuidanceResult; mode: 'rfq
       {fw.length > 0 && (
         <InfoCard title="Weight Feedback" accent={C.orange}>
           {fw.map((f, i) => (
-            <div key={i} style={{ fontSize: 9, color: '#999', fontFamily: FONT, lineHeight: 1.55 }}>· {f}</div>
+            <div key={i} style={{ fontSize: 13, color: '#999', fontFamily: FONT, lineHeight: 1.55 }}>· {f}</div>
           ))}
         </InfoCard>
       )}
@@ -232,7 +232,7 @@ function GuidanceOutput({ result, mode }: { result: UiGuidanceResult; mode: 'rfq
         <>
           {rfq.requirement_summary && (
             <InfoCard title="Requirement Summary" accent={C.cyan}>
-              <div style={{ fontSize: 10, color: '#aaa', fontFamily: FONT, lineHeight: 1.7 }}>
+              <div style={{ fontSize: 14, color: '#aaa', fontFamily: FONT, lineHeight: 1.7 }}>
                 {rfq.requirement_summary}
               </div>
             </InfoCard>
@@ -241,7 +241,7 @@ function GuidanceOutput({ result, mode }: { result: UiGuidanceResult; mode: 'rfq
           {(rfq.missing_inputs?.length ?? 0) > 0 && (
             <InfoCard title="Missing Inputs" accent={C.orange}>
               {rfq.missing_inputs!.map((m, i) => (
-                <div key={i} style={{ fontSize: 9, color: '#999', fontFamily: FONT, lineHeight: 1.5 }}>· {m}</div>
+                <div key={i} style={{ fontSize: 13, color: '#999', fontFamily: FONT, lineHeight: 1.5 }}>· {m}</div>
               ))}
             </InfoCard>
           )}
@@ -249,7 +249,7 @@ function GuidanceOutput({ result, mode }: { result: UiGuidanceResult; mode: 'rfq
           {(rfq.suggested_requirements?.length ?? 0) > 0 && (
             <InfoCard title="Suggested Requirements" accent={C.cyan}>
               {rfq.suggested_requirements!.map((r, i) => (
-                <div key={i} style={{ fontSize: 9, color: '#999', fontFamily: FONT, lineHeight: 1.5 }}>· {r}</div>
+                <div key={i} style={{ fontSize: 13, color: '#999', fontFamily: FONT, lineHeight: 1.5 }}>· {r}</div>
               ))}
             </InfoCard>
           )}
@@ -257,7 +257,7 @@ function GuidanceOutput({ result, mode }: { result: UiGuidanceResult; mode: 'rfq
           {(rfq.minimum_criteria?.length ?? 0) > 0 && (
             <InfoCard title="Recommended Minimum Criteria">
               {rfq.minimum_criteria!.map((c, i) => (
-                <div key={i} style={{ fontSize: 9, color: '#999', fontFamily: FONT, lineHeight: 1.5 }}>· {c}</div>
+                <div key={i} style={{ fontSize: 13, color: '#999', fontFamily: FONT, lineHeight: 1.5 }}>· {c}</div>
               ))}
             </InfoCard>
           )}
@@ -268,7 +268,7 @@ function GuidanceOutput({ result, mode }: { result: UiGuidanceResult; mode: 'rfq
         <InfoCard title="Negotiation Questions" accent={C.cyan}>
           {neg.negotiation_questions!.map((q, i) => (
             <div key={i} style={{
-              fontSize: 9, color: '#aaa', fontFamily: FONT, lineHeight: 1.55,
+              fontSize: 13, color: '#aaa', fontFamily: FONT, lineHeight: 1.55,
               paddingLeft: 10, borderLeft: `1px solid ${C.border}`, marginBottom: 5,
             }}>
               {q}
@@ -280,7 +280,7 @@ function GuidanceOutput({ result, mode }: { result: UiGuidanceResult; mode: 'rfq
       {(neg.contract_conditions?.length ?? 0) > 0 && (
         <InfoCard title="Contract Conditions to Include">
           {neg.contract_conditions!.map((c, i) => (
-            <div key={i} style={{ fontSize: 9, color: '#999', fontFamily: FONT, lineHeight: 1.5 }}>· {c}</div>
+            <div key={i} style={{ fontSize: 13, color: '#999', fontFamily: FONT, lineHeight: 1.5 }}>· {c}</div>
           ))}
         </InfoCard>
       )}
@@ -288,7 +288,7 @@ function GuidanceOutput({ result, mode }: { result: UiGuidanceResult; mode: 'rfq
       {(neg.cost_or_lifecycle_items?.length ?? 0) > 0 && (
         <InfoCard title="Lifecycle & Cost Items to Negotiate">
           {neg.cost_or_lifecycle_items!.map((c, i) => (
-            <div key={i} style={{ fontSize: 9, color: '#999', fontFamily: FONT, lineHeight: 1.5 }}>· {c}</div>
+            <div key={i} style={{ fontSize: 13, color: '#999', fontFamily: FONT, lineHeight: 1.5 }}>· {c}</div>
           ))}
         </InfoCard>
       )}
@@ -296,14 +296,14 @@ function GuidanceOutput({ result, mode }: { result: UiGuidanceResult; mode: 'rfq
       {neg.vendor_message_draft && (
         <InfoCard title="Draft Vendor Message" accent={C.cyan}>
           <div style={{
-            fontSize: 9, color: '#aaa', fontFamily: FONT, lineHeight: 1.75,
+            fontSize: 13, color: '#aaa', fontFamily: FONT, lineHeight: 1.75,
             whiteSpace: 'pre-wrap',
             background: '#050505', border: `1px solid ${C.border}`,
             borderRadius: 2, padding: '12px 14px',
           }}>
             {neg.vendor_message_draft}
           </div>
-          <div style={{ marginTop: 8, fontSize: 7, color: '#2a2a2a', fontFamily: FONT, letterSpacing: '0.08em' }}>
+          <div style={{ marginTop: 8, fontSize: 10, color: '#2a2a2a', fontFamily: FONT, letterSpacing: '0.08em' }}>
             FOR REVIEW ONLY — NOT SENT AUTOMATICALLY
           </div>
         </InfoCard>
@@ -312,7 +312,7 @@ function GuidanceOutput({ result, mode }: { result: UiGuidanceResult; mode: 'rfq
       {(result.evidence?.length ?? 0) > 0 && (
         <InfoCard title="Evidence">
           {result.evidence!.slice(0, 5).map((e, i) => (
-            <div key={i} style={{ fontSize: 9, color: '#555', fontFamily: FONT, lineHeight: 1.5 }}>· {e}</div>
+            <div key={i} style={{ fontSize: 13, color: '#555', fontFamily: FONT, lineHeight: 1.5 }}>· {e}</div>
           ))}
         </InfoCard>
       )}
@@ -320,7 +320,7 @@ function GuidanceOutput({ result, mode }: { result: UiGuidanceResult; mode: 'rfq
       {(result.guardrails?.length ?? 0) > 0 && (
         <InfoCard title="Guardrails Applied">
           {result.guardrails!.map((g, i) => (
-            <div key={i} style={{ fontSize: 8, color: '#333', fontFamily: FONT, lineHeight: 1.5 }}>· {g}</div>
+            <div key={i} style={{ fontSize: 11, color: '#333', fontFamily: FONT, lineHeight: 1.5 }}>· {g}</div>
           ))}
         </InfoCard>
       )}
@@ -422,7 +422,7 @@ export function RfqNegotiation() {
 
   const fieldStyle: React.CSSProperties = {
     background: '#0a0a0a', border: `1px solid ${C.border}`,
-    borderRadius: 2, padding: '7px 10px', fontSize: 10,
+    borderRadius: 2, padding: '7px 10px', fontSize: 14,
     color: C.text, fontFamily: FONT, outline: 'none', width: '100%', boxSizing: 'border-box',
   }
 
@@ -433,7 +433,7 @@ export function RfqNegotiation() {
         {/* Page header */}
         <div style={{ marginBottom: 24 }}>
           <Lbl>RFQ / Negotiation Guidance</Lbl>
-          <div style={{ fontSize: 8, color: '#2a2a2a', fontFamily: FONT, marginTop: 4, letterSpacing: '0.08em', lineHeight: 1.6 }}>
+          <div style={{ fontSize: 11, color: '#2a2a2a', fontFamily: FONT, marginTop: 4, letterSpacing: '0.08em', lineHeight: 1.6 }}>
             Capture organisation requirements before vendor quotes arrive, or prepare negotiation questions after bid evaluation.
           </div>
         </div>
@@ -447,7 +447,7 @@ export function RfqNegotiation() {
               style={{
                 background: tab === key ? '#141414' : 'none',
                 border: `1px solid ${tab === key ? '#252525' : 'transparent'}`,
-                borderRadius: 2, padding: '5px 16px', fontSize: 9,
+                borderRadius: 2, padding: '5px 16px', fontSize: 13,
                 letterSpacing: '0.14em', textTransform: 'uppercase', fontFamily: FONT,
                 color: tab === key ? C.text : C.muted, cursor: 'pointer',
               }}
@@ -473,7 +473,7 @@ export function RfqNegotiation() {
                     style={{
                       background: role === r.key ? '#001a1a' : '#0a0a0a',
                       border: `1px solid ${role === r.key ? C.cyan + '55' : C.border}`,
-                      borderRadius: 2, padding: '6px 14px', fontSize: 9,
+                      borderRadius: 2, padding: '6px 14px', fontSize: 13,
                       letterSpacing: '0.1em', textTransform: 'uppercase', fontFamily: FONT,
                       color: role === r.key ? C.cyan : '#444', cursor: 'pointer',
                     }}
@@ -482,7 +482,7 @@ export function RfqNegotiation() {
                   </button>
                 ))}
               </div>
-              <div style={{ marginTop: 6, fontSize: 8, color: '#2e2e2e', fontFamily: FONT }}>
+              <div style={{ marginTop: 6, fontSize: 11, color: '#2e2e2e', fontFamily: FONT }}>
                 {ROLES.find(r => r.key === role)?.desc}
               </div>
             </div>
@@ -498,14 +498,14 @@ export function RfqNegotiation() {
                     style={{
                       background: profile === p.key ? '#001a1a' : '#0a0a0a',
                       border: `1px solid ${profile === p.key ? C.cyan + '55' : C.border}`,
-                      borderRadius: 2, padding: '8px 12px', fontSize: 8, textAlign: 'left',
+                      borderRadius: 2, padding: '8px 12px', fontSize: 11, textAlign: 'left',
                       fontFamily: FONT, cursor: 'pointer',
                     }}
                   >
-                    <div style={{ fontSize: 9, color: profile === p.key ? C.cyan : '#666', fontWeight: 600, marginBottom: 3 }}>
+                    <div style={{ fontSize: 13, color: profile === p.key ? C.cyan : '#666', fontWeight: 600, marginBottom: 3 }}>
                       {p.label}
                     </div>
-                    <div style={{ fontSize: 7, color: '#2a2a2a', lineHeight: 1.4 }}>{p.desc}</div>
+                    <div style={{ fontSize: 10, color: '#2a2a2a', lineHeight: 1.4 }}>{p.desc}</div>
                   </button>
                 ))}
               </div>
@@ -552,7 +552,7 @@ export function RfqNegotiation() {
                 style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex', alignItems: 'center', gap: 8, width: '100%' }}
               >
                 <Lbl>Mandatory & Negotiable Criteria</Lbl>
-                <span style={{ marginLeft: 'auto', fontSize: 9, color: '#2e2e2e', fontFamily: FONT }}>
+                <span style={{ marginLeft: 'auto', fontSize: 13, color: '#2e2e2e', fontFamily: FONT }}>
                   {mandatory.length + negotiable.length > 0 ? `${mandatory.length + negotiable.length} added ` : ''}{showCriteria ? '▲' : '▼'}
                 </span>
               </button>
@@ -581,7 +581,7 @@ export function RfqNegotiation() {
                 style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex', alignItems: 'center', gap: 8, width: '100%' }}
               >
                 <Lbl>Decision Criteria & Weights</Lbl>
-                <span style={{ marginLeft: 'auto', fontSize: 9, color: '#2e2e2e', fontFamily: FONT }}>
+                <span style={{ marginLeft: 'auto', fontSize: 13, color: '#2e2e2e', fontFamily: FONT }}>
                   {showWeights ? '▲' : '▼'}
                 </span>
               </button>
@@ -601,7 +601,7 @@ export function RfqNegotiation() {
                   background: busy ? '#1a0808' : C.cyan,
                   color: busy ? '#5a2a2a' : '#080808',
                   border: `1px solid ${busy ? '#3a1010' : C.cyan}`,
-                  borderRadius: 2, padding: '8px 24px', fontSize: 9,
+                  borderRadius: 2, padding: '8px 24px', fontSize: 13,
                   letterSpacing: '0.16em', textTransform: 'uppercase',
                   fontFamily: FONT, fontWeight: 700,
                   cursor: busy ? 'not-allowed' : 'pointer',
@@ -624,7 +624,7 @@ export function RfqNegotiation() {
 
             <div style={{
               padding: '12px 16px', background: '#001a0a', border: `1px solid #003322`,
-              borderRadius: 2, fontSize: 9, color: '#336655', fontFamily: FONT, lineHeight: 1.65,
+              borderRadius: 2, fontSize: 13, color: '#336655', fontFamily: FONT, lineHeight: 1.65,
             }}>
               Run this after Bid Evaluation completes. Load a bid and quote ID to get vendor-specific negotiation questions and a draft message.
             </div>
@@ -666,7 +666,7 @@ export function RfqNegotiation() {
                 style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex', alignItems: 'center', gap: 8, width: '100%' }}
               >
                 <Lbl>Management Criteria (for context)</Lbl>
-                <span style={{ marginLeft: 'auto', fontSize: 9, color: '#2e2e2e', fontFamily: FONT }}>
+                <span style={{ marginLeft: 'auto', fontSize: 13, color: '#2e2e2e', fontFamily: FONT }}>
                   {showCriteria ? '▲' : '▼'}
                 </span>
               </button>
@@ -687,7 +687,7 @@ export function RfqNegotiation() {
                   background: busy || !negFreeText.trim() ? '#0a0a0a' : C.cyan,
                   color: busy || !negFreeText.trim() ? '#3a3a3a' : '#080808',
                   border: `1px solid ${busy || !negFreeText.trim() ? C.border : C.cyan}`,
-                  borderRadius: 2, padding: '8px 24px', fontSize: 9,
+                  borderRadius: 2, padding: '8px 24px', fontSize: 13,
                   letterSpacing: '0.16em', textTransform: 'uppercase',
                   fontFamily: FONT, fontWeight: 700,
                   cursor: busy || !negFreeText.trim() ? 'not-allowed' : 'pointer',
@@ -708,7 +708,7 @@ export function RfqNegotiation() {
         {error && (
           <div style={{
             marginTop: 20, padding: '12px 16px', background: '#1a0808',
-            border: `1px solid #3a1010`, borderRadius: 2, fontSize: 9, color: '#cc7777', fontFamily: FONT,
+            border: `1px solid #3a1010`, borderRadius: 2, fontSize: 13, color: '#cc7777', fontFamily: FONT,
           }}>
             ERROR: {error}
           </div>
@@ -720,7 +720,7 @@ export function RfqNegotiation() {
             <div style={{ borderTop: `1px solid ${C.border}`, paddingTop: 20, marginBottom: 16 }}>
               <Lbl color={C.cyan}>Guidance Output</Lbl>
               {result.history?.stored && (
-                <span style={{ marginLeft: 10, fontSize: 7, color: '#2a3a2a', fontFamily: FONT, letterSpacing: '0.1em' }}>
+                <span style={{ marginLeft: 10, fontSize: 10, color: '#2a3a2a', fontFamily: FONT, letterSpacing: '0.1em' }}>
                   STORED · {result.history.run_id}
                 </span>
               )}

@@ -21,6 +21,8 @@ def analyze(data: ProcurementInput) -> AgentResult:
         name=NAME,
         instructions=instructions,
         user_payload=data.model_dump_json(),
+        use_sonnet=True,
+        temperature=0,
     )
     if result is None:
         raise RuntimeError(f"{NAME}: LLM call failed — check your API key.")

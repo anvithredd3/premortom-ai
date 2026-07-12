@@ -1,0 +1,1180 @@
+{
+  "run_id": "RUN-032",
+  "quotes": [
+    {
+      "quote_id": "BID-001-Q01",
+      "fixed_features": {
+        "vendor_name": {
+          "value": "StartCare Devices 01",
+          "status": "found",
+          "confidence": 1.0,
+          "evidence": "proposal_text"
+        },
+        "legal_entity_name": {
+          "value": "StartCare Devices 01 Private Limited",
+          "status": "found",
+          "confidence": 1.0,
+          "evidence": "proposal_text"
+        },
+        "registered_address": {
+          "value": "836, Industrial Estate, Bengaluru, India",
+          "status": "found",
+          "confidence": 1.0,
+          "evidence": "proposal_text"
+        },
+        "contact_details": {
+          "value": "sales69@startcaredevices01.example, +91-74090-59615",
+          "status": "found",
+          "confidence": 1.0,
+          "evidence": "proposal_text"
+        },
+        "equipment_type": {
+          "value": "MRI Machine",
+          "status": "found",
+          "confidence": 1.0,
+          "evidence": "proposal_text"
+        },
+        "procurement_name": {
+          "value": "MRI Machine Procurement",
+          "status": "found",
+          "confidence": 1.0,
+          "evidence": "proposal_text"
+        },
+        "quoted_price_cr": {
+          "value": 15.84,
+          "status": "found",
+          "confidence": 0.9,
+          "evidence": "proposal_text"
+        },
+        "currency": {
+          "value": "INR",
+          "status": "found",
+          "confidence": 1.0,
+          "evidence": "proposal_text"
+        },
+        "advance_payment_pct": {
+          "value": 50.0,
+          "status": "found",
+          "confidence": 0.9,
+          "evidence": "proposal_text"
+        },
+        "delivery_timeline_months": {
+          "value": 5.6,
+          "status": "found",
+          "confidence": 0.9,
+          "evidence": "proposal_text"
+        },
+        "warranty_start_trigger": {
+          "value": "On Commissioning",
+          "status": "found",
+          "confidence": 1.0,
+          "evidence": "proposal_text"
+        },
+        "installation_responsibility": {
+          "value": "Buyer",
+          "status": "found",
+          "confidence": 1.0,
+          "evidence": "proposal_text"
+        },
+        "training_included": {
+          "value": "False",
+          "status": "found",
+          "confidence": 1.0,
+          "evidence": "proposal_text"
+        },
+        "service_response_target": {
+          "value": "12 hours",
+          "status": "found",
+          "confidence": 1.0,
+          "evidence": "proposal_text"
+        },
+        "local_service_team_available": {
+          "value": true,
+          "status": "found",
+          "confidence": 0.9,
+          "evidence": "proposal_text"
+        },
+        "compliance_claims": {
+          "value": [
+            "IEC 60601",
+            "ISO 13485",
+            "local regulatory approval"
+          ],
+          "status": "found",
+          "confidence": 0.9,
+          "evidence": "proposal_text"
+        },
+        "hospital_references_count": {
+          "value": 4,
+          "status": "found",
+          "confidence": 0.9,
+          "evidence": "proposal_text"
+        },
+        "years_in_operation": {
+          "value": 1,
+          "status": "found",
+          "confidence": 0.9,
+          "evidence": "proposal_text"
+        },
+        "contact_person": {
+          "value": "Sameer Khan",
+          "status": "found",
+          "confidence": 1.0,
+          "evidence": "proposal_text"
+        },
+        "quoted_price": {
+          "value": "INR 15.84 Cr",
+          "status": "found",
+          "confidence": 1.0,
+          "evidence": "proposal_text"
+        },
+        "advance_payment_percentage": {
+          "value": "50%",
+          "status": "found",
+          "confidence": 1.0,
+          "evidence": "proposal_text"
+        },
+        "delivery_timeline": {
+          "value": "5.6 months",
+          "status": "found",
+          "confidence": 1.0,
+          "evidence": "proposal_text"
+        },
+        "warranty_duration": {
+          "value": "missing",
+          "status": "missing",
+          "confidence": 0.0,
+          "evidence": "proposal_text"
+        },
+        "commissioning_responsibility": {
+          "value": "missing",
+          "status": "missing",
+          "confidence": 0.0,
+          "evidence": "proposal_text"
+        },
+        "local_service_team_availability": {
+          "value": "True",
+          "status": "found",
+          "confidence": 1.0,
+          "evidence": "proposal_text"
+        },
+        "certifications_or_compliance_claims": {
+          "value": [
+            "IEC 60601",
+            "ISO 13485",
+            "local regulatory approval"
+          ],
+          "status": "found",
+          "confidence": 1.0,
+          "evidence": "proposal_text"
+        },
+        "references_or_prior_hospital_installations": {
+          "value": "4 similar hospital references",
+          "status": "found",
+          "confidence": 1.0,
+          "evidence": "proposal_text"
+        }
+      },
+      "proposal_text": {
+        "raw_text": "BID-001-Q01 Vendor Quote\nVendor Quote: BID-001-Q01\nVendor: StartCare Devices 01 (New entrant with limited history)\nLegal Entity: StartCare Devices 01 Private Limited\nRegistered Address: 836, Industrial Estate, Bengaluru, India\nContact: Sameer Khan, sales69@startcaredevices01.example, +91-74090-59615\nCompany Profile: 1 years in operation, 4 similar hospital references, estimated quote length 14\npages.\nProcurement: MRI Machine Procurement - MRI Machine\nCommercial Offer: INR 15.84 Cr with 50% advance payment.\nDelivery and Warranty: Delivery in 5.6 months. Warranty starts On Commissioning. Installation\nresponsibility: Buyer.\nTraining and Service: Training included: False. Service response target: 12 hours. Local service\nteam: True.\nCompliance Claims: IEC 60601, ISO 13485, local regulatory approval.\nThe quote emphasizes brand reputation, patient confidence, and market differentiation more than\noperational details.\nCompany Details: The vendor states experience with hospital equipment procurement and provides\nreferences where available. Some claims may require verification during technical evaluation.\n",
+        "text_preview": "BID-001-Q01 Vendor Quote\nVendor Quote: BID-001-Q01\nVendor: StartCare Devices 01 (New entrant with limited history)\nLegal Entity: StartCare Devices 01 Private Limited\nRegistered Address: 836, Industrial Estate, Bengaluru, India\nContact: Sameer Khan, sales69@startcaredevices01.example, +91-74090-59615\nCompany Profile: 1 years in operation, 4 similar hospital references, estimated quote length 14\npages.\nProcurement: MRI Machine Procurement - MRI Machine\nCommercial Offer: INR 15.84 Cr with 50% advance payment.\nDelivery and Warranty: Delivery in 5.6 months. Warranty starts On Commissioning. Installation\nresponsibility: Buyer.\nTraining and Service: Training included: False. Service response target: 12 hours. Local service\nteam: True.\nCompliance Claims: IEC 60601, ISO 13485, local regulatory approval.\nThe quote emphasizes brand reputation, patient confidence, and market differentiation more than\noperational details.\nCompany Details: The vendor states experience with hospital equipment procurement and provides\nreferences where available. Some claims may require verification during technical evaluation.\n",
+        "char_count": 1112,
+        "source_pdf_path": "/Users/anvith/Documents/AI/premortem-ai/files/input/samples/bids/BID-001/BID-001-Q01.pdf",
+        "extraction_quality": "high",
+        "needs_ocr_or_vision_fallback": false
+      },
+      "proposal_intelligence": {
+        "vendor_profile": {
+          "years_in_operation": "1 year",
+          "hospital_references": "4 similar hospital references"
+        },
+        "commercial_terms": {
+          "quoted_price": "INR 15.84 Cr",
+          "advance_payment": "50%"
+        },
+        "delivery_and_installation": {
+          "delivery_timeline": "5.6 months",
+          "installation_responsibility": "Buyer"
+        },
+        "warranty_and_service": {
+          "warranty_start": "On Commissioning",
+          "service_response_time": "12 hours",
+          "local_service_team": true
+        },
+        "training_and_handover": {
+          "training_included": false
+        },
+        "compliance_claims": [
+          "IEC 60601",
+          "ISO 13485",
+          "local regulatory approval"
+        ],
+        "differentiators": [
+          "Emphasizes brand reputation, patient confidence, and market differentiation"
+        ],
+        "omissions_or_ambiguities": [
+          "Warranty duration is not specified",
+          "Commissioning responsibility is not specified"
+        ],
+        "unusual_terms": [],
+        "proposal_quality": {
+          "emphasis": "Brand reputation and market differentiation over operational details"
+        },
+        "follow_up_questions": [
+          "What is the warranty duration?",
+          "Who is responsible for commissioning?"
+        ],
+        "evidence_snippets": [
+          "Vendor: StartCare Devices 01 (New entrant with limited history)",
+          "Company Profile: 1 years in operation, 4 similar hospital references, estimated quote length 14",
+          "Commercial Offer: INR 15.84 Cr with 50% advance payment.",
+          "Delivery and Warranty: Delivery in 5.6 months. Warranty starts On Commissioning. Installation",
+          "Training and Service: Training included: False. Service response target: 12 hours. Local service",
+          "Compliance Claims: IEC 60601, ISO 13485, local regulatory approval."
+        ]
+      },
+      "raw_text_reference": {
+        "pdf_path": "bids/BID-001/BID-001-Q01.pdf",
+        "full_text_available": true
+      }
+    },
+    {
+      "quote_id": "BID-001-Q02",
+      "fixed_features": {
+        "vendor_name": {
+          "value": "PrimeHealth Diagnostics 02",
+          "status": "found",
+          "confidence": 1.0,
+          "evidence": "proposal_text"
+        },
+        "legal_entity_name": {
+          "value": "PrimeHealth Diagnostics 02 Private Limited",
+          "status": "found",
+          "confidence": 1.0,
+          "evidence": "proposal_text"
+        },
+        "registered_address": {
+          "value": "398, Business Center, Hyderabad, India",
+          "status": "found",
+          "confidence": 1.0,
+          "evidence": "proposal_text"
+        },
+        "contact_details": {
+          "value": "Neha Shah, sales29@primehealthdiagnostics02.example, +91-92433-52504",
+          "status": "found",
+          "confidence": 0.9,
+          "evidence": "proposal_text"
+        },
+        "equipment_type": {
+          "value": "MRI Machine",
+          "status": "found",
+          "confidence": 1.0,
+          "evidence": "proposal_text"
+        },
+        "procurement_name": {
+          "value": "MRI Machine Procurement",
+          "status": "found",
+          "confidence": 1.0,
+          "evidence": "proposal_text"
+        },
+        "quoted_price_cr": {
+          "value": 18.32,
+          "status": "found",
+          "confidence": 0.9,
+          "evidence": "proposal_text"
+        },
+        "currency": {
+          "value": "INR",
+          "status": "found",
+          "confidence": 1.0,
+          "evidence": "proposal_text"
+        },
+        "advance_payment_pct": {
+          "value": 50.0,
+          "status": "found",
+          "confidence": 0.9,
+          "evidence": "proposal_text"
+        },
+        "delivery_timeline_months": {
+          "value": 4.9,
+          "status": "found",
+          "confidence": 0.9,
+          "evidence": "proposal_text"
+        },
+        "warranty_start_trigger": {
+          "value": "On Delivery",
+          "status": "found",
+          "confidence": 1.0,
+          "evidence": "proposal_text"
+        },
+        "installation_responsibility": {
+          "value": "Vendor",
+          "status": "found",
+          "confidence": 1.0,
+          "evidence": "proposal_text"
+        },
+        "training_included": {
+          "value": "True",
+          "status": "found",
+          "confidence": 1.0,
+          "evidence": "proposal_text"
+        },
+        "service_response_target": {
+          "value": "48 hours",
+          "status": "found",
+          "confidence": 1.0,
+          "evidence": "proposal_text"
+        },
+        "local_service_team_available": {
+          "value": true,
+          "status": "found",
+          "confidence": 0.9,
+          "evidence": "proposal_text"
+        },
+        "compliance_claims": {
+          "value": [
+            "IEC 60601",
+            "ISO 13485",
+            "local regulatory approval"
+          ],
+          "status": "found",
+          "confidence": 0.9,
+          "evidence": "proposal_text"
+        },
+        "hospital_references_count": {
+          "value": 41,
+          "status": "found",
+          "confidence": 0.9,
+          "evidence": "proposal_text"
+        },
+        "years_in_operation": {
+          "value": 15,
+          "status": "found",
+          "confidence": 0.9,
+          "evidence": "proposal_text"
+        },
+        "contact_person_and_details": {
+          "value": "Neha Shah, sales29@primehealthdiagnostics02.example, +91-92433-52504",
+          "status": "found",
+          "confidence": 1.0,
+          "evidence": "proposal_text"
+        },
+        "quoted_price": {
+          "value": "INR 18.32 Cr",
+          "status": "found",
+          "confidence": 1.0,
+          "evidence": "proposal_text"
+        },
+        "advance_payment_percentage": {
+          "value": "50%",
+          "status": "found",
+          "confidence": 1.0,
+          "evidence": "proposal_text"
+        },
+        "delivery_timeline": {
+          "value": "4.9 months",
+          "status": "found",
+          "confidence": 1.0,
+          "evidence": "proposal_text"
+        },
+        "warranty_duration": {
+          "value": "missing",
+          "status": "missing",
+          "confidence": 0.0,
+          "evidence": "proposal_text"
+        },
+        "commissioning_responsibility": {
+          "value": "missing",
+          "status": "missing",
+          "confidence": 0.0,
+          "evidence": "proposal_text"
+        },
+        "local_service_team_availability": {
+          "value": "True",
+          "status": "found",
+          "confidence": 1.0,
+          "evidence": "proposal_text"
+        },
+        "certifications_or_compliance_claims": {
+          "value": [
+            "IEC 60601",
+            "ISO 13485",
+            "local regulatory approval"
+          ],
+          "status": "found",
+          "confidence": 1.0,
+          "evidence": "proposal_text"
+        },
+        "references_or_prior_hospital_installations": {
+          "value": "41 similar hospital references",
+          "status": "found",
+          "confidence": 1.0,
+          "evidence": "proposal_text"
+        }
+      },
+      "proposal_text": {
+        "raw_text": "BID-001-Q02 Vendor Quote\nVendor Quote: BID-001-Q02\nVendor: PrimeHealth Diagnostics 02 (International premium brand)\nLegal Entity: PrimeHealth Diagnostics 02 Private Limited\nRegistered Address: 398, Business Center, Hyderabad, India\nContact: Neha Shah, sales29@primehealthdiagnostics02.example, +91-92433-52504\nCompany Profile: 15 years in operation, 41 similar hospital references, estimated quote length 10\npages.\nProcurement: MRI Machine Procurement - MRI Machine\nCommercial Offer: INR 18.32 Cr with 50% advance payment.\nDelivery and Warranty: Delivery in 4.9 months. Warranty starts On Delivery. Installation\nresponsibility: Vendor.\nTraining and Service: Training included: True. Service response target: 48 hours. Local service\nteam: True.\nCompliance Claims: IEC 60601, ISO 13485, local regulatory approval.\nThe quote emphasizes local service coverage, spare parts access, response time, uptime support,\nand escalation process.\nCompany Details: The vendor states experience with hospital equipment procurement and provides\nreferences where available. Some claims may require verification during technical evaluation.\n",
+        "text_preview": "BID-001-Q02 Vendor Quote\nVendor Quote: BID-001-Q02\nVendor: PrimeHealth Diagnostics 02 (International premium brand)\nLegal Entity: PrimeHealth Diagnostics 02 Private Limited\nRegistered Address: 398, Business Center, Hyderabad, India\nContact: Neha Shah, sales29@primehealthdiagnostics02.example, +91-92433-52504\nCompany Profile: 15 years in operation, 41 similar hospital references, estimated quote length 10\npages.\nProcurement: MRI Machine Procurement - MRI Machine\nCommercial Offer: INR 18.32 Cr with 50% advance payment.\nDelivery and Warranty: Delivery in 4.9 months. Warranty starts On Delivery. Installation\nresponsibility: Vendor.\nTraining and Service: Training included: True. Service response target: 48 hours. Local service\nteam: True.\nCompliance Claims: IEC 60601, ISO 13485, local regulatory approval.\nThe quote emphasizes local service coverage, spare parts access, response time, uptime support,\nand escalation process.\nCompany Details: The vendor states experience with hospital equipment procurement and provides\nreferences where available. Some claims may require verification during technical evaluation.\n",
+        "char_count": 1121,
+        "source_pdf_path": "/Users/anvith/Documents/AI/premortem-ai/files/input/samples/bids/BID-001/BID-001-Q02.pdf",
+        "extraction_quality": "high",
+        "needs_ocr_or_vision_fallback": false
+      },
+      "proposal_intelligence": {
+        "vendor_profile": {
+          "years_in_operation": 15,
+          "hospital_references": 41
+        },
+        "commercial_terms": {
+          "quoted_price": "INR 18.32 Cr",
+          "advance_payment": "50%"
+        },
+        "delivery_and_installation": {
+          "delivery_timeline": "4.9 months",
+          "installation_responsibility": "Vendor"
+        },
+        "warranty_and_service": {
+          "warranty_start": "On Delivery",
+          "service_response_time": "48 hours",
+          "local_service_team": true
+        },
+        "training_and_handover": {
+          "training_included": true
+        },
+        "compliance_claims": [
+          "IEC 60601",
+          "ISO 13485",
+          "local regulatory approval"
+        ],
+        "differentiators": [
+          "Emphasizes local service coverage",
+          "Spare parts access",
+          "Response time",
+          "Uptime support",
+          "Escalation process"
+        ],
+        "omissions_or_ambiguities": [
+          "Warranty duration not specified",
+          "Commissioning responsibility not specified"
+        ],
+        "unusual_terms": [],
+        "proposal_quality": {
+          "operational_specificity": "high",
+          "marketing_content": "low"
+        },
+        "follow_up_questions": [
+          "What is the warranty duration?",
+          "Who is responsible for commissioning?"
+        ],
+        "evidence_snippets": [
+          "Vendor: PrimeHealth Diagnostics 02 (International premium brand)",
+          "Company Profile: 15 years in operation, 41 similar hospital references, estimated quote length 10",
+          "Commercial Offer: INR 18.32 Cr with 50% advance payment.",
+          "Delivery and Warranty: Delivery in 4.9 months. Warranty starts On Delivery. Installation",
+          "Training and Service: Training included: True. Service response target: 48 hours. Local service",
+          "Compliance Claims: IEC 60601, ISO 13485, local regulatory approval."
+        ]
+      },
+      "raw_text_reference": {
+        "pdf_path": "bids/BID-001/BID-001-Q02.pdf",
+        "full_text_available": true
+      }
+    },
+    {
+      "quote_id": "BID-001-Q03",
+      "fixed_features": {
+        "vendor_name": {
+          "value": "SecondCycle Healthcare 03",
+          "status": "found",
+          "confidence": 1.0,
+          "evidence": "proposal_text"
+        },
+        "legal_entity_name": {
+          "value": "SecondCycle Healthcare 03 Private Limited",
+          "status": "found",
+          "confidence": 1.0,
+          "evidence": "proposal_text"
+        },
+        "registered_address": {
+          "value": "58, Industrial Estate, Ahmedabad, India",
+          "status": "found",
+          "confidence": 1.0,
+          "evidence": "proposal_text"
+        },
+        "contact_details": {
+          "value": "Rohan Mehta, sales81@secondcyclehealthcare03.example, +91-75242-99192",
+          "status": "found",
+          "confidence": 0.9,
+          "evidence": "proposal_text"
+        },
+        "equipment_type": {
+          "value": "MRI Machine",
+          "status": "found",
+          "confidence": 1.0,
+          "evidence": "proposal_text"
+        },
+        "procurement_name": {
+          "value": "MRI Machine Procurement",
+          "status": "found",
+          "confidence": 1.0,
+          "evidence": "proposal_text"
+        },
+        "quoted_price_cr": {
+          "value": 15.67,
+          "status": "found",
+          "confidence": 0.9,
+          "evidence": "proposal_text"
+        },
+        "currency": {
+          "value": "INR",
+          "status": "found",
+          "confidence": 1.0,
+          "evidence": "proposal_text"
+        },
+        "advance_payment_pct": {
+          "value": 60.0,
+          "status": "found",
+          "confidence": 0.9,
+          "evidence": "proposal_text"
+        },
+        "delivery_timeline_months": {
+          "value": 4.8,
+          "status": "found",
+          "confidence": 0.9,
+          "evidence": "proposal_text"
+        },
+        "warranty_start_trigger": {
+          "value": "On Installation",
+          "status": "found",
+          "confidence": 1.0,
+          "evidence": "proposal_text"
+        },
+        "installation_responsibility": {
+          "value": "Shared",
+          "status": "found",
+          "confidence": 1.0,
+          "evidence": "proposal_text"
+        },
+        "training_included": {
+          "value": "True",
+          "status": "found",
+          "confidence": 1.0,
+          "evidence": "proposal_text"
+        },
+        "service_response_target": {
+          "value": "96 hours",
+          "status": "found",
+          "confidence": 1.0,
+          "evidence": "proposal_text"
+        },
+        "local_service_team_available": {
+          "value": true,
+          "status": "found",
+          "confidence": 0.9,
+          "evidence": "proposal_text"
+        },
+        "compliance_claims": {
+          "value": [
+            "IEC 60601",
+            "ISO 13485",
+            "local regulatory approval"
+          ],
+          "status": "found",
+          "confidence": 1.0,
+          "evidence": "proposal_text"
+        },
+        "hospital_references_count": {
+          "value": 10,
+          "status": "found",
+          "confidence": 0.9,
+          "evidence": "proposal_text"
+        },
+        "years_in_operation": {
+          "value": 16,
+          "status": "found",
+          "confidence": 0.9,
+          "evidence": "proposal_text"
+        },
+        "contact_person_and_details": {
+          "value": "Rohan Mehta, sales81@secondcyclehealthcare03.example, +91-75242-99192",
+          "status": "found",
+          "confidence": 1.0,
+          "evidence": "proposal_text"
+        },
+        "quoted_price": {
+          "value": "INR 15.67 Cr",
+          "status": "found",
+          "confidence": 1.0,
+          "evidence": "proposal_text"
+        },
+        "advance_payment_percentage": {
+          "value": "60%",
+          "status": "found",
+          "confidence": 1.0,
+          "evidence": "proposal_text"
+        },
+        "delivery_timeline": {
+          "value": "4.8 months",
+          "status": "found",
+          "confidence": 1.0,
+          "evidence": "proposal_text"
+        },
+        "local_service_team_availability": {
+          "value": "True",
+          "status": "found",
+          "confidence": 1.0,
+          "evidence": "proposal_text"
+        },
+        "references_or_prior_hospital_installations": {
+          "value": "10 similar hospital references",
+          "status": "found",
+          "confidence": 1.0,
+          "evidence": "proposal_text"
+        }
+      },
+      "proposal_text": {
+        "raw_text": "BID-001-Q03 Vendor Quote\nVendor Quote: BID-001-Q03\nVendor: SecondCycle Healthcare 03 (Refurbished or older-model supplier)\nLegal Entity: SecondCycle Healthcare 03 Private Limited\nRegistered Address: 58, Industrial Estate, Ahmedabad, India\nContact: Rohan Mehta, sales81@secondcyclehealthcare03.example, +91-75242-99192\nCompany Profile: 16 years in operation, 10 similar hospital references, estimated quote length 4\npages.\nProcurement: MRI Machine Procurement - MRI Machine\nCommercial Offer: INR 15.67 Cr with 60% advance payment.\nDelivery and Warranty: Delivery in 4.8 months. Warranty starts On Installation. Installation\nresponsibility: Shared.\nTraining and Service: Training included: True. Service response target: 96 hours. Local service\nteam: True.\nCompliance Claims: IEC 60601, ISO 13485, local regulatory approval.\nThe quote provides price and delivery details, but leaves some service and compliance evidence\nunclear.\nCompany Details: The vendor states experience with hospital equipment procurement and provides\nreferences where available. Some claims may require verification during technical evaluation.\n",
+        "text_preview": "BID-001-Q03 Vendor Quote\nVendor Quote: BID-001-Q03\nVendor: SecondCycle Healthcare 03 (Refurbished or older-model supplier)\nLegal Entity: SecondCycle Healthcare 03 Private Limited\nRegistered Address: 58, Industrial Estate, Ahmedabad, India\nContact: Rohan Mehta, sales81@secondcyclehealthcare03.example, +91-75242-99192\nCompany Profile: 16 years in operation, 10 similar hospital references, estimated quote length 4\npages.\nProcurement: MRI Machine Procurement - MRI Machine\nCommercial Offer: INR 15.67 Cr with 60% advance payment.\nDelivery and Warranty: Delivery in 4.8 months. Warranty starts On Installation. Installation\nresponsibility: Shared.\nTraining and Service: Training included: True. Service response target: 96 hours. Local service\nteam: True.\nCompliance Claims: IEC 60601, ISO 13485, local regulatory approval.\nThe quote provides price and delivery details, but leaves some service and compliance evidence\nunclear.\nCompany Details: The vendor states experience with hospital equipment procurement and provides\nreferences where available. Some claims may require verification during technical evaluation.\n",
+        "char_count": 1116,
+        "source_pdf_path": "/Users/anvith/Documents/AI/premortem-ai/files/input/samples/bids/BID-001/BID-001-Q03.pdf",
+        "extraction_quality": "high",
+        "needs_ocr_or_vision_fallback": false
+      },
+      "proposal_intelligence": {
+        "vendor_profile": {
+          "years_in_operation": "16 years",
+          "hospital_references": "10 similar hospital references"
+        },
+        "commercial_terms": {
+          "quoted_price": "INR 15.67 Cr",
+          "advance_payment": "60%"
+        },
+        "delivery_and_installation": {
+          "delivery_timeline": "4.8 months",
+          "installation_responsibility": "Shared"
+        },
+        "warranty_and_service": {
+          "warranty_start": "On Installation",
+          "service_response_time": "96 hours",
+          "local_service_team": "True"
+        },
+        "training_and_handover": {
+          "training_included": "True"
+        },
+        "compliance_claims": [
+          "IEC 60601",
+          "ISO 13485",
+          "local regulatory approval"
+        ],
+        "differentiators": [
+          "Refurbished or older-model supplier"
+        ],
+        "omissions_or_ambiguities": [
+          "Some service and compliance evidence unclear"
+        ],
+        "unusual_terms": [],
+        "proposal_quality": {
+          "clarity": "The quote provides price and delivery details, but leaves some service and compliance evidence unclear."
+        },
+        "follow_up_questions": [
+          "Can the vendor provide detailed evidence for compliance claims?",
+          "What specific responsibilities are shared in the installation process?"
+        ],
+        "evidence_snippets": [
+          "Vendor: SecondCycle Healthcare 03 (Refurbished or older-model supplier)",
+          "Company Profile: 16 years in operation, 10 similar hospital references, estimated quote length 4",
+          "Commercial Offer: INR 15.67 Cr with 60% advance payment.",
+          "Delivery and Warranty: Delivery in 4.8 months. Warranty starts On Installation. Installation",
+          "Training and Service: Training included: True. Service response target: 96 hours. Local service",
+          "Compliance Claims: IEC 60601, ISO 13485, local regulatory approval."
+        ]
+      },
+      "raw_text_reference": {
+        "pdf_path": "bids/BID-001/BID-001-Q03.pdf",
+        "full_text_available": true
+      }
+    },
+    {
+      "quote_id": "BID-001-Q04",
+      "fixed_features": {
+        "vendor_name": {
+          "value": "MediBridge Systems 04",
+          "status": "found",
+          "confidence": 1.0,
+          "evidence": "proposal_text"
+        },
+        "legal_entity_name": {
+          "value": "MediBridge Systems 04 Private Limited",
+          "status": "found",
+          "confidence": 1.0,
+          "evidence": "proposal_text"
+        },
+        "registered_address": {
+          "value": "664, Medical Tech Park, Ahmedabad, India",
+          "status": "found",
+          "confidence": 1.0,
+          "evidence": "proposal_text"
+        },
+        "contact_details": {
+          "value": "sales48@medibridgesystems04.example, +91-94985-31174",
+          "status": "found",
+          "confidence": 1.0,
+          "evidence": "proposal_text"
+        },
+        "equipment_type": {
+          "value": "MRI Machine",
+          "status": "found",
+          "confidence": 1.0,
+          "evidence": "proposal_text"
+        },
+        "procurement_name": {
+          "value": "MRI Machine Procurement",
+          "status": "found",
+          "confidence": 1.0,
+          "evidence": "proposal_text"
+        },
+        "quoted_price_cr": {
+          "value": 17.02,
+          "status": "found",
+          "confidence": 0.9,
+          "evidence": "proposal_text"
+        },
+        "currency": {
+          "value": "INR",
+          "status": "found",
+          "confidence": 1.0,
+          "evidence": "proposal_text"
+        },
+        "advance_payment_pct": {
+          "value": 10.0,
+          "status": "found",
+          "confidence": 0.9,
+          "evidence": "proposal_text"
+        },
+        "delivery_timeline_months": {
+          "value": 5.7,
+          "status": "found",
+          "confidence": 0.9,
+          "evidence": "proposal_text"
+        },
+        "warranty_start_trigger": {
+          "value": "On Installation",
+          "status": "found",
+          "confidence": 1.0,
+          "evidence": "proposal_text"
+        },
+        "installation_responsibility": {
+          "value": "Buyer",
+          "status": "found",
+          "confidence": 1.0,
+          "evidence": "proposal_text"
+        },
+        "training_included": {
+          "value": "False",
+          "status": "found",
+          "confidence": 1.0,
+          "evidence": "proposal_text"
+        },
+        "service_response_target": {
+          "value": "18 hours",
+          "status": "found",
+          "confidence": 1.0,
+          "evidence": "proposal_text"
+        },
+        "local_service_team_available": {
+          "value": true,
+          "status": "found",
+          "confidence": 0.9,
+          "evidence": "proposal_text"
+        },
+        "compliance_claims": {
+          "value": [
+            "IEC 60601",
+            "ISO 13485",
+            "local regulatory approval"
+          ],
+          "status": "found",
+          "confidence": 0.9,
+          "evidence": "proposal_text"
+        },
+        "hospital_references_count": {
+          "value": 6,
+          "status": "found",
+          "confidence": 0.9,
+          "evidence": "proposal_text"
+        },
+        "years_in_operation": {
+          "value": 5,
+          "status": "found",
+          "confidence": 0.9,
+          "evidence": "proposal_text"
+        },
+        "contact_person": {
+          "value": "Rohan Mehta",
+          "status": "found",
+          "confidence": 1.0,
+          "evidence": "proposal_text"
+        },
+        "quoted_price": {
+          "value": "INR 17.02 Cr",
+          "status": "found",
+          "confidence": 1.0,
+          "evidence": "proposal_text"
+        },
+        "advance_payment_percentage": {
+          "value": "10%",
+          "status": "found",
+          "confidence": 1.0,
+          "evidence": "proposal_text"
+        },
+        "delivery_timeline": {
+          "value": "5.7 months",
+          "status": "found",
+          "confidence": 1.0,
+          "evidence": "proposal_text"
+        },
+        "warranty_duration": {
+          "value": "missing",
+          "status": "missing",
+          "confidence": 0.0,
+          "evidence": "proposal_text"
+        },
+        "commissioning_responsibility": {
+          "value": "missing",
+          "status": "missing",
+          "confidence": 0.0,
+          "evidence": "proposal_text"
+        },
+        "local_service_team_availability": {
+          "value": "True",
+          "status": "found",
+          "confidence": 1.0,
+          "evidence": "proposal_text"
+        },
+        "certifications_or_compliance_claims": {
+          "value": [
+            "IEC 60601",
+            "ISO 13485",
+            "local regulatory approval"
+          ],
+          "status": "found",
+          "confidence": 1.0,
+          "evidence": "proposal_text"
+        },
+        "references_or_prior_hospital_installations": {
+          "value": "6 similar hospital references",
+          "status": "found",
+          "confidence": 1.0,
+          "evidence": "proposal_text"
+        }
+      },
+      "proposal_text": {
+        "raw_text": "BID-001-Q04 Vendor Quote\nVendor Quote: BID-001-Q04\nVendor: MediBridge Systems 04 (New entrant with limited history)\nLegal Entity: MediBridge Systems 04 Private Limited\nRegistered Address: 664, Medical Tech Park, Ahmedabad, India\nContact: Rohan Mehta, sales48@medibridgesystems04.example, +91-94985-31174\nCompany Profile: 5 years in operation, 6 similar hospital references, estimated quote length 20\npages.\nProcurement: MRI Machine Procurement - MRI Machine\nCommercial Offer: INR 17.02 Cr with 10% advance payment.\nDelivery and Warranty: Delivery in 5.7 months. Warranty starts On Installation. Installation\nresponsibility: Buyer.\nTraining and Service: Training included: False. Service response target: 18 hours. Local service\nteam: True.\nCompliance Claims: IEC 60601, ISO 13485, local regulatory approval.\nThe quote includes a technical specification, commercial offer, installation plan, training plan,\nwarranty terms, service support details, and compliance statement.\nCompany Details: The vendor states experience with hospital equipment procurement and provides\nreferences where available. Some claims may require verification during technical evaluation.\n",
+        "text_preview": "BID-001-Q04 Vendor Quote\nVendor Quote: BID-001-Q04\nVendor: MediBridge Systems 04 (New entrant with limited history)\nLegal Entity: MediBridge Systems 04 Private Limited\nRegistered Address: 664, Medical Tech Park, Ahmedabad, India\nContact: Rohan Mehta, sales48@medibridgesystems04.example, +91-94985-31174\nCompany Profile: 5 years in operation, 6 similar hospital references, estimated quote length 20\npages.\nProcurement: MRI Machine Procurement - MRI Machine\nCommercial Offer: INR 17.02 Cr with 10% advance payment.\nDelivery and Warranty: Delivery in 5.7 months. Warranty starts On Installation. Installation\nresponsibility: Buyer.\nTraining and Service: Training included: False. Service response target: 18 hours. Local service\nteam: True.\nCompliance Claims: IEC 60601, ISO 13485, local regulatory approval.\nThe quote includes a technical specification, commercial offer, installation plan, training plan,\nwarranty terms, service support details, and compliance statement.\nCompany Details: The vendor states experience with hospital equipment procurement and provides\nreferences where available. Some claims may require verification during technical evaluation.\n",
+        "char_count": 1162,
+        "source_pdf_path": "/Users/anvith/Documents/AI/premortem-ai/files/input/samples/bids/BID-001/BID-001-Q04.pdf",
+        "extraction_quality": "high",
+        "needs_ocr_or_vision_fallback": false
+      },
+      "proposal_intelligence": {
+        "vendor_profile": {
+          "years_in_operation": 5,
+          "hospital_references": 6,
+          "new_entrant": true
+        },
+        "commercial_terms": {
+          "quoted_price": "INR 17.02 Cr",
+          "advance_payment": "10%"
+        },
+        "delivery_and_installation": {
+          "delivery_timeline": "5.7 months",
+          "installation_responsibility": "Buyer"
+        },
+        "warranty_and_service": {
+          "warranty_start": "On Installation",
+          "service_response_time": "18 hours",
+          "local_service_team": true
+        },
+        "training_and_handover": {
+          "training_included": false
+        },
+        "compliance_claims": [
+          "IEC 60601",
+          "ISO 13485",
+          "local regulatory approval"
+        ],
+        "differentiators": [
+          "New entrant with limited history but 6 hospital references"
+        ],
+        "omissions_or_ambiguities": [
+          "Warranty duration not specified",
+          "Commissioning responsibility not mentioned"
+        ],
+        "unusual_terms": [],
+        "proposal_quality": {
+          "completeness": "high",
+          "clarity": "medium",
+          "specificity": "medium"
+        },
+        "follow_up_questions": [
+          "What is the warranty duration?",
+          "Who is responsible for commissioning?"
+        ],
+        "evidence_snippets": [
+          "Vendor: MediBridge Systems 04 (New entrant with limited history)",
+          "Company Profile: 5 years in operation, 6 similar hospital references, estimated quote length 20",
+          "Commercial Offer: INR 17.02 Cr with 10% advance payment.",
+          "Delivery and Warranty: Delivery in 5.7 months. Warranty starts On Installation. Installation",
+          "Training and Service: Training included: False. Service response target: 18 hours. Local service",
+          "Compliance Claims: IEC 60601, ISO 13485, local regulatory approval."
+        ]
+      },
+      "raw_text_reference": {
+        "pdf_path": "bids/BID-001/BID-001-Q04.pdf",
+        "full_text_available": true
+      }
+    },
+    {
+      "quote_id": "BID-001-Q05",
+      "fixed_features": {
+        "vendor_name": {
+          "value": "BudgetMed Devices 05",
+          "status": "found",
+          "confidence": 1.0,
+          "evidence": "proposal_text"
+        },
+        "legal_entity_name": {
+          "value": "BudgetMed Devices 05 Private Limited",
+          "status": "found",
+          "confidence": 1.0,
+          "evidence": "proposal_text"
+        },
+        "registered_address": {
+          "value": "757, Medical Tech Park, Ahmedabad, India",
+          "status": "found",
+          "confidence": 1.0,
+          "evidence": "proposal_text"
+        },
+        "contact_details": {
+          "value": "Kavita Iyer, sales52@budgetmeddevices05.example, +91-92009-95180",
+          "status": "found",
+          "confidence": 0.9,
+          "evidence": "proposal_text"
+        },
+        "equipment_type": {
+          "value": "MRI Machine",
+          "status": "found",
+          "confidence": 1.0,
+          "evidence": "proposal_text"
+        },
+        "procurement_name": {
+          "value": "MRI Machine Procurement",
+          "status": "found",
+          "confidence": 1.0,
+          "evidence": "proposal_text"
+        },
+        "quoted_price_cr": {
+          "value": 13.76,
+          "status": "found",
+          "confidence": 0.9,
+          "evidence": "proposal_text"
+        },
+        "currency": {
+          "value": "INR",
+          "status": "found",
+          "confidence": 1.0,
+          "evidence": "proposal_text"
+        },
+        "advance_payment_pct": {
+          "value": 70.0,
+          "status": "found",
+          "confidence": 0.9,
+          "evidence": "proposal_text"
+        },
+        "delivery_timeline_months": {
+          "value": 3.7,
+          "status": "found",
+          "confidence": 0.9,
+          "evidence": "proposal_text"
+        },
+        "warranty_start_trigger": {
+          "value": "On Delivery",
+          "status": "found",
+          "confidence": 1.0,
+          "evidence": "proposal_text"
+        },
+        "installation_responsibility": {
+          "value": "Vendor",
+          "status": "found",
+          "confidence": 1.0,
+          "evidence": "proposal_text"
+        },
+        "training_included": {
+          "value": "True",
+          "status": "found",
+          "confidence": 1.0,
+          "evidence": "proposal_text"
+        },
+        "service_response_target": {
+          "value": "48 hours",
+          "status": "found",
+          "confidence": 1.0,
+          "evidence": "proposal_text"
+        },
+        "local_service_team_available": {
+          "value": true,
+          "status": "found",
+          "confidence": 0.9,
+          "evidence": "proposal_text"
+        },
+        "compliance_claims": {
+          "value": [
+            "IEC 60601",
+            "ISO 13485",
+            "local regulatory approval"
+          ],
+          "status": "found",
+          "confidence": 0.9,
+          "evidence": "proposal_text"
+        },
+        "hospital_references_count": {
+          "value": 15,
+          "status": "found",
+          "confidence": 0.9,
+          "evidence": "proposal_text"
+        },
+        "years_in_operation": {
+          "value": 7,
+          "status": "found",
+          "confidence": 0.9,
+          "evidence": "proposal_text"
+        },
+        "contact_person_and_contact_details": {
+          "value": "Kavita Iyer, sales52@budgetmeddevices05.example, +91-92009-95180",
+          "status": "found",
+          "confidence": 1.0,
+          "evidence": "proposal_text"
+        },
+        "quoted_price": {
+          "value": "INR 13.76 Cr",
+          "status": "found",
+          "confidence": 1.0,
+          "evidence": "proposal_text"
+        },
+        "advance_payment_percentage": {
+          "value": "70%",
+          "status": "found",
+          "confidence": 1.0,
+          "evidence": "proposal_text"
+        },
+        "delivery_timeline": {
+          "value": "3.7 months",
+          "status": "found",
+          "confidence": 1.0,
+          "evidence": "proposal_text"
+        },
+        "warranty_duration": {
+          "value": "missing",
+          "status": "missing",
+          "confidence": 0.0,
+          "evidence": "proposal_text"
+        },
+        "commissioning_responsibility": {
+          "value": "missing",
+          "status": "missing",
+          "confidence": 0.0,
+          "evidence": "proposal_text"
+        },
+        "local_service_team_availability": {
+          "value": "True",
+          "status": "found",
+          "confidence": 1.0,
+          "evidence": "proposal_text"
+        },
+        "certifications_or_compliance_claims": {
+          "value": [
+            "IEC 60601",
+            "ISO 13485",
+            "local regulatory approval"
+          ],
+          "status": "found",
+          "confidence": 1.0,
+          "evidence": "proposal_text"
+        },
+        "references_or_prior_hospital_installations": {
+          "value": "15 similar hospital references",
+          "status": "found",
+          "confidence": 1.0,
+          "evidence": "proposal_text"
+        }
+      },
+      "proposal_text": {
+        "raw_text": "BID-001-Q05 Vendor Quote\nVendor Quote: BID-001-Q05\nVendor: BudgetMed Devices 05 (Low-cost vendor)\nLegal Entity: BudgetMed Devices 05 Private Limited\nRegistered Address: 757, Medical Tech Park, Ahmedabad, India\nContact: Kavita Iyer, sales52@budgetmeddevices05.example, +91-92009-95180\nCompany Profile: 7 years in operation, 15 similar hospital references, estimated quote length 7\npages.\nProcurement: MRI Machine Procurement - MRI Machine\nCommercial Offer: INR 13.76 Cr with 70% advance payment.\nDelivery and Warranty: Delivery in 3.7 months. Warranty starts On Delivery. Installation\nresponsibility: Vendor.\nTraining and Service: Training included: True. Service response target: 48 hours. Local service\nteam: True.\nCompliance Claims: IEC 60601, ISO 13485, local regulatory approval.\nThe quote emphasizes low purchase price and fast shipment, with limited explanation of long-term\noperating cost.\nCompany Details: The vendor states experience with hospital equipment procurement and provides\nreferences where available. Some claims may require verification during technical evaluation.\n",
+        "text_preview": "BID-001-Q05 Vendor Quote\nVendor Quote: BID-001-Q05\nVendor: BudgetMed Devices 05 (Low-cost vendor)\nLegal Entity: BudgetMed Devices 05 Private Limited\nRegistered Address: 757, Medical Tech Park, Ahmedabad, India\nContact: Kavita Iyer, sales52@budgetmeddevices05.example, +91-92009-95180\nCompany Profile: 7 years in operation, 15 similar hospital references, estimated quote length 7\npages.\nProcurement: MRI Machine Procurement - MRI Machine\nCommercial Offer: INR 13.76 Cr with 70% advance payment.\nDelivery and Warranty: Delivery in 3.7 months. Warranty starts On Delivery. Installation\nresponsibility: Vendor.\nTraining and Service: Training included: True. Service response target: 48 hours. Local service\nteam: True.\nCompliance Claims: IEC 60601, ISO 13485, local regulatory approval.\nThe quote emphasizes low purchase price and fast shipment, with limited explanation of long-term\noperating cost.\nCompany Details: The vendor states experience with hospital equipment procurement and provides\nreferences where available. Some claims may require verification during technical evaluation.\n",
+        "char_count": 1086,
+        "source_pdf_path": "/Users/anvith/Documents/AI/premortem-ai/files/input/samples/bids/BID-001/BID-001-Q05.pdf",
+        "extraction_quality": "high",
+        "needs_ocr_or_vision_fallback": false
+      },
+      "proposal_intelligence": {
+        "vendor_profile": {
+          "years_in_operation": 7,
+          "hospital_references": 15
+        },
+        "commercial_terms": {
+          "price": "INR 13.76 Cr",
+          "advance_payment": "70%"
+        },
+        "delivery_and_installation": {
+          "delivery_timeline": "3.7 months",
+          "installation_responsibility": "Vendor"
+        },
+        "warranty_and_service": {
+          "warranty_start": "On Delivery",
+          "service_response_time": "48 hours",
+          "local_service_team": true
+        },
+        "training_and_handover": {
+          "training_included": true
+        },
+        "compliance_claims": [
+          "IEC 60601",
+          "ISO 13485",
+          "local regulatory approval"
+        ],
+        "differentiators": [
+          "Low purchase price",
+          "Fast shipment"
+        ],
+        "omissions_or_ambiguities": [
+          "Limited explanation of long-term operating cost",
+          "Warranty duration not specified",
+          "Commissioning responsibility not specified"
+        ],
+        "unusual_terms": [],
+        "proposal_quality": {
+          "emphasis_on_cost": true,
+          "emphasis_on_speed": true,
+          "lack_of_detail_on_lifecycle_cost": true
+        },
+        "follow_up_questions": [
+          "What is the warranty duration?",
+          "Who is responsible for commissioning?",
+          "Can you provide more details on long-term operating costs?"
+        ],
+        "evidence_snippets": [
+          "Vendor: BudgetMed Devices 05 (Low-cost vendor)",
+          "Company Profile: 7 years in operation, 15 similar hospital references, estimated quote length 7",
+          "Commercial Offer: INR 13.76 Cr with 70% advance payment.",
+          "Delivery and Warranty: Delivery in 3.7 months. Warranty starts On Delivery. Installation",
+          "Training and Service: Training included: True. Service response target: 48 hours. Local service",
+          "Compliance Claims: IEC 60601, ISO 13485, local regulatory approval."
+        ]
+      },
+      "raw_text_reference": {
+        "pdf_path": "bids/BID-001/BID-001-Q05.pdf",
+        "full_text_available": true
+      }
+    }
+  ]
+}

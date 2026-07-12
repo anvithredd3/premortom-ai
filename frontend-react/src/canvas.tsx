@@ -194,7 +194,7 @@ export function GraphCanvas({
         id: 'e-infra-fin', source: 'infrastructure', target: 'financial',
         style: { ...EDGE_STYLE, stroke: edgeColor(st.infrastructure) },
         markerEnd: { ...MK_EDGE, color: edgeColor(st.infrastructure) },
-        label: 'delay est.', labelStyle: { fontSize: 6, fill: '#252525', fontFamily: "'JetBrains Mono', monospace" },
+        label: 'delay est.', labelStyle: { fontSize: 9, fill: '#252525', fontFamily: "'JetBrains Mono', monospace" },
         animated: false,
       },
 

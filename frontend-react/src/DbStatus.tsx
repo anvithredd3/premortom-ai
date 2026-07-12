@@ -8,7 +8,7 @@ function Lbl({ children }: { children: string }) {
   const { theme: C } = useTheme()
   return (
     <span style={{
-      fontSize: 8, letterSpacing: '0.18em', textTransform: 'uppercase',
+      fontSize: 11, letterSpacing: '0.18em', textTransform: 'uppercase',
       color: C.muted, fontWeight: 600, fontFamily: FONT,
     }}>
       {children}
@@ -35,7 +35,7 @@ function TableCard({ title, children }: { title: string; children: React.ReactNo
     }}>
       <div style={{
         padding: '10px 16px', borderBottom: `1px solid ${C.border}`,
-        fontSize: 8, letterSpacing: '0.18em', color: C.muted, fontWeight: 600, fontFamily: FONT,
+        fontSize: 11, letterSpacing: '0.18em', color: C.muted, fontWeight: 600, fontFamily: FONT,
       }}>
         {title}
       </div>
@@ -114,7 +114,7 @@ export function DbStatus() {
             onClick={fetchStatus}
             style={{
               marginLeft: 'auto', background: 'none', border: `1px solid ${C.border}`,
-              borderRadius: 2, padding: '4px 12px', fontSize: 8,
+              borderRadius: 2, padding: '4px 12px', fontSize: 11,
               letterSpacing: '0.14em', textTransform: 'uppercase',
               color: C.muted, fontFamily: FONT, cursor: 'pointer',
             }}
@@ -124,7 +124,7 @@ export function DbStatus() {
         </div>
 
         {loading && (
-          <div style={{ fontSize: 9, color: C.muted, letterSpacing: '0.18em', fontFamily: FONT }}>
+          <div style={{ fontSize: 13, color: C.muted, letterSpacing: '0.18em', fontFamily: FONT }}>
             LOADING···
           </div>
         )}
@@ -132,7 +132,7 @@ export function DbStatus() {
         {error && (
           <div style={{
             padding: '12px 16px', background: C.accent + '12', border: `1px solid ${C.accent}44`,
-            borderRadius: 2, fontSize: 9, color: C.red, fontFamily: FONT, marginBottom: 16,
+            borderRadius: 2, fontSize: 13, color: C.red, fontFamily: FONT, marginBottom: 16,
           }}>
             ERROR: {error}
           </div>
@@ -158,7 +158,7 @@ export function DbStatus() {
                   <div>
                     <Lbl>{item.label}</Lbl>
                     <div style={{
-                      fontSize: 11, fontWeight: 700, fontFamily: FONT,
+                      fontSize: 15, fontWeight: 700, fontFamily: FONT,
                       color: item.ok ? C.green : C.red, marginTop: 4,
                     }}>
                       {item.ok ? 'YES' : 'NO'}
@@ -171,7 +171,7 @@ export function DbStatus() {
             {data.error && (
               <div style={{
                 padding: '10px 14px', background: C.amber + '12', border: `1px solid ${C.amber}44`,
-                borderRadius: 2, fontSize: 9, color: C.amber, fontFamily: FONT, marginBottom: 16,
+                borderRadius: 2, fontSize: 13, color: C.amber, fontFamily: FONT, marginBottom: 16,
               }}>
                 {data.error}
               </div>
@@ -245,7 +245,7 @@ export function DbStatus() {
              data.agent_history_counts.length === 0 && (
               <div style={{
                 padding: '24px', textAlign: 'center',
-                fontSize: 9, color: C.muted, letterSpacing: '0.14em', fontFamily: FONT,
+                fontSize: 13, color: C.muted, letterSpacing: '0.14em', fontFamily: FONT,
               }}>
                 {data.database_connected
                   ? 'DATABASE CONNECTED — NO DATA YET. RUN AN ANALYSIS TO POPULATE MEMORY.'
@@ -264,15 +264,15 @@ export function DbStatus() {
                 <div style={{
                   marginTop: 10, padding: '10px 12px',
                   background: C.surface, borderRadius: 2, border: `1px solid ${C.border}`,
-                  fontSize: 9, color: C.cyan, fontFamily: FONT, lineHeight: 1.8,
+                  fontSize: 13, color: C.cyan, fontFamily: FONT, lineHeight: 1.8,
                 }}>
                   <div>docker compose up -d</div>
-                  <div style={{ color: C.textDim, marginTop: 4, fontSize: 8 }}>
+                  <div style={{ color: C.textDim, marginTop: 4, fontSize: 11 }}>
                     Starts PostgreSQL + pgvector on port 5432. See docker-compose.yml.
                   </div>
                 </div>
                 <div style={{
-                  marginTop: 10, fontSize: 8, color: C.muted, fontFamily: FONT, lineHeight: 1.7,
+                  marginTop: 10, fontSize: 11, color: C.muted, fontFamily: FONT, lineHeight: 1.7,
                 }}>
                   Set DATABASE_URL in .env to enable decision history storage and OKF vector memory.
                 </div>

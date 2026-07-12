@@ -9,7 +9,7 @@ function Lbl({ children, style }: { children: React.ReactNode; style?: React.CSS
   const { theme: C } = useTheme()
   return (
     <span style={{
-      fontSize: 8, letterSpacing: '0.18em', textTransform: 'uppercase',
+      fontSize: 11, letterSpacing: '0.18em', textTransform: 'uppercase',
       color: C.muted, fontWeight: 600, fontFamily: FONT, ...style,
     }}>
       {children}
@@ -63,9 +63,18 @@ function cy(id: string) {
   const n = NODE_DEFS[id]; return n ? n.y + n.h / 2 : 0
 }
 
-function AgentGraph({ nodes, edges }: { nodes: BidGraphNode[]; edges: BidGraphEdge[] }) {
+function AgentGraph({ nodes, edges, isActive }: {
+  nodes: BidGraphNode[]; edges: BidGraphEdge[]; isActive: boolean
+}) {
   const { theme: C } = useTheme()
   const statusMap = Object.fromEntries(nodes.map(n => [n.id, n.status]))
+
+  // Infrastructure nodes have fixed colors independent of backend status
+  const resolveColor = (id: string, status: string) => {
+    if (id === 'llm_provider')  return isActive ? C.amber : C.green
+    if (id === 'document_store') return C.cyan
+    return nodeColor(status, C)
+  }
 
   return (
     <svg
@@ -77,6 +86,14 @@ function AgentGraph({ nodes, edges }: { nodes: BidGraphNode[]; edges: BidGraphEd
           markerWidth="4" markerHeight="4" orient="auto">
           <path d="M0,0 L0,6 L6,3 z" fill={C.borderMid} />
         </marker>
+        {/* Glow filter for LLM provider dot */}
+        <filter id="llm-glow" x="-80%" y="-80%" width="260%" height="260%">
+          <feGaussianBlur stdDeviation="2.5" result="blur" />
+          <feMerge>
+            <feMergeNode in="blur" />
+            <feMergeNode in="SourceGraphic" />
+          </feMerge>
+        </filter>
       </defs>
 
       {/* Edges */}
@@ -99,9 +116,10 @@ function AgentGraph({ nodes, edges }: { nodes: BidGraphNode[]; edges: BidGraphEd
       {/* Nodes */}
       {Object.entries(NODE_DEFS).map(([id, def]) => {
         const status = statusMap[id] ?? 'waiting'
-        const color = nodeColor(status, C)
+        const color = resolveColor(id, status)
         const isRunning = status === 'running'
         const isData = def.h < 32
+        const isLlm = id === 'llm_provider'
         return (
           <g key={id}>
             <rect
@@ -110,16 +128,20 @@ function AgentGraph({ nodes, edges }: { nodes: BidGraphNode[]; edges: BidGraphEd
               stroke={isRunning ? C.borderMid : color === C.faint ? C.border : `${color}44`}
               strokeWidth={1}
             />
-            {/* Status dot */}
+            {/* Status dot — LLM provider pulses and glows when active */}
             <circle
-              cx={def.x + 10} cy={def.y + def.h / 2} r={3}
+              cx={def.x + 10} cy={def.y + def.h / 2} r={isLlm ? 3.5 : 3}
               fill={color}
-              opacity={color === C.faint ? 0.4 : 1}
-            />
+              filter={isLlm && isActive ? 'url(#llm-glow)' : undefined}
+            >
+              {isLlm && isActive && (
+                <animate attributeName="opacity" values="0.45;1;0.45" dur="1.4s" repeatCount="indefinite" />
+              )}
+            </circle>
             {/* Label */}
             <text
               x={def.x + 20} y={def.y + def.h / 2 + 1}
-              fill={status === 'waiting' || status === 'pending' ? C.muted : C.textDim}
+              fill={isData || !(status === 'waiting' || status === 'pending') ? C.textDim : C.muted}
               fontSize={isData ? 7 : 7.5}
               fontFamily={FONT}
               letterSpacing="0.1em"
@@ -135,44 +157,61 @@ function AgentGraph({ nodes, edges }: { nodes: BidGraphNode[]; edges: BidGraphEd
 }
 
 /* ── Quote progress table ─────────────────────────────────────────────── */
+function QuoteBar({ status, riskScore, C }: {
+  status: string; riskScore?: number;
+  C: { green: string; red: string; amber: string; faint: string; cyan: string }
+}) {
+  const isDone = status === 'completed' || status === 'failed'
+  const pct = isDone ? 100 : status === 'running' ? 50 : 0
+  const color = status === 'failed' ? C.red
+    : status === 'completed' && riskScore != null ? riskColor(riskScore, C)
+    : C.cyan
+  return (
+    <div style={{ height: 3, background: C.faint, borderRadius: 2, overflow: 'hidden', marginTop: 6 }}>
+      <div style={{
+        height: '100%', borderRadius: 2, background: color,
+        width: `${pct}%`,
+        transition: isDone ? 'width 0.5s ease' : undefined,
+        animation: status === 'running' ? 'quoteShimmer 1.4s ease-in-out infinite' : undefined,
+      }} />
+    </div>
+  )
+}
+
 function QuoteTable({ quotes }: { quotes: RunQuote[] }) {
   const { theme: C } = useTheme()
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
       {quotes.map(q => (
         <div key={q.quote_id} style={{
-          display: 'flex', alignItems: 'center', gap: 10,
           background: C.surface, border: `1px solid ${C.border}`,
           borderRadius: 2, padding: '8px 12px',
         }}>
-          <div style={{
-            width: 5, height: 5, borderRadius: '50%', flexShrink: 0,
-            background: quoteStatusColor(q.status, C),
-            boxShadow: q.status === 'running' ? `0 0 4px ${C.text}` : undefined,
-          }} />
-          <div style={{ flex: 1, fontSize: 10, color: q.status === 'pending' ? C.muted : C.text }}>
-            {q.vendor_name || q.quote_id}
-          </div>
-          {q.vendor_name && (
-            <div style={{ fontSize: 8, color: C.muted }}>{q.quote_id}</div>
-          )}
-          {q.status === 'running' && (
-            <div style={{ fontSize: 8, color: '#444', letterSpacing: '0.12em' }}>ANALYZING···</div>
-          )}
-          {q.status === 'completed' && q.risk_score != null && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <div style={{
-              fontSize: 10, fontWeight: 700,
-              color: riskColor(q.risk_score, C),
-            }}>
-              {fmtScore(q.risk_score)}/100
+              width: 5, height: 5, borderRadius: '50%', flexShrink: 0,
+              background: quoteStatusColor(q.status, C),
+              boxShadow: q.status === 'running' ? `0 0 4px ${C.text}` : undefined,
+            }} />
+            <div style={{ flex: 1, fontSize: 14, color: q.status === 'pending' ? C.muted : C.text }}>
+              {q.vendor_name || q.quote_id}
             </div>
-          )}
-          <div style={{
-            fontSize: 7, letterSpacing: '0.12em',
-            color: quoteStatusColor(q.status, C), opacity: 0.6,
-          }}>
-            {q.status.toUpperCase()}
+            {q.vendor_name && (
+              <div style={{ fontSize: 11, color: C.muted }}>{q.quote_id}</div>
+            )}
+            {q.status === 'running' && (
+              <div style={{ fontSize: 11, color: C.textDim, letterSpacing: '0.12em' }}>ANALYZING···</div>
+            )}
+            {q.status === 'completed' && q.risk_score != null && (
+              <div style={{ fontSize: 14, fontWeight: 700, color: riskColor(q.risk_score, C) }}>
+                {fmtScore(q.risk_score)}/100
+              </div>
+            )}
+            <div style={{ fontSize: 10, letterSpacing: '0.12em', color: quoteStatusColor(q.status, C), opacity: 0.6 }}>
+              {q.status.toUpperCase()}
+            </div>
           </div>
+          <QuoteBar status={q.status} riskScore={q.risk_score} C={C} />
         </div>
       ))}
     </div>
@@ -193,6 +232,9 @@ export function BidMonitor({ bid, runId, onBack, onComplete }: BidMonitorProps) 
   const [error, setError] = useState<string | null>(null)
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const doneRef = useRef(false)
+  // If the run was already completed when this component mounted, don't auto-navigate
+  // back to results (the user explicitly came back here from the results page)
+  const mountedDoneRef = useRef<boolean | null>(null)
 
   const poll = useCallback(async () => {
     try {
@@ -200,10 +242,16 @@ export function BidMonitor({ bid, runId, onBack, onComplete }: BidMonitorProps) 
       if (!r.ok) throw new Error(await r.text())
       const data: RunState = await r.json()
       setState(data)
-      if (data.status === 'completed' || data.status === 'failed') {
+      const alreadyDone = data.status === 'completed' || data.status === 'failed'
+      // Record whether the run was done when we first mounted
+      if (mountedDoneRef.current === null) {
+        mountedDoneRef.current = alreadyDone
+      }
+      if (alreadyDone) {
         doneRef.current = true
         if (intervalRef.current) clearInterval(intervalRef.current)
-        if (data.status === 'completed') {
+        // Only auto-navigate if the run became done WHILE we were watching
+        if (data.status === 'completed' && !mountedDoneRef.current) {
           setTimeout(() => onComplete(runId), 1200)
         }
       }
@@ -227,23 +275,55 @@ export function BidMonitor({ bid, runId, onBack, onComplete }: BidMonitorProps) 
   const isDone = state?.status === 'completed' || state?.status === 'failed'
   const isFailed = state?.status === 'failed'
 
+  /* ── Progress calculation ─────────────────────────────────────────── */
+  const totalQuotes = quotes.length
+  const completedQuotes = quotes.filter((q: RunQuote) => q.status === 'completed' || q.status === 'failed').length
+  const agentDone = (id: string) => (agents[id]?.status ?? '') === 'completed'
+  const agentRunning = (id: string) => (agents[id]?.status ?? '') === 'running'
+
+  const fixedUnits = 4 // vendor_proposal + market_research + bid_recommender + decision_logic
+  const totalUnits = fixedUnits + Math.max(totalQuotes, 1)
+  const doneUnits =
+    (agentDone('vendor_proposal') ? 1 : 0) +
+    completedQuotes +
+    (agentDone('market_research') ? 1 : 0) +
+    (agentDone('bid_recommender') ? 1 : 0) +
+    (agentDone('decision_logic')  ? 1 : 0)
+
+  const progressPct = isDone ? 100 : state
+    ? Math.max(4, Math.min(96, Math.round((doneUnits / totalUnits) * 100)))
+    : 0
+
+  const currentPhase = isDone && !isFailed ? 'COMPLETE'
+    : isFailed                              ? 'FAILED'
+    : agentRunning('decision_logic')        ? 'DECISION ENGINE'
+    : agentRunning('bid_recommender')       ? 'BID RECOMMENDATION'
+    : agentRunning('market_research')       ? 'MARKET BENCHMARKING'
+    : agentRunning('contract_review') || quotes.some((q: RunQuote) => q.status === 'running')
+                                            ? `REVIEWING QUOTES · ${completedQuotes}/${totalQuotes}`
+    : agentRunning('vendor_proposal')       ? 'EXTRACTING PROPOSALS'
+    : state                                 ? 'STARTING'
+    : 'WAITING'
+
+  const barColor = isFailed ? C.red : isDone ? C.green : C.cyan
+
   return (
     <div style={{ flex: 1, overflow: 'auto', padding: '32px 40px', background: C.bg, fontFamily: FONT }}>
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 24 }}>
         <button onClick={onBack} style={{
           background: 'none', border: 'none', color: C.textDim,
-          fontFamily: FONT, fontSize: 9, letterSpacing: '0.14em',
+          fontFamily: FONT, fontSize: 13, letterSpacing: '0.14em',
           textTransform: 'uppercase', cursor: 'pointer', padding: 0,
         }}>
           ← BACK
         </button>
         <div style={{ width: 1, height: 12, background: C.border }} />
         <div>
-          <div style={{ fontSize: 12, fontWeight: 700, color: C.text, letterSpacing: '0.05em' }}>
+          <div style={{ fontSize: 17, fontWeight: 700, color: C.text, letterSpacing: '0.05em' }}>
             {bid.procurement_name || bid.bid_id}
           </div>
-          <div style={{ fontSize: 8, color: C.muted, letterSpacing: '0.1em', marginTop: 2 }}>
+          <div style={{ fontSize: 11, color: C.muted, letterSpacing: '0.1em', marginTop: 2 }}>
             {runId}
           </div>
         </div>
@@ -254,26 +334,61 @@ export function BidMonitor({ bid, runId, onBack, onComplete }: BidMonitorProps) 
                 width: 5, height: 5, borderRadius: '50%', background: C.textDim,
                 animation: 'pulse 1.2s ease-in-out infinite',
               }} />
-              <span style={{ fontSize: 8, color: C.muted, letterSpacing: '0.14em' }}>RUNNING</span>
+              <span style={{ fontSize: 11, color: C.muted, letterSpacing: '0.14em' }}>RUNNING</span>
             </div>
           )}
           {isDone && !isFailed && (
-            <span style={{ fontSize: 8, color: C.green, letterSpacing: '0.14em' }}>COMPLETED</span>
+            <span style={{ fontSize: 11, color: C.green, letterSpacing: '0.14em' }}>COMPLETED</span>
           )}
           {isFailed && (
-            <span style={{ fontSize: 8, color: C.red, letterSpacing: '0.14em' }}>FAILED</span>
+            <span style={{ fontSize: 11, color: C.red, letterSpacing: '0.14em' }}>FAILED</span>
           )}
           {telemetry && (
-            <span style={{ fontSize: 8, color: C.muted, letterSpacing: '0.1em' }}>
+            <span style={{ fontSize: 11, color: C.muted, letterSpacing: '0.1em' }}>
               {telemetry.llm_calls} LLM · {telemetry.errors} ERR
             </span>
+          )}
+          {isDone && !isFailed && (
+            <button onClick={() => onComplete(runId)} style={{
+              background: C.green, border: 'none', color: C.bg,
+              fontFamily: FONT, fontSize: 11, letterSpacing: '0.14em',
+              textTransform: 'uppercase', cursor: 'pointer',
+              padding: '5px 12px', borderRadius: 2,
+            }}>
+              VIEW RESULTS →
+            </button>
           )}
         </div>
       </div>
 
+      {/* ── Progress bar ── */}
+      {state && (
+        <div style={{
+          background: C.surface, border: `1px solid ${C.border}`,
+          borderRadius: 2, padding: '12px 16px', marginBottom: 20,
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
+            <span style={{ fontSize: 11, color: isFailed ? C.red : isDone ? C.green : C.textDim, fontFamily: FONT, letterSpacing: '0.12em' }}>
+              {currentPhase}
+            </span>
+            <span style={{ fontSize: 13, fontWeight: 700, color: barColor, fontFamily: FONT }}>
+              {progressPct}%
+            </span>
+          </div>
+          <div style={{ height: 4, background: C.faint, borderRadius: 2, overflow: 'hidden' }}>
+            <div style={{
+              height: '100%', borderRadius: 2,
+              width: `${progressPct}%`,
+              background: barColor,
+              transition: 'width 0.6s ease, background 0.3s ease',
+            }} />
+          </div>
+        </div>
+      )}
+
       {error && (
         <div style={{
-          fontSize: 9, color: C.accent, background: C.accent + '12',
+          fontSize: 13, color: C.accent, background: C.accent + '12',
           border: `1px solid ${C.accent}44`, borderRadius: 2,
           padding: '8px 12px', marginBottom: 16,
         }}>
@@ -282,7 +397,7 @@ export function BidMonitor({ bid, runId, onBack, onComplete }: BidMonitorProps) 
       )}
       {isFailed && state?.error && (
         <div style={{
-          fontSize: 9, color: C.red, background: C.red + '12',
+          fontSize: 13, color: C.red, background: C.red + '12',
           border: `1px solid ${C.red}44`, borderRadius: 2,
           padding: '10px 14px', marginBottom: 16,
         }}>
@@ -299,7 +414,7 @@ export function BidMonitor({ bid, runId, onBack, onComplete }: BidMonitorProps) 
             borderRadius: 2, padding: '16px 14px', marginBottom: 16,
           }}>
             <Lbl style={{ display: 'block', marginBottom: 14 }}>AGENT GRAPH</Lbl>
-            <AgentGraph nodes={graphNodes} edges={graphEdges} />
+            <AgentGraph nodes={graphNodes} edges={graphEdges} isActive={!isDone && !isFailed} />
           </div>
 
           {/* Quote progress */}
@@ -308,7 +423,7 @@ export function BidMonitor({ bid, runId, onBack, onComplete }: BidMonitorProps) 
               QUOTES ({quotes.length})
             </Lbl>
             {quotes.length === 0 ? (
-              <div style={{ fontSize: 9, color: C.muted, letterSpacing: '0.14em' }}>
+              <div style={{ fontSize: 13, color: C.muted, letterSpacing: '0.14em' }}>
                 WAITING FOR QUOTE REVIEW TO BEGIN···
               </div>
             ) : (
@@ -335,7 +450,7 @@ export function BidMonitor({ bid, runId, onBack, onComplete }: BidMonitorProps) 
                       background: nodeColor(ag.status, C),
                     }} />
                     <span style={{
-                      fontSize: 9, color: ag.status === 'waiting' ? '#333' : C.text,
+                      fontSize: 13, color: ag.status === 'waiting' ? '#333' : C.text,
                       letterSpacing: '0.06em', textTransform: 'uppercase',
                     }}>
                       {id.replace(/_/g, ' ')}
@@ -343,7 +458,7 @@ export function BidMonitor({ bid, runId, onBack, onComplete }: BidMonitorProps) 
                   </div>
                   {ag.message && (
                     <div style={{
-                      fontSize: 8, color: C.textDim, paddingLeft: 13, lineHeight: 1.4,
+                      fontSize: 11, color: C.textDim, paddingLeft: 13, lineHeight: 1.4,
                     }}>
                       {ag.message}
                     </div>
@@ -354,7 +469,7 @@ export function BidMonitor({ bid, runId, onBack, onComplete }: BidMonitorProps) 
 
             {state && (
               <div style={{ marginTop: 12, paddingTop: 12, borderTop: `1px solid ${C.border}` }}>
-                <div style={{ fontSize: 8, color: C.muted, lineHeight: 1.8 }}>
+                <div style={{ fontSize: 11, color: C.muted, lineHeight: 1.8 }}>
                   <div>STEP: <span style={{ color: C.textDim }}>{state.current_step}</span></div>
                   <div>STATUS: <span style={{ color: nodeColor(state.status, C) }}>{state.status.toUpperCase()}</span></div>
                 </div>
@@ -372,7 +487,7 @@ export function BidMonitor({ bid, runId, onBack, onComplete }: BidMonitorProps) 
               {state.external_connections.map(conn => (
                 <div key={conn.id} style={{
                   display: 'flex', alignItems: 'center', gap: 8,
-                  marginBottom: 6, fontSize: 9, color: C.textDim,
+                  marginBottom: 6, fontSize: 13, color: C.textDim,
                 }}>
                   <div style={{
                     width: 4, height: 4, borderRadius: '50%',
