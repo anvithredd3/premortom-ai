@@ -26,6 +26,8 @@ services:
       OPENAI_MODEL: ${OPENAI_MODEL:-gpt-5.5}
       OPENAI_EMBED_MODEL: ${OPENAI_EMBED_MODEL:-text-embedding-3-small}
       CLAUDE_MODEL: ${CLAUDE_MODEL:-claude-haiku-4-5-20251001}
+      ANONYMIZED_TELEMETRY: ${ANONYMIZED_TELEMETRY:-False}
+      ENABLE_CHROMA_HISTORY: ${ENABLE_CHROMA_HISTORY:-0}
       OKF_MEMORY_ROOT: /app/agent_profiles/contract_agent_profile
       BID_RECOMMENDER_AGENT_OKF_MEMORY_ROOT: /app/agent_profiles/bid_recommender_agent_profile
       INTERNET_MARKET_RESEARCH_AGENT_OKF_MEMORY_ROOT: /app/agent_profiles/internet_market_research_agent_profile

@@ -120,27 +120,34 @@ def analyze(data: ProcurementInput):
 
 
 @app.post("/analyze/demo-run")
-def analyze_and_start_demo_bid_run(data: ProcurementInput, background_tasks: BackgroundTasks):
+def analyze_and_start_demo_bid_run(data: ProcurementInput):
     """Run the existing single analysis and also add it to the BID-001 bid flow."""
+    print("Demo run: starting Screen 1 single-case analysis.", flush=True)
     source_data = data
     if data.raw_document_text:
         source_data, _ = extraction_agent.extract(data.raw_document_text)
 
     report = run_premortem(source_data)
+    print("Demo run: single-case analysis complete.", flush=True)
     sample = input_bids.save_procurement_input_sample(
         "BID-001",
         source_data.model_dump(),
+    )
+    print(
+        f"Demo run: registered current Screen 1 input as {sample['sample_id']}.",
+        flush=True,
     )
     quote_ids = [
         quote["quote_id"] for quote in input_bids.list_quotes("BID-001")["quotes"]
     ]
     run = bid_outputs.create_run("BID-001", quote_ids)
-    background_tasks.add_task(
-        run_bid_evaluation,
-        run["run_id"],
-        "BID-001",
-        quote_ids,
+    print(
+        f"Demo run: starting bid recommender workflow {run['run_id']} "
+        f"with {len(quote_ids)} quotes.",
+        flush=True,
     )
+    run_bid_evaluation(run["run_id"], "BID-001", quote_ids)
+    print(f"Demo run: bid recommender workflow {run['run_id']} complete.", flush=True)
     return {
         "report": report.model_dump(mode="json"),
         "bid_id": "BID-001",

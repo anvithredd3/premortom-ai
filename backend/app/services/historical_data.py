@@ -88,18 +88,21 @@ def _try_build_chroma():
     global _collection
     if _collection is not None:
         return _collection
+    if os.getenv("ENABLE_CHROMA_HISTORY", "0") not in {"1", "true", "True"}:
+        return None
     openai_key = os.getenv("OPENAI_API_KEY")
     if not openai_key:
         return None  # ChromaDB embedding path requires OpenAI; keyword fallback used otherwise
     try:
         import chromadb
+        from chromadb.config import Settings
         from chromadb.utils import embedding_functions
 
         ef = embedding_functions.OpenAIEmbeddingFunction(
             api_key=openai_key,
             model_name=os.getenv("OPENAI_EMBED_MODEL", "text-embedding-3-small"),
         )
-        client = chromadb.Client()
+        client = chromadb.Client(Settings(anonymized_telemetry=False))
         col = client.get_or_create_collection("procurements", embedding_function=ef)
         if col.count() == 0:
             col.add(

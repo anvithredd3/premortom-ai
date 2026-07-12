@@ -12,3 +12,5 @@ chroma/
 *.log
 .idea/
 .vscode/
+files/Research/presentation/
+files/output/bid_runs/

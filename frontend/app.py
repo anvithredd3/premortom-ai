@@ -34,6 +34,72 @@ st.markdown(
     .decision-go {background:#16a34a;}
     .decision-cond {background:#d97706;}
     .decision-nogo {background:#dc2626;}
+    .neon-slide {
+        background:#050914;
+        border:1px solid #00e5ff;
+        border-radius:42px;
+        padding:28px 32px;
+        margin:18px 0;
+        color:#eaf6ff;
+        box-shadow:0 0 20px rgba(0,229,255,0.16);
+    }
+    .neon-slide h2 {
+        color:#ffffff;
+        font-size:2rem;
+        font-weight:800;
+        margin:0 0 6px 0;
+        letter-spacing:0;
+    }
+    .neon-slide h3 {
+        color:#00f5ff;
+        font-size:1rem;
+        font-weight:500;
+        margin:0 0 22px 0;
+        letter-spacing:0;
+        text-transform:uppercase;
+    }
+    .neon-accent {
+        width:180px;
+        height:5px;
+        background:#ff2bd6;
+        border-radius:999px;
+        margin:0 0 24px 0;
+    }
+    .neon-grid {
+        display:grid;
+        grid-template-columns:repeat(3, minmax(0, 1fr));
+        gap:18px;
+    }
+    .neon-card {
+        border:1px solid #16466b;
+        border-radius:18px;
+        background:#081120;
+        padding:18px;
+        min-height:150px;
+    }
+    .neon-card h4 {
+        color:#00f5ff;
+        font-size:1rem;
+        margin:0 0 14px 0;
+        text-transform:uppercase;
+    }
+    .neon-card ul {
+        margin:0;
+        padding-left:18px;
+    }
+    .neon-card li {
+        margin:0 0 10px 0;
+    }
+    .neon-page {
+        color:#00f5ff;
+        text-align:right;
+        font-weight:700;
+        margin-top:20px;
+    }
+    @media (max-width: 900px) {
+        .neon-grid {grid-template-columns:1fr;}
+        .neon-slide {border-radius:24px; padding:22px;}
+    }
     </style>
     """,
     unsafe_allow_html=True,
@@ -90,6 +156,7 @@ with st.sidebar:
             "6 · Database / Memory",
             "7 · Market Research",
             "★ Bonus Lab (What-If / Digital Twin)",
+            "About PreMortem AI",
         ],
     )
     st.divider()
@@ -101,6 +168,135 @@ with st.sidebar:
         rep = st.session_state.report
         st.metric("Overall Risk", f"{rep['overall_risk_score']:.0f}/100")
         st.metric("Decision", rep["recommended_decision"])
+
+
+# --------------------------------------------------------------------------- #
+# Screen 0 - About
+# --------------------------------------------------------------------------- #
+def screen_about():
+    st.subheader("About · PreMortem AI")
+    _neon_slide(
+        title="PreMortem AI",
+        subtitle="The AI That Stress-Tests Decisions Before You Make Them",
+        lead="Predict procurement failures before approval, not after loss.",
+        cards=[
+            ("Signals", [
+                "Warning signs existed before the decision.",
+                "Someone noticed them.",
+                "Nobody acted.",
+            ]),
+            ("Premortem", [
+                "PreMortem asks: what failed six months later?",
+                "It finds the answers automatically.",
+            ]),
+        ],
+        page="01 / 05",
+    )
+    _neon_slide(
+        title="The Approval Gate Is the Gap",
+        subtitle="Procurement Risk Is Fragmented Before the Decision",
+        lead="Risk hides across proposal, contract, site, workforce, and history.",
+        cards=[
+            ("Commercial", [
+                "Vendor language and payment terms",
+                "Warranty exclusions and installation ownership",
+            ]),
+            ("Operational", [
+                "Site readiness and workforce readiness",
+                "Market pricing and vendor history",
+            ]),
+            ("Decision", [
+                "PreMortem challenges approval before commitment.",
+            ]),
+        ],
+        page="02 / 05",
+    )
+    _neon_slide(
+        title="How PreMortem Works",
+        subtitle="Autonomous Agentic Expert Team With Human Touch",
+        lead="Upload proposal, contract, purchase order, or project plan.",
+        cards=[
+            ("Skills", [
+                "Skills: focused procurement capabilities.",
+                "Memory: OKF, RAG, history, embeddings.",
+            ]),
+            ("Memory", [
+                "Connections: artifacts now; MCP and A2A next.",
+                "Agents predict failure modes and financial impact.",
+            ]),
+            ("Human Touch", [
+                "Humans provide governance, judgment, and approval.",
+            ]),
+        ],
+        page="03 / 05",
+    )
+    _neon_slide(
+        title="Technical Architecture",
+        subtitle="Inspectable Memory, Artifacts, and Reusable Agent Skills",
+        cards=[
+            ("Agentic AI", [
+                "OpenAI APIs and agents",
+                "Decision Board",
+                "Tool/search fallback",
+            ]),
+            ("Memory", [
+                "OKF, RAG, embeddings",
+                "pgvector history",
+                "Agent-specific chunking",
+            ]),
+            ("Stack", [
+                "Streamlit and FastAPI",
+                "JSON artifacts",
+                "Docker Compose",
+            ]),
+        ],
+        page="04 / 05",
+    )
+    _neon_slide(
+        title="Demo Results and Next Proof Points",
+        subtitle="One Upload. One Report. Potentially Millions Saved.",
+        cards=[
+            ("Outcome", [
+                "Risk Score: [placeholder]",
+                "Failure Probability: [placeholder]",
+                "Decision: [placeholder]",
+            ]),
+            ("Comparison", [
+                "Winner: [placeholder]",
+                "Quote samples: [placeholder]",
+                "Accuracy: [placeholder %]",
+            ]),
+            ("Proof", [
+                "One upload",
+                "One report",
+                "Millions saved",
+            ]),
+        ],
+        page="05 / 05",
+    )
+
+
+def _neon_slide(title: str, subtitle: str, cards: list[tuple[str, list[str]]], page: str, lead: str = ""):
+    card_html = []
+    for heading, items in cards:
+        bullets = "".join(f"<li>{item}</li>" for item in items)
+        card_html.append(
+            f'<div class="neon-card"><h4>{heading}</h4><ul>{bullets}</ul></div>'
+        )
+    lead_html = f"<p><strong>{lead}</strong></p>" if lead else ""
+    st.markdown(
+        (
+            '<section class="neon-slide">'
+            f"<h2>{title}</h2>"
+            f"<h3>{subtitle}</h3>"
+            '<div class="neon-accent"></div>'
+            f"{lead_html}"
+            f'<div class="neon-grid">{"".join(card_html)}</div>'
+            f'<div class="neon-page">{page}</div>'
+            "</section>"
+        ),
+        unsafe_allow_html=True,
+    )
 
 
 # --------------------------------------------------------------------------- #
@@ -639,7 +835,7 @@ def screen_market_research():
                 if signal.get("interpretation"):
                     st.markdown("**Interpretation**")
                     st.write(signal["interpretation"])
-                _render_sources(signal.get("sources") or [])
+                _render_sources(signal.get("sources") or [], expandable=False)
 
 
 def _render_benchmark_field(title: str, value):
@@ -664,20 +860,28 @@ def _render_benchmark_field(title: str, value):
         st.write(value)
 
 
-def _render_sources(sources):
+def _render_sources(sources, expandable: bool = True):
     if not sources:
         return
-    with st.expander("Sources"):
-        for source in sources:
-            if isinstance(source, dict):
-                url = source.get("url", "")
-                note = source.get("note", "")
-                if url:
-                    st.markdown(f"- [{url}]({url})")
-                if note:
-                    st.caption(note)
-            else:
-                st.markdown(f"- {source}")
+    if expandable:
+        with st.expander("Sources"):
+            _render_source_items(sources)
+    else:
+        st.markdown("**Sources**")
+        _render_source_items(sources)
+
+
+def _render_source_items(sources):
+    for source in sources:
+        if isinstance(source, dict):
+            url = source.get("url", "")
+            note = source.get("note", "")
+            if url:
+                st.markdown(f"- [{url}]({url})")
+            if note:
+                st.caption(note)
+        else:
+            st.markdown(f"- {source}")
 
 
 # --------------------------------------------------------------------------- #
@@ -782,7 +986,9 @@ def screen_bonus():
 # --------------------------------------------------------------------------- #
 # Router
 # --------------------------------------------------------------------------- #
-if screen.startswith("1"):
+if screen.startswith("About"):
+    screen_about()
+elif screen.startswith("1"):
     screen_input()
 elif screen.startswith("2"):
     screen_agents()

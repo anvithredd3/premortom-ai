@@ -16,7 +16,7 @@ if load_dotenv is not None:
     load_dotenv(Path(__file__).resolve().parents[1] / ".env", override=False)
 
 API_BASE = os.getenv("PREMORTEM_API", "http://localhost:8000")
-TIMEOUT = 120
+TIMEOUT = 300
 
 
 def health() -> dict:
