@@ -55,7 +55,7 @@ def analyze(data: ProcurementInput, predicted_delay_months: float = 8.0) -> Agen
     payload = json.loads(data.model_dump_json())
     payload["predicted_delay_months"] = predicted_delay_months
 
-    result = run_agent_llm(
+    result, telemetry = run_agent_llm(
         name=NAME,
         instructions=INSTRUCTIONS,
         user_payload=json.dumps(payload),
@@ -82,6 +82,10 @@ def analyze(data: ProcurementInput, predicted_delay_months: float = 8.0) -> Agen
         reasoning=result.get("reasoning") or "",
         recommendation=result.get("recommendation") or "",
         metrics=metrics,
+        tokens_in=telemetry["tokens_in"],
+        tokens_out=telemetry["tokens_out"],
+        time_ms=telemetry["time_ms"],
+        model=telemetry["model"],
     )
 
 

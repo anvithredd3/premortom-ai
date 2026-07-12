@@ -56,7 +56,7 @@ def analyze(data: ProcurementInput) -> AgentResult:
         "benchmark_projects": similar,
     }
 
-    result = run_agent_llm(
+    result, telemetry = run_agent_llm(
         name=NAME,
         instructions=INSTRUCTIONS,
         user_payload=json.dumps(payload),
@@ -80,6 +80,10 @@ def analyze(data: ProcurementInput) -> AgentResult:
         reasoning=result.get("reasoning") or "",
         recommendation=result.get("recommendation") or "",
         metrics=metrics,
+        tokens_in=telemetry["tokens_in"],
+        tokens_out=telemetry["tokens_out"],
+        time_ms=telemetry["time_ms"],
+        model=telemetry["model"],
     )
 
 

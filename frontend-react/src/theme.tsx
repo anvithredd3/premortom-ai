@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, ReactNode } from 'react'
+import { createContext, useContext, useState, useEffect, ReactNode } from 'react'
 
 export type ThemeMode = 'dark' | 'light'
 
@@ -72,13 +72,13 @@ export const LIGHT: Theme = {
   cyan:           '#0369a1',
   orange:         '#c2410c',
   purple:         '#6d28d9',
-  navBg:          '#1a1a1a',
-  navItem:        '#888888',
-  navItemActive:  '#f5f5f5',
-  navSection:     '#555555',
-  navFuture:      '#333333',
-  navLegend:      '#666666',
-  brand:          '#ff4444',
+  navBg:          '#f5f5f5',
+  navItem:        '#666666',
+  navItemActive:  '#111111',
+  navSection:     '#444444',
+  navFuture:      '#bbbbbb',
+  navLegend:      '#888888',
+  brand:          '#cc1111',
 }
 
 interface ThemeCtx {
@@ -93,6 +93,10 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   const [mode, setMode] = useState<ThemeMode>(() =>
     (localStorage.getItem('pm-theme') as ThemeMode | null) ?? 'dark'
   )
+
+  useEffect(() => {
+    document.documentElement.dataset.theme = mode
+  }, [mode])
 
   const toggle = () =>
     setMode(m => {

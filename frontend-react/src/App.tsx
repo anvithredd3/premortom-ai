@@ -169,10 +169,7 @@ function Sidebar({
   hasRun: boolean
   onChange: (s: Screen) => void
 }) {
-  const { mode, toggle } = useTheme()
-
-  // Sidebar is always dark — intentional design choice
-  const SB = DARK
+  const { theme: SB, mode, toggle } = useTheme()
 
   return (
     <nav style={{
@@ -212,7 +209,7 @@ function Sidebar({
               const active = screen === item.screen
               const needsRun = ['board', 'debate', 'dashboard', 'report'].includes(item.screen)
               const dimmed = needsRun && !hasRun && !active
-              const dotColor = dimmed ? '#1a1a1a' : AVAIL_COLOR[item.avail]
+              const dotColor = dimmed ? SB.border : AVAIL_COLOR[item.avail]
 
               return (
                 <button
@@ -221,7 +218,7 @@ function Sidebar({
                   style={{
                     display: 'flex', alignItems: 'center', gap: 9,
                     width: '100%', padding: '7px 16px',
-                    background: active ? '#111111' : 'none',
+                    background: active ? SB.faint : 'none',
                     border: 'none',
                     borderLeft: `2px solid ${active ? SB.brand : 'transparent'}`,
                     cursor: 'pointer',
@@ -233,14 +230,14 @@ function Sidebar({
                     boxShadow: item.avail === 'live' && !dimmed ? `0 0 4px ${dotColor}66` : 'none',
                   }} />
                   <span style={{
-                    fontSize: 10, color: active ? SB.brand : dimmed ? '#2a2a2a' : SB.navSection,
+                    fontSize: 10, color: active ? SB.brand : dimmed ? SB.border : SB.navSection,
                     fontFamily: FONT, letterSpacing: '0.08em', flexShrink: 0, width: 14,
                   }}>
                     {item.num}
                   </span>
                   <span style={{
                     fontSize: 11, letterSpacing: '0.1em', textTransform: 'uppercase',
-                    color: active ? SB.navItemActive : dimmed ? '#2a2a2a' : SB.navItem,
+                    color: active ? SB.navItemActive : dimmed ? SB.border : SB.navItem,
                     fontFamily: FONT, fontWeight: active ? 600 : 400,
                   }}>
                     {item.label}
@@ -258,16 +255,16 @@ function Sidebar({
         <div>
           <div style={{
             padding: '12px 16px 4px',
-            fontSize: 10, letterSpacing: '0.18em', color: '#252525',
+            fontSize: 10, letterSpacing: '0.18em', color: SB.navFuture,
             fontWeight: 600, fontFamily: FONT, textTransform: 'uppercase',
           }}>
             FUTURE WORKFLOWS
           </div>
           {FUTURE_WORKFLOWS.map(fw => (
             <div key={fw.label} title={fw.desc} style={{ display: 'flex', alignItems: 'center', gap: 9, padding: '6px 16px', cursor: 'default' }}>
-              <div style={{ width: 4, height: 4, borderRadius: '50%', background: '#1e1e1e', flexShrink: 0 }} />
-              <span style={{ fontSize: 10, color: '#222', fontFamily: FONT, letterSpacing: '0.08em', width: 14 }}>—</span>
-              <span style={{ fontSize: 11, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#252525', fontFamily: FONT }}>
+              <div style={{ width: 4, height: 4, borderRadius: '50%', background: SB.border, flexShrink: 0 }} />
+              <span style={{ fontSize: 10, color: SB.navFuture, fontFamily: FONT, letterSpacing: '0.08em', width: 14 }}>—</span>
+              <span style={{ fontSize: 11, letterSpacing: '0.1em', textTransform: 'uppercase', color: SB.navFuture, fontFamily: FONT }}>
                 {fw.label}
               </span>
             </div>
@@ -294,7 +291,7 @@ function Sidebar({
           title={`Switch to ${mode === 'dark' ? 'light' : 'dark'} mode`}
           style={{
             marginTop: 8, display: 'flex', alignItems: 'center', gap: 8,
-            background: '#111', border: `1px solid #252525`, borderRadius: 2,
+            background: SB.faint, border: `1px solid ${SB.border}`, borderRadius: 2,
             padding: '5px 10px', cursor: 'pointer', width: '100%',
           }}
         >
@@ -304,7 +301,7 @@ function Sidebar({
           </span>
         </button>
 
-        <div style={{ marginTop: 4, fontSize: 9, color: '#252525', fontFamily: FONT, letterSpacing: '0.08em' }}>
+        <div style={{ marginTop: 4, fontSize: 9, color: SB.navFuture, fontFamily: FONT, letterSpacing: '0.08em' }}>
           PREMORTEM AI v1.0
         </div>
       </div>

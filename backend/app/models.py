@@ -87,6 +87,11 @@ class AgentResult(BaseModel):
     recommendation: str = ""
     # free-form extras (delay prediction, projected loss, readiness %, etc.)
     metrics: dict = Field(default_factory=dict)
+    # LLM telemetry
+    tokens_in: Optional[int] = None
+    tokens_out: Optional[int] = None
+    time_ms: Optional[float] = None
+    model: Optional[str] = None
 
 
 class DebateTurn(BaseModel):

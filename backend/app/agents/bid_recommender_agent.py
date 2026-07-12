@@ -167,7 +167,7 @@ def _llm_enrichment(
             "# Bid Recommender OKF memory selected for this explanation\n"
             f"{memory}\n"
         )
-    result = run_agent_llm(
+    result, _ = run_agent_llm(
         name=NAME,
         instructions=instructions,
         user_payload=json.dumps(payload),

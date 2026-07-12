@@ -369,7 +369,7 @@ def _llm_enrichment(quote: Dict[str, str], raw_text: str) -> Dict[str, object]:
         "quote": quote,
         "raw_document_text": raw_text[:MAX_LLM_TEXT_CHARS],
     }
-    result = run_agent_llm(
+    result, _ = run_agent_llm(
         name=NAME,
         instructions=_build_instructions(),
         user_payload=json.dumps(payload),

@@ -9,6 +9,7 @@ import ReactFlow, {
 } from 'reactflow'
 import { AgentNode, DbNode, DecisionNode, ProfilerNode } from './nodes'
 import type { AgentId, AgentState, ResearchItem } from './types'
+import { useTheme } from './theme'
 
 const nodeTypes = {
   agentNode:    AgentNode,
@@ -99,6 +100,7 @@ export function GraphCanvas({
   intakeCategory,
   dbRowCount = 0,
 }: Props) {
+  const { theme: C, mode } = useTheme()
   const hasStarted = Object.values(agentStates).some(s => s.status !== 'idle')
 
   /* Which agents actively query which DB — used for live edge highlight */
@@ -228,9 +230,9 @@ export function GraphCanvas({
       panOnDrag
       zoomOnScroll
       onNodeClick={(_, node) => void node}
-      style={{ background: '#080808' }}
+      style={{ background: C.bg }}
     >
-      <Background color="#141414" variant={BackgroundVariant.Dots} gap={28} size={1} />
+      <Background color={mode === 'dark' ? '#141414' : '#d8d8d8'} variant={BackgroundVariant.Dots} gap={28} size={1} />
       <Controls showInteractive={false} />
     </ReactFlow>
   )

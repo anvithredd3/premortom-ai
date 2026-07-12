@@ -43,7 +43,7 @@ Rules:
 
 def extract(raw_text: str) -> Tuple[ProcurementInput, List[str]]:
     """Return (ProcurementInput, missing_fields). Never raises."""
-    result = run_agent_llm(
+    result, _ = run_agent_llm(
         name=NAME,
         instructions=INSTRUCTIONS,
         user_payload=f"Extract procurement details from this document:\n\n{raw_text[:8000]}",

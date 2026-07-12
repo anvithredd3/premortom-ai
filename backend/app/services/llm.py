@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import json
 import os
+import time
 from typing import Optional
 
 # --- Anthropic models ---
@@ -77,10 +78,11 @@ def run_agent_llm(
     user_payload: str,
     temperature: float = 0.2,
     use_sonnet: bool = False,
-) -> Optional[dict]:
-    """Call the configured LLM and return a parsed JSON dict, or None on failure.
+) -> tuple[Optional[dict], dict]:
+    """Call the configured LLM and return (parsed JSON dict or None, telemetry dict).
 
-    Callers fall back to the rule-based engine on None.
+    Telemetry keys: tokens_in, tokens_out, time_ms, model.
+    Callers fall back to the rule-based engine on a None result.
     use_sonnet=True upgrades to claude-sonnet-4-6 (Anthropic path only; ignored
     on OpenAI path where the same model is used throughout).
     """
@@ -89,7 +91,7 @@ def run_agent_llm(
         return _run_anthropic(instructions, user_payload, temperature, use_sonnet)
     if provider == "openai":
         return _run_openai(instructions, user_payload, temperature)
-    return None
+    return None, {"tokens_in": 0, "tokens_out": 0, "time_ms": 0.0, "model": ""}
 
 
 def _run_anthropic(
@@ -97,12 +99,13 @@ def _run_anthropic(
     user_payload: str,
     temperature: float,
     use_sonnet: bool,
-) -> Optional[dict]:
+) -> tuple[Optional[dict], dict]:
     client = _get_anthropic()
     if client is None:
-        return None
+        return None, {"tokens_in": 0, "tokens_out": 0, "time_ms": 0.0, "model": ""}
     model = CLAUDE_SONNET if use_sonnet else CLAUDE_MODEL
     try:
+        t0 = time.monotonic()
         resp = client.messages.create(
             model=model,
             max_tokens=1024,
@@ -113,20 +116,28 @@ def _run_anthropic(
                 {"role": "assistant", "content": "{"},
             ],
         )
-        return _coerce_json("{" + resp.content[0].text)
+        elapsed_ms = (time.monotonic() - t0) * 1000
+        telemetry = {
+            "tokens_in": resp.usage.input_tokens,
+            "tokens_out": resp.usage.output_tokens,
+            "time_ms": round(elapsed_ms, 1),
+            "model": resp.model,
+        }
+        return _coerce_json("{" + resp.content[0].text), telemetry
     except Exception:
-        return None
+        return None, {"tokens_in": 0, "tokens_out": 0, "time_ms": 0.0, "model": model}
 
 
 def _run_openai(
     instructions: str,
     user_payload: str,
     temperature: float,
-) -> Optional[dict]:
+) -> tuple[Optional[dict], dict]:
     client = _get_openai()
     if client is None:
-        return None
+        return None, {"tokens_in": 0, "tokens_out": 0, "time_ms": 0.0, "model": ""}
     try:
+        t0 = time.monotonic()
         resp = client.chat.completions.create(
             model=OPENAI_MODEL,
             temperature=temperature,
@@ -136,9 +147,17 @@ def _run_openai(
                 {"role": "user", "content": user_payload},
             ],
         )
-        return _coerce_json(resp.choices[0].message.content)
+        elapsed_ms = (time.monotonic() - t0) * 1000
+        usage = resp.usage
+        telemetry = {
+            "tokens_in": usage.prompt_tokens if usage else 0,
+            "tokens_out": usage.completion_tokens if usage else 0,
+            "time_ms": round(elapsed_ms, 1),
+            "model": resp.model,
+        }
+        return _coerce_json(resp.choices[0].message.content), telemetry
     except Exception:
-        return None
+        return None, {"tokens_in": 0, "tokens_out": 0, "time_ms": 0.0, "model": OPENAI_MODEL}
 
 
 def _coerce_json(text) -> Optional[dict]:

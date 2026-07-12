@@ -66,7 +66,7 @@ def research(item_name: str) -> dict:
     if not has_api_key():
         return _offline_result(item_name)
 
-    result = run_agent_llm(
+    result, _ = run_agent_llm(
         name=NAME,
         instructions=INSTRUCTIONS,
         user_payload=f'{{"item_name": "{item_name}"}}',

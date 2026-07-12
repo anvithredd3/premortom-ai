@@ -187,7 +187,7 @@ function SourceLink({ item, isEvidence }: { item: ResearchItem; isEvidence?: boo
       borderRadius: 2, marginBottom: 6,
     }}>
       {isEvidence || !item.url ? (
-        <div style={{ fontSize: 13, color: '#666', fontFamily: FONT, lineHeight: 1.55 }}>
+        <div style={{ fontSize: 13, color: C.textDim, fontFamily: FONT, lineHeight: 1.55 }}>
           {item.title}
         </div>
       ) : (
@@ -199,7 +199,7 @@ function SourceLink({ item, isEvidence }: { item: ResearchItem; isEvidence?: boo
             ↗ {item.title || item.url}
           </a>
           {item.snippet && item.snippet !== item.title && (
-            <div style={{ fontSize: 11, color: '#3a3a3a', lineHeight: 1.55, fontFamily: FONT }}>
+            <div style={{ fontSize: 11, color: C.textDim, lineHeight: 1.55, fontFamily: FONT }}>
               {item.snippet.slice(0, 140)}{item.snippet.length > 140 ? '…' : ''}
             </div>
           )}
@@ -217,12 +217,12 @@ function TelemetryRow({ state }: { state: AgentState }) {
   return (
     <div style={{
       display: 'flex', gap: 16, paddingTop: 10, borderTop: `1px solid ${C.border}`,
-      fontSize: 11, color: '#3a3a3a', letterSpacing: '0.08em', fontFamily: FONT,
+      fontSize: 11, color: C.textDim, letterSpacing: '0.08em', fontFamily: FONT,
     }}>
       <span><Label>MODEL</Label>&nbsp;&nbsp;{model}</span>
       <span><Label>TOKENS</Label>&nbsp;&nbsp;{toks}</span>
       {state.tokens && (
-        <span style={{ color: '#2a2a2a' }}>
+        <span style={{ color: C.muted }}>
           {(state.tokens.in ?? 0).toLocaleString()} in · {(state.tokens.out ?? 0).toLocaleString()} out
         </span>
       )}
@@ -232,10 +232,11 @@ function TelemetryRow({ state }: { state: AgentState }) {
 }
 
 function ChartSkeleton({ h }: { h: number }) {
+  const { theme: C } = useTheme()
   return (
     <div style={{
       height: h, display: 'flex', alignItems: 'center', justifyContent: 'center',
-      fontSize: 11, color: '#222', letterSpacing: '0.14em', fontFamily: FONT,
+      fontSize: 11, color: C.muted, letterSpacing: '0.14em', fontFamily: FONT,
     }}>
       LOADING
     </div>
@@ -250,7 +251,7 @@ function EmptyState({ message }: { message: string }) {
       flexDirection: 'column', gap: 12, padding: 40,
     }}>
       <div style={{ width: 40, height: 1, background: C.border }} />
-      <div style={{ fontSize: 13, color: '#2a2a2a', letterSpacing: '0.18em', fontFamily: FONT }}>
+      <div style={{ fontSize: 13, color: C.muted, letterSpacing: '0.18em', fontFamily: FONT }}>
         {message}
       </div>
       <div style={{ width: 40, height: 1, background: C.border }} />
@@ -609,7 +610,7 @@ function DecisionSection({
     <SectionCard sectionRef={sectionRef}>
       <SectionTitle label="DECISION" />
       {isRunning && (
-        <div style={{ fontSize: 14, color: '#555', fontFamily: FONT, letterSpacing: '0.1em' }}>ANALYZING···</div>
+        <div style={{ fontSize: 14, color: C.textDim, fontFamily: FONT, letterSpacing: '0.1em' }}>ANALYZING···</div>
       )}
       {runResult && (
         <>
@@ -627,7 +628,7 @@ function DecisionSection({
           {decisionState.summary && (
             <div style={{ marginBottom: 16 }}>
               <Label>PREDICTED FAILURE MODE</Label>
-              <div style={{ marginTop: 8, fontSize: 14, color: '#888', lineHeight: 1.7, fontFamily: FONT }}>
+              <div style={{ marginTop: 8, fontSize: 14, color: C.textDim, lineHeight: 1.7, fontFamily: FONT }}>
                 {decisionState.summary}
               </div>
             </div>
@@ -638,7 +639,7 @@ function DecisionSection({
               <div style={{ marginTop: 8, display: 'flex', flexDirection: 'column', gap: 8 }}>
                 {runResult.conditions.map((c, i) => (
                   <div key={i} style={{
-                    fontSize: 13, color: '#888', lineHeight: 1.65,
+                    fontSize: 13, color: C.textDim, lineHeight: 1.65,
                     paddingLeft: 10, borderLeft: `1px solid ${C.faint}`, fontFamily: FONT,
                   }}>
                     {c}
@@ -1172,26 +1173,26 @@ function ScenarioCard({ scenario }: { scenario: ScenarioOutcome }) {
         <div style={{ width: 5, height: 5, borderRadius: '50%', background: col }} />
         <Label color={col}>{scenario.name}</Label>
         <span style={{
-          marginLeft: 'auto', fontSize: 10, color: '#3a3a3a', fontFamily: FONT, letterSpacing: '0.1em',
+          marginLeft: 'auto', fontSize: 10, color: C.muted, fontFamily: FONT, letterSpacing: '0.1em',
         }}>
           {Math.round(scenario.probability_pct)}% PROB
         </span>
       </div>
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 10 }}>
         <div>
-          <div style={{ fontSize: 10, color: '#2a2a2a', letterSpacing: '0.14em', fontFamily: FONT, marginBottom: 3 }}>DELAY</div>
+          <div style={{ fontSize: 10, color: C.muted, letterSpacing: '0.14em', fontFamily: FONT, marginBottom: 3 }}>DELAY</div>
           <div style={{ fontSize: 16, fontWeight: 700, color: col, fontFamily: FONT }}>
             {scenario.timeline_months}mo
           </div>
         </div>
         <div>
-          <div style={{ fontSize: 10, color: '#2a2a2a', letterSpacing: '0.14em', fontFamily: FONT, marginBottom: 3 }}>LOSS</div>
+          <div style={{ fontSize: 10, color: C.muted, letterSpacing: '0.14em', fontFamily: FONT, marginBottom: 3 }}>LOSS</div>
           <div style={{ fontSize: 16, fontWeight: 700, color: col, fontFamily: FONT }}>
             ₹{scenario.financial_impact_cr.toFixed(1)} Cr
           </div>
         </div>
       </div>
-      <div style={{ fontSize: 11, color: '#555', lineHeight: 1.6, fontFamily: FONT }}>
+      <div style={{ fontSize: 11, color: C.textDim, lineHeight: 1.6, fontFamily: FONT }}>
         {scenario.operational_impact}
       </div>
     </div>
@@ -1228,7 +1229,7 @@ export function ExecutiveDashboard({ agentStates, runResult, fullReport, confirm
           borderRadius: 2, padding: '20px 24px', marginBottom: 24,
         }}>
           {procName && (
-            <div style={{ fontSize: 11, color: '#3a3a3a', fontFamily: FONT, letterSpacing: '0.12em', marginBottom: 8 }}>
+            <div style={{ fontSize: 11, color: C.muted, fontFamily: FONT, letterSpacing: '0.12em', marginBottom: 8 }}>
               {procName}
             </div>
           )}
@@ -1236,7 +1237,7 @@ export function ExecutiveDashboard({ agentStates, runResult, fullReport, confirm
             {runResult.decision}
           </div>
           {fullReport?.predicted_failure_mode && (
-            <div style={{ marginTop: 10, fontSize: 14, color: '#666', fontFamily: FONT, lineHeight: 1.65 }}>
+            <div style={{ marginTop: 10, fontSize: 14, color: C.textDim, fontFamily: FONT, lineHeight: 1.65 }}>
               {fullReport.predicted_failure_mode}
             </div>
           )}
@@ -1246,19 +1247,19 @@ export function ExecutiveDashboard({ agentStates, runResult, fullReport, confirm
         {fullReport && (
           <div style={{
             display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16,
-            padding: '8px 14px', background: '#040e04', border: `1px solid #1a2a1a`,
+            padding: '8px 14px', background: C.cyan + '08', border: `1px solid ${C.cyan}22`,
             borderRadius: 2,
           }}>
-            <div style={{ width: 5, height: 5, borderRadius: '50%', background: '#22d3ee' }} />
-            <span style={{ fontSize: 11, color: '#2a4a4a', fontFamily: FONT, letterSpacing: '0.1em' }}>
+            <div style={{ width: 5, height: 5, borderRadius: '50%', background: C.cyan }} />
+            <span style={{ fontSize: 11, color: C.muted, fontFamily: FONT, letterSpacing: '0.1em' }}>
               EVALUATOR
             </span>
-            <span style={{ fontSize: 11, color: '#1e3a3a', fontFamily: FONT }}>
+            <span style={{ fontSize: 11, color: C.textDim, fontFamily: FONT }}>
               {fullReport.confidence_pct > 0
                 ? `${Math.round(fullReport.confidence_pct)}% CONFIDENCE`
                 : 'CONFIDENCE NOT AVAILABLE'}
             </span>
-            <span style={{ marginLeft: 'auto', fontSize: 10, color: '#1e2a2a', fontFamily: FONT, letterSpacing: '0.1em' }}>
+            <span style={{ marginLeft: 'auto', fontSize: 10, color: C.muted, fontFamily: FONT, letterSpacing: '0.1em' }}>
               FULL EVALUATOR AGENT REQUIRES BACKEND IMPLEMENTATION
             </span>
           </div>
@@ -1335,13 +1336,13 @@ export function ReportView({ runResult, fullReport, confirmedInput, onExport }: 
 
         {/* Report header */}
         <div style={{ marginBottom: 28 }}>
-          <div style={{ fontSize: 11, color: '#2a2a2a', letterSpacing: '0.1em', fontFamily: FONT, marginBottom: 4 }}>
+          <div style={{ fontSize: 11, color: C.muted, letterSpacing: '0.1em', fontFamily: FONT, marginBottom: 4 }}>
             PREMORTEM REPORT  ·  {generatedAt}
           </div>
           <div style={{ fontSize: 19, fontWeight: 700, color: C.text, fontFamily: FONT, letterSpacing: '0.02em' }}>
             {procName ?? fullReport.procurement_name}
           </div>
-          <div style={{ fontSize: 13, color: '#3a3a3a', fontFamily: FONT, marginTop: 4 }}>
+          <div style={{ fontSize: 13, color: C.textDim, fontFamily: FONT, marginTop: 4 }}>
             {fullReport.equipment_type}  ·  ₹{fullReport.contract_value_cr} Cr
           </div>
         </div>
@@ -1370,7 +1371,7 @@ export function ReportView({ runResult, fullReport, confirmedInput, onExport }: 
               {runResult.conditions.map((c, i) => (
                 <div key={i} style={{
                   padding: '10px 14px', background: `${C.amber}0a`, border: `1px solid ${C.amber}33`,
-                  borderRadius: 2, fontSize: 14, color: '#aaa', lineHeight: 1.65, fontFamily: FONT,
+                  borderRadius: 2, fontSize: 14, color: C.textDim, lineHeight: 1.65, fontFamily: FONT,
                 }}>
                   <span style={{ color: C.amber, fontSize: 11, fontWeight: 700, letterSpacing: '0.1em' }}>
                     CONDITION {i + 1} &nbsp;
@@ -1389,7 +1390,7 @@ export function ReportView({ runResult, fullReport, confirmedInput, onExport }: 
             <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
               {fullReport.predicted_outcomes.map((o, i) => (
                 <div key={i} style={{
-                  fontSize: 13, color: '#888', lineHeight: 1.65,
+                  fontSize: 13, color: C.textDim, lineHeight: 1.65,
                   paddingLeft: 10, borderLeft: `1px solid ${C.faint}`, fontFamily: FONT,
                 }}>
                   {o}
@@ -1407,7 +1408,7 @@ export function ReportView({ runResult, fullReport, confirmedInput, onExport }: 
               {fullReport.supporting_evidence.map((e, i) => (
                 <div key={i} style={{
                   padding: '8px 12px', background: C.surface, border: `1px solid ${C.border}`,
-                  borderRadius: 2, fontSize: 13, color: '#888', lineHeight: 1.6, fontFamily: FONT,
+                  borderRadius: 2, fontSize: 13, color: C.textDim, lineHeight: 1.6, fontFamily: FONT,
                 }}>
                   {e}
                 </div>
@@ -1420,7 +1421,7 @@ export function ReportView({ runResult, fullReport, confirmedInput, onExport }: 
         {fullReport.predicted_failure_mode && (
           <div style={{ borderTop: `1px solid ${C.border}`, paddingTop: 20, marginBottom: 24 }}>
             <SectionTitle label="PREDICTED FAILURE MODE" />
-            <div style={{ fontSize: 14, color: '#888', lineHeight: 1.7, fontFamily: FONT }}>
+            <div style={{ fontSize: 14, color: C.textDim, lineHeight: 1.7, fontFamily: FONT }}>
               {fullReport.predicted_failure_mode}
             </div>
           </div>
@@ -1433,11 +1434,11 @@ export function ReportView({ runResult, fullReport, confirmedInput, onExport }: 
             <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
               {fullReport.conditions.map((c, i) => (
                 <div key={i} style={{
-                  padding: '9px 13px', background: '#040e04', border: `1px solid #1a2a1a`,
-                  borderRadius: 2, fontSize: 13, color: '#2a5a3a', lineHeight: 1.6, fontFamily: FONT,
+                  padding: '9px 13px', background: C.green + '08', border: `1px solid ${C.green}22`,
+                  borderRadius: 2, fontSize: 13, color: C.textDim, lineHeight: 1.6, fontFamily: FONT,
                   display: 'flex', gap: 10,
                 }}>
-                  <span style={{ color: '#1e3a2a', fontSize: 11, flexShrink: 0, paddingTop: 1 }}>
+                  <span style={{ color: C.green, fontSize: 11, flexShrink: 0, paddingTop: 1 }}>
                     Q{i + 1}
                   </span>
                   {c}
@@ -1450,7 +1451,7 @@ export function ReportView({ runResult, fullReport, confirmedInput, onExport }: 
         {/* Human approval actions */}
         <div style={{ borderTop: `1px solid ${C.border}`, paddingTop: 20, marginBottom: 24 }}>
           <SectionTitle label="HUMAN DECISION" />
-          <div style={{ fontSize: 11, color: '#2a2a2a', fontFamily: FONT, marginBottom: 14, lineHeight: 1.6 }}>
+          <div style={{ fontSize: 11, color: C.muted, fontFamily: FONT, marginBottom: 14, lineHeight: 1.6 }}>
             Record your decision on this procurement. Stored to decision history when backend is connected.
           </div>
           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
@@ -1475,7 +1476,7 @@ export function ReportView({ runResult, fullReport, confirmedInput, onExport }: 
               </button>
             ))}
           </div>
-          <div style={{ marginTop: 8, fontSize: 10, color: '#1e1e1e', fontFamily: FONT, letterSpacing: '0.08em' }}>
+          <div style={{ marginTop: 8, fontSize: 10, color: C.muted, fontFamily: FONT, letterSpacing: '0.08em' }}>
             Full approval workflow stores human decision and override to database — requires backend implementation
           </div>
         </div>
@@ -1547,11 +1548,11 @@ export function AnalysisPage({
     <div style={{ flex: 1, overflowY: 'auto', background: C.bg }}>
       <div style={{ maxWidth: 880, margin: '0 auto', padding: '28px 28px 60px' }}>
         <div style={{ marginBottom: 28 }}>
-          <div style={{ fontSize: 13, color: '#2a2a2a', letterSpacing: '0.1em', fontFamily: FONT, marginBottom: 4 }}>
+          <div style={{ fontSize: 13, color: C.muted, letterSpacing: '0.1em', fontFamily: FONT, marginBottom: 4 }}>
             {procName ?? 'ANALYSIS'}
           </div>
           {!hasAnyData && (
-            <div style={{ fontSize: 14, color: '#333', fontFamily: FONT }}>
+            <div style={{ fontSize: 14, color: C.textDim, fontFamily: FONT }}>
               Run an analysis to see results here.
             </div>
           )}

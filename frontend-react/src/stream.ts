@@ -88,9 +88,11 @@ export function useAnalysisStream() {
           research: (ar.evidence ?? []).slice(0, 4).map((e: string) => ({
             title: e, url: '', snippet: e,
           })),
-          tokens: undefined,
-          time_ms: undefined,
-          model: undefined,
+          tokens: ar.tokens_in != null
+            ? { in: ar.tokens_in ?? 0, out: ar.tokens_out ?? 0 }
+            : undefined,
+          time_ms: ar.time_ms ?? undefined,
+          model: ar.model ?? undefined,
         }
       }
 

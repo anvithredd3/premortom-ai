@@ -82,7 +82,7 @@ def analyze_vendor_proposal(
     }
 
     if has_api_key():
-        result = run_agent_llm(
+        result, _ = run_agent_llm(
             name=NAME,
             instructions=_build_instructions(),
             user_payload=json.dumps(payload),
@@ -110,7 +110,7 @@ def analyze_text(*, raw_document_text: str, source_name: str = "uploaded_documen
     }
 
     if has_api_key():
-        result = run_agent_llm(
+        result, _ = run_agent_llm(
             name=NAME,
             instructions=_build_instructions(),
             user_payload=json.dumps(payload),

@@ -11,66 +11,69 @@ import ReactFlow, {
   Position,
 } from 'reactflow'
 import type { AgentId, AgentState } from './types'
+import { useTheme } from './theme'
 
 const FONT = "'JetBrains Mono', monospace"
 
 /* ── Status palette ──────────────────────────────────────────────────── */
 type St = 'idle' | 'running' | 'green' | 'amber' | 'red'
-const S: Record<St, { border: string; glow: string; dot: string; label: string }> = {
-  idle:    { border: '#1e1e1e', glow: 'none',                                dot: '#2a2a2a', label: '#3a3a3a' },
-  running: { border: '#c8c8c8', glow: 'none',                                dot: '#c8c8c8', label: '#c8c8c8' },
-  green:   { border: '#22c55e', glow: '0 0 12px 3px rgba(34,197,94,.20)',    dot: '#22c55e', label: '#d4d4d4' },
-  amber:   { border: '#f59e0b', glow: '0 0 12px 3px rgba(245,158,11,.20)',   dot: '#f59e0b', label: '#d4d4d4' },
-  red:     { border: '#ef4444', glow: '0 0 12px 3px rgba(239,68,68,.20)',    dot: '#ef4444', label: '#d4d4d4' },
+const S: Record<St, { border: string; glow: string; dot: string }> = {
+  idle:    { border: '#1e1e1e', glow: 'none',                              dot: '#2a2a2a' },
+  running: { border: '#c8c8c8', glow: 'none',                              dot: '#c8c8c8' },
+  green:   { border: '#22c55e', glow: '0 0 12px 3px rgba(34,197,94,.20)', dot: '#22c55e' },
+  amber:   { border: '#f59e0b', glow: '0 0 12px 3px rgba(245,158,11,.20)',dot: '#f59e0b' },
+  red:     { border: '#ef4444', glow: '0 0 12px 3px rgba(239,68,68,.20)', dot: '#ef4444' },
 }
 const stOf = (as?: AgentState): St =>
   !as ? 'idle' : (as.status as St)
-
-/* ── Shared handle style ─────────────────────────────────────────────── */
-const H = { width: 6, height: 6, background: '#111', border: '1px solid #252525', borderRadius: '50%' }
 
 /* ═══════════════════════════════════════════════════════════════════════
    NODE TYPES
 ═══════════════════════════════════════════════════════════════════════ */
 
-/* ── Section label (background text group) ───────────────────────────── */
-const LabelNode = memo(({ data }: { data: { text: string; sub?: string } }) => (
-  <div style={{ pointerEvents: 'none', userSelect: 'none' }}>
-    <div style={{ fontSize: 10, letterSpacing: '0.24em', color: '#1e1e1e', fontFamily: FONT, textTransform: 'uppercase', fontWeight: 700 }}>
-      {data.text}
-    </div>
-    {data.sub && (
-      <div style={{ fontSize: 10, letterSpacing: '0.12em', color: '#161616', fontFamily: FONT, marginTop: 3 }}>
-        {data.sub}
+/* ── Section label ───────────────────────────────────────────────────── */
+const LabelNode = memo(({ data }: { data: { text: string; sub?: string } }) => {
+  const { theme: C } = useTheme()
+  return (
+    <div style={{ pointerEvents: 'none', userSelect: 'none' }}>
+      <div style={{ fontSize: 10, letterSpacing: '0.24em', color: C.muted, fontFamily: FONT, textTransform: 'uppercase', fontWeight: 700 }}>
+        {data.text}
       </div>
-    )}
-  </div>
-))
+      {data.sub && (
+        <div style={{ fontSize: 10, letterSpacing: '0.12em', color: C.textDim, fontFamily: FONT, marginTop: 3 }}>
+          {data.sub}
+        </div>
+      )}
+    </div>
+  )
+})
 LabelNode.displayName = 'LabelNode'
 
 /* ── Input node ──────────────────────────────────────────────────────── */
 interface InputData { title: string; desc: string; sub: string; hasRun: boolean }
 const InputNode = memo(({ data }: { data: InputData }) => {
+  const { theme: C } = useTheme()
   const active = data.hasRun
+  const H = { width: 6, height: 6, background: C.border, border: `1px solid ${C.borderMid}`, borderRadius: '50%' }
   return (
     <div style={{
-      background: '#080e14', border: `1px solid ${active ? '#22d3ee55' : '#1a2a3a'}`,
-      borderLeft: `3px solid ${active ? '#22d3ee' : '#1a3a4a'}`,
+      background: C.surface, border: `1px solid ${active ? '#22d3ee55' : C.border}`,
+      borderLeft: `3px solid ${active ? '#22d3ee' : C.borderMid}`,
       borderRadius: 3, padding: '14px 16px', width: 180, fontFamily: FONT,
       boxShadow: active ? '0 0 14px 2px rgba(34,211,238,.12)' : 'none',
       transition: 'border-color .3s, box-shadow .3s',
     }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 9 }}>
-        <div style={{ width: 5, height: 5, borderRadius: '50%', background: active ? '#22d3ee' : '#1a4a5a', flexShrink: 0 }} />
-        <span style={{ fontSize: 13, letterSpacing: '0.14em', color: active ? '#22d3ee' : '#1e4a5a', textTransform: 'uppercase', fontWeight: 700 }}>
+        <div style={{ width: 5, height: 5, borderRadius: '50%', background: active ? '#22d3ee' : C.border, flexShrink: 0 }} />
+        <span style={{ fontSize: 13, letterSpacing: '0.14em', color: active ? '#22d3ee' : C.textDim, textTransform: 'uppercase', fontWeight: 700 }}>
           INPUT
         </span>
       </div>
-      <div style={{ fontSize: 15, color: active ? '#d8d8d8' : '#3a3a3a', fontWeight: 600, lineHeight: 1.4, marginBottom: 7 }}>
+      <div style={{ fontSize: 15, color: active ? C.text : C.muted, fontWeight: 600, lineHeight: 1.4, marginBottom: 7 }}>
         {data.title}
       </div>
-      <div style={{ fontSize: 11, color: '#333', lineHeight: 1.65, marginBottom: 9 }}>{data.desc}</div>
-      <div style={{ fontSize: 10, color: '#1e3a4a', letterSpacing: '0.1em', textTransform: 'uppercase' }}>{data.sub}</div>
+      <div style={{ fontSize: 11, color: C.textDim, lineHeight: 1.65, marginBottom: 9 }}>{data.desc}</div>
+      <div style={{ fontSize: 10, color: C.muted, letterSpacing: '0.1em', textTransform: 'uppercase' }}>{data.sub}</div>
       <Handle type="source" position={Position.Right} style={H} />
     </div>
   )
@@ -89,14 +92,17 @@ interface AgentData {
   hasSource?: boolean
 }
 const AgentFlowNode = memo(({ data }: { data: AgentData }) => {
+  const { theme: C } = useTheme()
+  const H = { width: 6, height: 6, background: C.border, border: `1px solid ${C.borderMid}`, borderRadius: '50%' }
   const st = S[data.status]
-  const isRun = data.status === 'running'
+  const isRun  = data.status === 'running'
   const isDone = ['green', 'amber', 'red'].includes(data.status)
+  const active = isDone || isRun
 
   return (
     <div style={{
-      background: '#0d0d0d', border: `1px solid ${st.border}`,
-      borderLeft: `3px solid ${isDone || isRun ? data.accentColor : '#1e1e1e'}`,
+      background: C.surface, border: `1px solid ${st.border}`,
+      borderLeft: `3px solid ${active ? data.accentColor : C.border}`,
       borderRadius: 3, padding: '12px 14px', width: 190, fontFamily: FONT,
       boxShadow: st.glow,
       animation: isRun ? 'pulse-glow 1.3s ease-in-out infinite' : 'none',
@@ -104,14 +110,13 @@ const AgentFlowNode = memo(({ data }: { data: AgentData }) => {
     }}>
       {data.hasTarget && <Handle type="target" position={Position.Left} style={H} />}
 
-      {/* Title row */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 8 }}>
         <div style={{
           width: 5, height: 5, borderRadius: '50%', flexShrink: 0,
-          background: isDone || isRun ? data.accentColor : '#2a2a2a',
+          background: active ? data.accentColor : C.border,
           transition: 'background .25s',
         }} />
-        <span style={{ fontSize: 10, letterSpacing: '0.18em', color: isDone || isRun ? data.accentColor : '#2a2a2a', textTransform: 'uppercase', fontWeight: 700, transition: 'color .25s' }}>
+        <span style={{ fontSize: 10, letterSpacing: '0.18em', color: active ? data.accentColor : C.muted, textTransform: 'uppercase', fontWeight: 700, transition: 'color .25s' }}>
           {isRun ? 'RUNNING' : isDone ? 'COMPLETE' : 'WAITING'}
         </span>
         {isDone && data.score != null && (
@@ -119,18 +124,15 @@ const AgentFlowNode = memo(({ data }: { data: AgentData }) => {
         )}
       </div>
 
-      {/* Plain-English title */}
-      <div style={{ fontSize: 15, color: isDone || isRun ? '#d8d8d8' : '#3a3a3a', fontWeight: 600, lineHeight: 1.4, marginBottom: 6, transition: 'color .25s' }}>
+      <div style={{ fontSize: 15, color: active ? C.text : C.muted, fontWeight: 600, lineHeight: 1.4, marginBottom: 6, transition: 'color .25s' }}>
         {data.title}
       </div>
 
-      {/* Description — visible for HR */}
-      <div style={{ fontSize: 11, color: isDone || isRun ? '#555' : '#2a2a2a', lineHeight: 1.65, marginBottom: 8, transition: 'color .25s' }}>
+      <div style={{ fontSize: 11, color: active ? C.textDim : C.muted, lineHeight: 1.65, marginBottom: 8, transition: 'color .25s' }}>
         {data.desc}
       </div>
 
-      {/* Technical subtitle — for engineers */}
-      <div style={{ fontSize: 10, color: '#252525', letterSpacing: '0.09em', textTransform: 'uppercase' }}>
+      <div style={{ fontSize: 10, color: C.muted, letterSpacing: '0.09em', textTransform: 'uppercase' }}>
         {data.sub}
       </div>
 
@@ -142,42 +144,51 @@ AgentFlowNode.displayName = 'AgentFlowNode'
 
 /* ── Memory / DB node ────────────────────────────────────────────────── */
 interface MemoryData { title: string; desc: string; sub: string; rowCount?: number }
-const MemoryNode = memo(({ data }: { data: MemoryData }) => (
-  <div style={{
-    background: '#0c0814', border: '1px solid #1e1430',
-    borderLeft: '3px solid #4a2a8a',
-    borderRadius: 3, padding: '10px 14px', width: 190, fontFamily: FONT,
-  }}>
-    <Handle type="source" position={Position.Top} style={H} />
-    <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 7 }}>
-      <div style={{ width: 5, height: 5, borderRadius: '50%', background: '#4a2a8a', flexShrink: 0 }} />
-      <span style={{ fontSize: 10, letterSpacing: '0.18em', color: '#4a2a8a', textTransform: 'uppercase', fontWeight: 700 }}>
-        KNOWLEDGE BASE
-      </span>
-      {data.rowCount != null && data.rowCount > 0 && (
-        <span style={{ marginLeft: 'auto', fontSize: 10, color: '#3a1a6a' }}>{data.rowCount} records</span>
-      )}
+const MemoryNode = memo(({ data }: { data: MemoryData }) => {
+  const { theme: C, mode } = useTheme()
+  const H = { width: 6, height: 6, background: C.border, border: `1px solid ${C.borderMid}`, borderRadius: '50%' }
+  const purple = '#7c3aed'
+  return (
+    <div style={{
+      background: mode === 'dark' ? '#0c0814' : '#f5f0ff',
+      border: `1px solid ${mode === 'dark' ? '#1e1430' : '#d8c8ff'}`,
+      borderLeft: `3px solid ${purple}`,
+      borderRadius: 3, padding: '10px 14px', width: 190, fontFamily: FONT,
+    }}>
+      <Handle type="source" position={Position.Top} style={H} />
+      <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 7 }}>
+        <div style={{ width: 5, height: 5, borderRadius: '50%', background: purple, flexShrink: 0 }} />
+        <span style={{ fontSize: 10, letterSpacing: '0.18em', color: purple, textTransform: 'uppercase', fontWeight: 700 }}>
+          KNOWLEDGE BASE
+        </span>
+        {data.rowCount != null && data.rowCount > 0 && (
+          <span style={{ marginLeft: 'auto', fontSize: 10, color: C.muted }}>{data.rowCount} records</span>
+        )}
+      </div>
+      <div style={{ fontSize: 14, color: mode === 'dark' ? '#9a70d0' : '#5a30a0', fontWeight: 600, lineHeight: 1.4, marginBottom: 5 }}>
+        {data.title}
+      </div>
+      <div style={{ fontSize: 11, color: C.textDim, lineHeight: 1.6, marginBottom: 6 }}>{data.desc}</div>
+      <div style={{ fontSize: 10, color: C.muted, letterSpacing: '0.09em', textTransform: 'uppercase' }}>{data.sub}</div>
     </div>
-    <div style={{ fontSize: 14, color: '#5a3a9a', fontWeight: 600, lineHeight: 1.4, marginBottom: 5 }}>
-      {data.title}
-    </div>
-    <div style={{ fontSize: 11, color: '#2a1a4a', lineHeight: 1.6, marginBottom: 6 }}>{data.desc}</div>
-    <div style={{ fontSize: 10, color: '#1e1030', letterSpacing: '0.09em', textTransform: 'uppercase' }}>{data.sub}</div>
-  </div>
-))
+  )
+})
 MemoryNode.displayName = 'MemoryNode'
 
 /* ── Decision node ───────────────────────────────────────────────────── */
 interface DecisionData { status: St; verdict?: string; score?: number }
 const DecisionFlowNode = memo(({ data }: { data: DecisionData }) => {
+  const { theme: C } = useTheme()
+  const H = { width: 6, height: 6, background: C.border, border: `1px solid ${C.borderMid}`, borderRadius: '50%' }
   const st = S[data.status]
-  const isRun = data.status === 'running'
+  const isRun  = data.status === 'running'
   const isDone = ['green', 'amber', 'red'].includes(data.status)
+  const active = isDone || isRun
 
   return (
     <div style={{
-      background: '#0a0a0a', border: `1px solid ${st.border}`,
-      borderLeft: `3px solid ${isDone || isRun ? st.dot : '#1e1e1e'}`,
+      background: C.surface, border: `1px solid ${st.border}`,
+      borderLeft: `3px solid ${active ? st.dot : C.border}`,
       borderRadius: 3, padding: '16px 18px', width: 200, fontFamily: FONT,
       boxShadow: st.glow,
       animation: isRun ? 'pulse-glow 1.3s ease-in-out infinite' : 'none',
@@ -186,17 +197,17 @@ const DecisionFlowNode = memo(({ data }: { data: DecisionData }) => {
       <Handle type="target" position={Position.Left} style={H} />
 
       <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 10 }}>
-        <div style={{ width: 5, height: 5, borderRadius: '50%', background: isDone || isRun ? st.dot : '#2a2a2a', flexShrink: 0 }} />
-        <span style={{ fontSize: 10, letterSpacing: '0.18em', color: isDone || isRun ? st.dot : '#2a2a2a', textTransform: 'uppercase', fontWeight: 700 }}>
+        <div style={{ width: 5, height: 5, borderRadius: '50%', background: active ? st.dot : C.border, flexShrink: 0 }} />
+        <span style={{ fontSize: 10, letterSpacing: '0.18em', color: active ? st.dot : C.muted, textTransform: 'uppercase', fontWeight: 700 }}>
           DECISION ENGINE
         </span>
       </div>
 
-      <div style={{ fontSize: 17, color: isDone || isRun ? '#e8e8e8' : '#3a3a3a', fontWeight: 700, lineHeight: 1.3, marginBottom: 7 }}>
+      <div style={{ fontSize: 17, color: active ? C.text : C.muted, fontWeight: 700, lineHeight: 1.3, marginBottom: 7 }}>
         AI Decision Board
       </div>
 
-      <div style={{ fontSize: 11, color: isDone || isRun ? '#555' : '#2a2a2a', lineHeight: 1.65, marginBottom: 10 }}>
+      <div style={{ fontSize: 11, color: active ? C.textDim : C.muted, lineHeight: 1.65, marginBottom: 10 }}>
         Weighs all agent findings and issues a GO / GO WITH CONDITIONS / NO-GO recommendation
       </div>
 
@@ -211,10 +222,10 @@ const DecisionFlowNode = memo(({ data }: { data: DecisionData }) => {
       )}
 
       {isRun && (
-        <div style={{ fontSize: 11, color: '#555', letterSpacing: '0.08em' }}>DELIBERATING...</div>
+        <div style={{ fontSize: 11, color: C.textDim, letterSpacing: '0.08em' }}>DELIBERATING...</div>
       )}
 
-      <div style={{ marginTop: 10, fontSize: 10, color: '#252525', letterSpacing: '0.09em', textTransform: 'uppercase' }}>
+      <div style={{ marginTop: 10, fontSize: 10, color: C.muted, letterSpacing: '0.09em', textTransform: 'uppercase' }}>
         decision_board.py · Rule-based weighted avg
       </div>
 
@@ -226,28 +237,33 @@ DecisionFlowNode.displayName = 'DecisionFlowNode'
 
 /* ── Output node ─────────────────────────────────────────────────────── */
 interface OutputData { title: string; desc: string; sub: string; ready: boolean; accentColor: string }
-const OutputNode = memo(({ data }: { data: OutputData }) => (
-  <div style={{
-    background: '#080e08', border: `1px solid ${data.ready ? '#22c55e44' : '#1a2a1a'}`,
-    borderLeft: `3px solid ${data.ready ? data.accentColor : '#1a2a1a'}`,
-    borderRadius: 3, padding: '11px 14px', width: 175, fontFamily: FONT,
-    boxShadow: data.ready ? '0 0 12px 2px rgba(34,197,94,.10)' : 'none',
-    transition: 'all .3s',
-  }}>
-    <Handle type="target" position={Position.Left} style={H} />
-    <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 8 }}>
-      <div style={{ width: 5, height: 5, borderRadius: '50%', background: data.ready ? data.accentColor : '#1e2a1e', flexShrink: 0 }} />
-      <span style={{ fontSize: 10, letterSpacing: '0.18em', color: data.ready ? data.accentColor : '#1e2a1e', textTransform: 'uppercase', fontWeight: 700 }}>
-        OUTPUT
-      </span>
+const OutputNode = memo(({ data }: { data: OutputData }) => {
+  const { theme: C } = useTheme()
+  const H = { width: 6, height: 6, background: C.border, border: `1px solid ${C.borderMid}`, borderRadius: '50%' }
+  return (
+    <div style={{
+      background: C.surface,
+      border: `1px solid ${data.ready ? '#22c55e44' : C.border}`,
+      borderLeft: `3px solid ${data.ready ? data.accentColor : C.borderMid}`,
+      borderRadius: 3, padding: '11px 14px', width: 175, fontFamily: FONT,
+      boxShadow: data.ready ? '0 0 12px 2px rgba(34,197,94,.10)' : 'none',
+      transition: 'all .3s',
+    }}>
+      <Handle type="target" position={Position.Left} style={H} />
+      <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 8 }}>
+        <div style={{ width: 5, height: 5, borderRadius: '50%', background: data.ready ? data.accentColor : C.border, flexShrink: 0 }} />
+        <span style={{ fontSize: 10, letterSpacing: '0.18em', color: data.ready ? data.accentColor : C.muted, textTransform: 'uppercase', fontWeight: 700 }}>
+          OUTPUT
+        </span>
+      </div>
+      <div style={{ fontSize: 14, color: data.ready ? C.text : C.muted, fontWeight: 600, lineHeight: 1.4, marginBottom: 6 }}>
+        {data.title}
+      </div>
+      <div style={{ fontSize: 11, color: data.ready ? C.textDim : C.muted, lineHeight: 1.65, marginBottom: 6 }}>{data.desc}</div>
+      <div style={{ fontSize: 10, color: C.muted, letterSpacing: '0.09em', textTransform: 'uppercase' }}>{data.sub}</div>
     </div>
-    <div style={{ fontSize: 14, color: data.ready ? '#d8d8d8' : '#2a3a2a', fontWeight: 600, lineHeight: 1.4, marginBottom: 6 }}>
-      {data.title}
-    </div>
-    <div style={{ fontSize: 11, color: data.ready ? '#444' : '#1e2a1e', lineHeight: 1.65, marginBottom: 6 }}>{data.desc}</div>
-    <div style={{ fontSize: 10, color: '#1a241a', letterSpacing: '0.09em', textTransform: 'uppercase' }}>{data.sub}</div>
-  </div>
-))
+  )
+})
 OutputNode.displayName = 'OutputNode'
 
 /* ── Node types registry ─────────────────────────────────────────────── */
@@ -281,8 +297,8 @@ function edge(
 function memEdge(id: string, source: string, target: string): Edge {
   return {
     id, source, target,
-    style: { stroke: '#4a2a8a', strokeWidth: 1, strokeDasharray: '4 4' },
-    markerEnd: MK('#4a2a8a'),
+    style: { stroke: '#7c3aed', strokeWidth: 1, strokeDasharray: '4 4' },
+    markerEnd: MK('#7c3aed'),
     animated: false,
     sourceHandle: null,
     targetHandle: null,
@@ -299,6 +315,7 @@ export interface SystemDesignProps {
 }
 
 export function SystemDesign({ agentStates, hasRun = false, dbRowCount = 0 }: SystemDesignProps) {
+  const { theme: C, mode } = useTheme()
 
   const st = (id: AgentId): St => stOf(agentStates?.[id])
   const score = (id: AgentId) => {
@@ -308,17 +325,17 @@ export function SystemDesign({ agentStates, hasRun = false, dbRowCount = 0 }: Sy
   const decSt = st('decision')
   const allDone = agentStates ? Object.values(agentStates).every(s => !['idle', 'running'].includes(s.status)) : false
 
+  const dimEdge = mode === 'dark' ? '#252525' : '#cccccc'
+
   /* ── Nodes ─────────────────────────────────────────────────────────── */
   const nodes: Node[] = useMemo(() => [
 
-    /* Group labels */
     { id: 'lbl-input',    type: 'sdLabel', position: { x: 20,   y: 8   }, data: { text: 'YOUR INPUT' },            selectable: false },
     { id: 'lbl-analysis', type: 'sdLabel', position: { x: 270,  y: 8   }, data: { text: 'AI ANALYSIS LAYER', sub: 'Runs in parallel · Claude Haiku / GPT-4o' }, selectable: false },
     { id: 'lbl-memory',   type: 'sdLabel', position: { x: 510,  y: 520 }, data: { text: 'KNOWLEDGE BASE', sub: 'pgvector · PostgreSQL' }, selectable: false },
     { id: 'lbl-decision', type: 'sdLabel', position: { x: 770,  y: 8   }, data: { text: 'DECISION ENGINE' },       selectable: false },
     { id: 'lbl-output',   type: 'sdLabel', position: { x: 1040, y: 8   }, data: { text: 'YOUR REPORT' },           selectable: false },
 
-    /* ── INPUT ── */
     {
       id: 'input', type: 'sdInput', position: { x: 20, y: 160 },
       data: {
@@ -329,7 +346,6 @@ export function SystemDesign({ agentStates, hasRun = false, dbRowCount = 0 }: Sy
       },
     },
 
-    /* ── AGENTS (parallel) ── */
     {
       id: 'contract', type: 'sdAgent', position: { x: 270, y: 30 },
       data: {
@@ -375,7 +391,6 @@ export function SystemDesign({ agentStates, hasRun = false, dbRowCount = 0 }: Sy
       },
     },
 
-    /* ── FINANCIAL (sequential — waits for infra delay estimate) ── */
     {
       id: 'financial', type: 'sdAgent', position: { x: 520, y: 160 },
       data: {
@@ -388,7 +403,6 @@ export function SystemDesign({ agentStates, hasRun = false, dbRowCount = 0 }: Sy
       },
     },
 
-    /* ── MEMORY ── */
     {
       id: 'mem-policy', type: 'sdMemory', position: { x: 510, y: 540 },
       data: {
@@ -408,7 +422,6 @@ export function SystemDesign({ agentStates, hasRun = false, dbRowCount = 0 }: Sy
       },
     },
 
-    /* ── DECISION BOARD ── */
     {
       id: 'decision', type: 'sdDecision', position: { x: 790, y: 195 },
       data: {
@@ -418,7 +431,6 @@ export function SystemDesign({ agentStates, hasRun = false, dbRowCount = 0 }: Sy
       },
     },
 
-    /* ── OUTPUTS ── */
     {
       id: 'out-scenarios', type: 'sdOutput', position: { x: 1065, y: 80 },
       data: {
@@ -448,14 +460,14 @@ export function SystemDesign({ agentStates, hasRun = false, dbRowCount = 0 }: Sy
     },
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  ], [agentStates, hasRun, allDone, decSt, dbRowCount])
+  ], [agentStates, hasRun, allDone, decSt, dbRowCount, dimEdge])
 
   /* ── Edges ─────────────────────────────────────────────────────────── */
   const edges: Edge[] = useMemo(() => {
     const cyan   = '#22d3ee'
     const orange = '#f97316'
     const amber  = '#f59e0b'
-    const white  = '#3a3a3a'
+    const white  = mode === 'dark' ? '#3a3a3a' : '#888888'
     const green  = '#22c55e'
 
     const inputActive  = hasRun
@@ -464,71 +476,65 @@ export function SystemDesign({ agentStates, hasRun = false, dbRowCount = 0 }: Sy
     const decActive    = !['idle'].includes(decSt)
 
     return [
-      /* Input → agents */
-      edge('e-in-contract',   'input', 'contract',       inputActive ? cyan   : '#1e1e1e'),
-      edge('e-in-infra',      'input', 'infrastructure', inputActive ? orange : '#1e1e1e'),
-      edge('e-in-workforce',  'input', 'workforce',      inputActive ? '#a78bfa' : '#1e1e1e'),
-      edge('e-in-historical', 'input', 'historical',     inputActive ? '#fb923c' : '#1e1e1e'),
+      edge('e-in-contract',   'input', 'contract',       inputActive ? cyan       : dimEdge),
+      edge('e-in-infra',      'input', 'infrastructure', inputActive ? orange     : dimEdge),
+      edge('e-in-workforce',  'input', 'workforce',      inputActive ? '#a78bfa'  : dimEdge),
+      edge('e-in-historical', 'input', 'historical',     inputActive ? '#fb923c'  : dimEdge),
 
-      /* Infra → Financial (sequential dependency) */
       edge('e-infra-fin', 'infrastructure', 'financial',
-        agentActive('infrastructure') ? amber : '#1e1e1e',
-        { label: 'delay est.', labelStyle: { fontSize: 10, fill: '#2a2a2a', fontFamily: FONT } }),
+        agentActive('infrastructure') ? amber : dimEdge,
+        { label: 'delay est.', labelStyle: { fontSize: 10, fill: C.muted, fontFamily: FONT } }),
 
-      /* Agents → Decision Board */
-      edge('e-contract-dec',   'contract',       'decision', agentActive('contract')       ? white : '#1a1a1a'),
-      edge('e-infra-dec',      'infrastructure', 'decision', agentActive('infrastructure') ? white : '#1a1a1a'),
-      edge('e-workforce-dec',  'workforce',      'decision', agentActive('workforce')      ? white : '#1a1a1a'),
-      edge('e-historical-dec', 'historical',     'decision', agentActive('historical')     ? white : '#1a1a1a'),
-      edge('e-fin-dec',        'financial',      'decision', finActive                     ? amber : '#1a1a1a'),
+      edge('e-contract-dec',   'contract',       'decision', agentActive('contract')       ? white : dimEdge),
+      edge('e-infra-dec',      'infrastructure', 'decision', agentActive('infrastructure') ? white : dimEdge),
+      edge('e-workforce-dec',  'workforce',      'decision', agentActive('workforce')      ? white : dimEdge),
+      edge('e-historical-dec', 'historical',     'decision', agentActive('historical')     ? white : dimEdge),
+      edge('e-fin-dec',        'financial',      'decision', finActive                     ? amber : dimEdge),
 
-      /* Memory feeds (dashed purple) */
       memEdge('e-mem-contract',   'mem-policy',  'contract'),
       memEdge('e-mem-infra',      'mem-policy',  'infrastructure'),
       memEdge('e-mem-historical', 'mem-history', 'historical'),
 
-      /* Decision → Outputs */
-      edge('e-dec-scenarios', 'decision', 'out-scenarios', decActive ? green : '#1a2a1a'),
-      edge('e-dec-debate',    'decision', 'out-debate',    decActive ? green : '#1a2a1a'),
-      edge('e-dec-report',    'decision', 'out-report',    decActive ? green : '#1a2a1a'),
+      edge('e-dec-scenarios', 'decision', 'out-scenarios', decActive ? green : dimEdge),
+      edge('e-dec-debate',    'decision', 'out-debate',    decActive ? green : dimEdge),
+      edge('e-dec-report',    'decision', 'out-report',    decActive ? green : dimEdge),
     ]
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [agentStates, hasRun, decSt])
+  }, [agentStates, hasRun, decSt, dimEdge])
 
   /* ── Legend ─────────────────────────────────────────────────────────── */
   const legend = [
     { color: '#22d3ee', label: 'Data Input' },
     { color: '#f59e0b', label: 'Sequential Dependency' },
-    { color: '#4a2a8a', label: 'Knowledge Base Feed' },
-    { color: '#3a3a3a', label: 'Risk Signals → Decision' },
+    { color: '#7c3aed', label: 'Knowledge Base Feed' },
+    { color: mode === 'dark' ? '#3a3a3a' : '#888888', label: 'Risk Signals → Decision' },
     { color: '#22c55e', label: 'Results Ready' },
   ]
 
   return (
-    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', background: '#080808', fontFamily: FONT }}>
+    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', background: C.bg, fontFamily: FONT }}>
 
       {/* Header */}
       <div style={{
-        padding: '16px 24px 14px', borderBottom: '1px solid #111',
+        padding: '16px 24px 14px', borderBottom: `1px solid ${C.border}`,
         display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap',
       }}>
         <div>
-          <div style={{ fontSize: 11, letterSpacing: '0.22em', color: '#2a2a2a', textTransform: 'uppercase', marginBottom: 4 }}>
+          <div style={{ fontSize: 11, letterSpacing: '0.22em', color: C.muted, textTransform: 'uppercase', marginBottom: 4 }}>
             SYSTEM DESIGN
           </div>
-          <div style={{ fontSize: 15, color: '#c8c8c8', fontWeight: 600 }}>
+          <div style={{ fontSize: 15, color: C.text, fontWeight: 600 }}>
             How PreMortem AI Works
           </div>
         </div>
-        <div style={{ fontSize: 13, color: '#2e2e2e', lineHeight: 1.7, maxWidth: 500, borderLeft: '1px solid #1a1a1a', paddingLeft: 16 }}>
+        <div style={{ fontSize: 13, color: C.textDim, lineHeight: 1.7, maxWidth: 500, borderLeft: `1px solid ${C.border}`, paddingLeft: 16 }}>
           Your procurement request flows through specialised AI agents that review contracts, site readiness,
           team availability, and financial risk — then a decision board weighs everything up and gives you a verdict.
         </div>
 
-        {/* Live / idle badge */}
         <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 8 }}>
-          <div style={{ width: 5, height: 5, borderRadius: '50%', background: hasRun ? '#22c55e' : '#1e1e1e', flexShrink: 0 }} />
-          <span style={{ fontSize: 10, letterSpacing: '0.16em', color: hasRun ? '#22c55e' : '#2a2a2a', textTransform: 'uppercase' }}>
+          <div style={{ width: 5, height: 5, borderRadius: '50%', background: hasRun ? '#22c55e' : C.border, flexShrink: 0 }} />
+          <span style={{ fontSize: 10, letterSpacing: '0.16em', color: hasRun ? '#22c55e' : C.muted, textTransform: 'uppercase' }}>
             {hasRun ? 'LIVE RUN' : 'AWAITING RUN'}
           </span>
         </div>
@@ -547,41 +553,41 @@ export function SystemDesign({ agentStates, hasRun = false, dbRowCount = 0 }: Sy
           elementsSelectable={false}
           panOnDrag
           zoomOnScroll
-          style={{ background: '#080808' }}
+          style={{ background: C.bg }}
         >
-          <Background color="#111" variant={BackgroundVariant.Dots} gap={24} size={1} />
+          <Background color={mode === 'dark' ? '#111' : '#d8d8d8'} variant={BackgroundVariant.Dots} gap={24} size={1} />
           <Controls showInteractive={false} />
           <MiniMap
-            style={{ background: '#050505', border: '1px solid #111' }}
+            style={{ background: C.surface, border: `1px solid ${C.border}` }}
             nodeColor={(n) => {
-              if (n.type === 'sdMemory') return '#4a2a8a'
-              if (n.type === 'sdDecision') return '#2e2e2e'
-              if (n.type === 'sdOutput') return '#1a2a1a'
-              if (n.type === 'sdInput') return '#1a2a3a'
-              return '#1a1a1a'
+              if (n.type === 'sdMemory')   return '#7c3aed'
+              if (n.type === 'sdDecision') return C.border
+              if (n.type === 'sdOutput')   return mode === 'dark' ? '#1a3a1a' : '#c8eec8'
+              if (n.type === 'sdInput')    return mode === 'dark' ? '#1a2a3a' : '#c8dff0'
+              return C.surface2
             }}
-            maskColor="rgba(0,0,0,0.7)"
+            maskColor={mode === 'dark' ? 'rgba(0,0,0,0.7)' : 'rgba(240,240,240,0.7)'}
           />
         </ReactFlow>
       </div>
 
       {/* Legend */}
       <div style={{
-        padding: '10px 24px', borderTop: '1px solid #111',
+        padding: '10px 24px', borderTop: `1px solid ${C.border}`,
         display: 'flex', alignItems: 'center', gap: 20, flexWrap: 'wrap',
       }}>
-        <span style={{ fontSize: 10, letterSpacing: '0.16em', color: '#1e1e1e', textTransform: 'uppercase' }}>LEGEND</span>
+        <span style={{ fontSize: 10, letterSpacing: '0.16em', color: C.muted, textTransform: 'uppercase' }}>LEGEND</span>
         {legend.map(l => (
           <div key={l.label} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
             <div style={{ width: 20, height: 1, background: l.color }} />
-            <span style={{ fontSize: 10, color: '#2a2a2a', letterSpacing: '0.1em', textTransform: 'uppercase' }}>{l.label}</span>
+            <span style={{ fontSize: 10, color: C.textDim, letterSpacing: '0.1em', textTransform: 'uppercase' }}>{l.label}</span>
           </div>
         ))}
         <div style={{ marginLeft: 'auto', display: 'flex', gap: 14 }}>
           {(['idle', 'running', 'green', 'amber', 'red'] as St[]).map(s => (
             <div key={s} style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
               <div style={{ width: 5, height: 5, borderRadius: '50%', background: S[s].dot }} />
-              <span style={{ fontSize: 10, color: '#252525', letterSpacing: '0.1em', textTransform: 'uppercase' }}>{s}</span>
+              <span style={{ fontSize: 10, color: C.textDim, letterSpacing: '0.1em', textTransform: 'uppercase' }}>{s}</span>
             </div>
           ))}
         </div>

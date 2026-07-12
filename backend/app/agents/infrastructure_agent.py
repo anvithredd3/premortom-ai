@@ -55,7 +55,7 @@ def analyze(data: ProcurementInput) -> AgentResult:
     if not has_api_key():
         return _offline_result()
 
-    result = run_agent_llm(
+    result, telemetry = run_agent_llm(
         name=NAME,
         instructions=INSTRUCTIONS,
         user_payload=data.model_dump_json(),
@@ -84,6 +84,10 @@ def analyze(data: ProcurementInput) -> AgentResult:
         reasoning=result.get("reasoning") or "",
         recommendation=result.get("recommendation") or "",
         metrics=metrics,
+        tokens_in=telemetry["tokens_in"],
+        tokens_out=telemetry["tokens_out"],
+        time_ms=telemetry["time_ms"],
+        model=telemetry["model"],
     )
 
 

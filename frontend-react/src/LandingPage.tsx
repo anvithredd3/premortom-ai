@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from 'react'
+import { useTheme } from './theme'
 
 const MONO  = "'JetBrains Mono', monospace"
 const SERIF = "'Playfair Display', Georgia, serif"
 const TAGLINE = 'PreMortem AI catches procurement risks before you sign — not after they cost you.'
 
-// Landing page accent — red fits the risk/threat theme
 const ACCENT = '#e11d48'
 
 const NODE_DATA: Array<{ label: string; color: string }> = [
@@ -36,6 +36,10 @@ export function LandingPage({
   onProcurement: () => void
   onBidEvaluation: () => void
 }) {
+  const { theme: C, mode } = useTheme()
+  const modeRef = useRef(mode)
+  useEffect(() => { modeRef.current = mode }, [mode])
+
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const nodesRef = useRef<FloatNode[]>([])
   const frameRef = useRef<number>(0)
@@ -43,7 +47,6 @@ export function LandingPage({
   const [taglineIdx, setTaglineIdx] = useState(0)
   const [showButtons, setShowButtons] = useState(false)
 
-  // Initialise floating nodes
   useEffect(() => {
     const w = window.innerWidth
     const h = window.innerHeight
@@ -60,7 +63,6 @@ export function LandingPage({
     requestAnimationFrame(() => setVisible(true))
   }, [])
 
-  // Canvas draw loop — Obsidian-style solid connections
   useEffect(() => {
     const canvas = canvasRef.current
     if (!canvas) return
@@ -77,11 +79,11 @@ export function LandingPage({
     const draw = () => {
       const { width: w, height: h } = canvas
       const nodes = nodesRef.current
+      const isDark = modeRef.current === 'dark'
 
-      ctx.fillStyle = '#050505'
+      ctx.fillStyle = isDark ? '#050505' : '#f2f2f2'
       ctx.fillRect(0, 0, w, h)
 
-      // Move nodes
       for (const n of nodes) {
         n.x += n.vx
         n.y += n.vy
@@ -92,7 +94,6 @@ export function LandingPage({
         if (n.y > h)  { n.y = h;  n.vy = -Math.abs(n.vy) }
       }
 
-      // Obsidian-style solid edges — solid lines, fade by distance
       const MAX_DIST = 240
       ctx.setLineDash([])
       for (let i = 0; i < nodes.length; i++) {
@@ -101,10 +102,11 @@ export function LandingPage({
           const dy = nodes[i].y - nodes[j].y
           const d = Math.sqrt(dx * dx + dy * dy)
           if (d < MAX_DIST) {
-            const t = 1 - d / MAX_DIST // 1 at closest, 0 at MAX_DIST
-            // Blend the two node colors slightly for the edge
-            const alpha = t * t * 0.28  // quadratic fade, max ~0.28
-            ctx.strokeStyle = `rgba(160, 165, 180, ${alpha})`
+            const t = 1 - d / MAX_DIST
+            const alpha = t * t * 0.28
+            ctx.strokeStyle = isDark
+              ? `rgba(160, 165, 180, ${alpha})`
+              : `rgba(60, 65, 80, ${alpha})`
             ctx.lineWidth = 0.8 + t * 0.6
             ctx.beginPath()
             ctx.moveTo(nodes[i].x, nodes[i].y)
@@ -114,12 +116,10 @@ export function LandingPage({
         }
       }
 
-      // Nodes with glow
       for (const n of nodes) {
         const pulse = 0.5 + 0.5 * Math.sin(n.phase)
         const r = 2.5 + pulse * 1.5
 
-        // Soft outer glow
         const glowR = r * 7
         const glow = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, glowR)
         const glowAlpha = Math.round(pulse * 0x22).toString(16).padStart(2, '0')
@@ -130,14 +130,12 @@ export function LandingPage({
         ctx.arc(n.x, n.y, glowR, 0, Math.PI * 2)
         ctx.fill()
 
-        // Core dot
         const coreA = Math.round((0.55 + 0.45 * pulse) * 0xff).toString(16).padStart(2, '0')
         ctx.fillStyle = n.color + coreA
         ctx.beginPath()
         ctx.arc(n.x, n.y, r, 0, Math.PI * 2)
         ctx.fill()
 
-        // Label — faint, pulses slightly
         const lblA = Math.round((0.16 + 0.16 * pulse) * 0xff).toString(16).padStart(2, '0')
         ctx.fillStyle = n.color + lblA
         ctx.font = `7px ${MONO}`
@@ -154,7 +152,6 @@ export function LandingPage({
     }
   }, [])
 
-  // Typewriter after fade-in
   useEffect(() => {
     if (!visible) return
     if (taglineIdx >= TAGLINE.length) {
@@ -166,15 +163,19 @@ export function LandingPage({
     return () => clearTimeout(t)
   }, [visible, taglineIdx])
 
+  const titleColor  = mode === 'dark' ? '#e8e8e8' : '#111111'
+  const taglineColor = mode === 'dark' ? '#888888' : '#444444'
+  const badgeColor  = mode === 'dark' ? '#444444' : '#666666'
+  const badgeBorder = mode === 'dark' ? '#2a2a2a' : '#cccccc'
+  const versionColor = mode === 'dark' ? '#333333' : '#999999'
+
   return (
-    <div style={{ position: 'relative', flex: 1, overflow: 'hidden', background: '#050505' }}>
-      {/* Animated canvas */}
+    <div style={{ position: 'relative', flex: 1, overflow: 'hidden', background: mode === 'dark' ? '#050505' : '#f2f2f2' }}>
       <canvas
         ref={canvasRef}
         style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}
       />
 
-      {/* Center overlay */}
       <div style={{
         position: 'absolute', inset: 0,
         display: 'flex', flexDirection: 'column',
@@ -185,9 +186,9 @@ export function LandingPage({
       }}>
         {/* Platform badge */}
         <div style={{
-          fontFamily: MONO, fontSize: 9, letterSpacing: '0.32em', color: '#2a2a2a',
+          fontFamily: MONO, fontSize: 9, letterSpacing: '0.32em', color: badgeColor,
           textTransform: 'uppercase', marginBottom: 44,
-          border: '1px solid #1a1a1a', padding: '5px 14px', borderRadius: 2,
+          border: `1px solid ${badgeBorder}`, padding: '5px 14px', borderRadius: 2,
         }}>
           AGENTIC · PROCUREMENT · RISK ANALYSIS
         </div>
@@ -196,7 +197,7 @@ export function LandingPage({
         <div style={{ textAlign: 'center', marginBottom: 52, userSelect: 'none' }}>
           <div style={{
             fontFamily: SERIF, fontSize: 116, fontWeight: 400,
-            letterSpacing: '0.01em', color: '#e8e8e8', lineHeight: 1,
+            letterSpacing: '0.01em', color: titleColor, lineHeight: 1,
             textShadow: `0 0 120px ${ACCENT}18`,
           }}>
             PreMortem
@@ -213,7 +214,7 @@ export function LandingPage({
 
         {/* Typewriter tagline */}
         <div style={{
-          fontFamily: MONO, fontSize: 13, color: '#4a4a4a', maxWidth: 500,
+          fontFamily: MONO, fontSize: 13, color: taglineColor, maxWidth: 500,
           textAlign: 'center', lineHeight: 1.8, minHeight: 64,
           marginBottom: 68, letterSpacing: '0.03em',
         }}>
@@ -223,17 +224,17 @@ export function LandingPage({
           )}
         </div>
 
-        {/* Two matched outline buttons */}
+        {/* Buttons */}
         <div style={{
           display: 'flex', gap: 12,
           opacity: showButtons ? 1 : 0,
           transform: showButtons ? 'translateY(0)' : 'translateY(10px)',
           transition: 'opacity 0.55s ease, transform 0.55s ease',
         }}>
-          <LandingBtn accent={ACCENT} dim onClick={onProcurement}>
+          <LandingBtn accent={ACCENT} dim mode={mode} onClick={onProcurement}>
             PROCUREMENT ANALYSIS
           </LandingBtn>
-          <LandingBtn accent={ACCENT} onClick={onBidEvaluation}>
+          <LandingBtn accent={ACCENT} mode={mode} onClick={onBidEvaluation}>
             BID EVALUATION
           </LandingBtn>
         </div>
@@ -241,7 +242,7 @@ export function LandingPage({
         {/* Version tag */}
         <div style={{
           position: 'absolute', bottom: 24, fontFamily: MONO,
-          fontSize: 9, letterSpacing: '0.22em', color: '#1e1e1e',
+          fontSize: 9, letterSpacing: '0.22em', color: versionColor,
           opacity: showButtons ? 1 : 0, transition: 'opacity 1s ease 0.3s',
         }}>
           PREMORTEM AI · v1.0 · AGENTIC DECISION REVIEW
@@ -252,21 +253,29 @@ export function LandingPage({
 }
 
 function LandingBtn({
-  accent, dim = false, onClick, children,
+  accent, dim = false, mode, onClick, children,
 }: {
   accent: string
   dim?: boolean
+  mode: string
   onClick: () => void
   children: React.ReactNode
 }) {
   const [hovered, setHovered] = useState(false)
 
+  const restBorder = mode === 'dark'
+    ? (dim ? '#333333' : '#555555')
+    : (dim ? '#bbbbbb' : '#999999')
+  const restColor = mode === 'dark'
+    ? (dim ? '#555555' : '#888888')
+    : (dim ? '#777777' : '#555555')
+
   const base: React.CSSProperties = {
     fontFamily: MONO, fontSize: 11, letterSpacing: '0.18em', textTransform: 'uppercase',
     padding: '13px 30px', borderRadius: 2, cursor: 'pointer',
     transition: 'all 0.18s ease', background: 'none',
-    border: `1px solid ${hovered ? accent : dim ? '#2a2a2a' : '#3a3a3a'}`,
-    color: hovered ? accent : dim ? '#555' : '#888',
+    border: `1px solid ${hovered ? accent : restBorder}`,
+    color: hovered ? accent : restColor,
   }
 
   return (

@@ -19,6 +19,12 @@ html, body, #root {
   font-family: 'JetBrains Mono', ui-monospace, monospace;
 }
 
+[data-theme="light"] body,
+[data-theme="light"] #root {
+  background: #f0f0f0;
+  color: #111111;
+}
+
 /* Pulsing white glow for running nodes */
 @keyframes pulse-glow {
   0%, 100% {
@@ -96,3 +102,46 @@ html, body, #root {
 ::-webkit-scrollbar { width: 4px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: #222; border-radius: 2px; }
+
+/* ── Light-mode React Flow overrides ──────────────────────────────── */
+[data-theme="light"] .react-flow__renderer {
+  background: #f0f0f0;
+}
+
+[data-theme="light"] .react-flow__edge-path,
+[data-theme="light"] .react-flow__connection-path {
+  stroke: #bbb;
+}
+
+[data-theme="light"] .react-flow__edge.selected .react-flow__edge-path {
+  stroke: #999;
+}
+
+[data-theme="light"] .react-flow__handle {
+  background: #ccc;
+  border-color: #bbb;
+}
+
+[data-theme="light"] .react-flow__minimap {
+  background: #f8f8f8;
+  border-color: #e0e0e0;
+}
+
+[data-theme="light"] .react-flow__controls {
+  border-color: #e0e0e0;
+}
+
+[data-theme="light"] .react-flow__controls-button {
+  background: #ffffff;
+  border-bottom-color: #e0e0e0;
+  color: #666;
+}
+
+[data-theme="light"] .react-flow__controls-button:hover {
+  background: #f0f0f0;
+  color: #222;
+}
+
+[data-theme="light"] ::-webkit-scrollbar-thumb {
+  background: #ccc;
+}
