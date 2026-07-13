@@ -1,19 +1,10 @@
 import { useState } from 'react'
 import type { UiGuidanceResult } from './types'
 import { useTheme } from './theme'
+import { RfqChat, ReqRow, RFQ_ROLES } from './RfqChat'
+import type { RfqReq } from './RfqChat'
 
-interface PubReq {
-  id: string
-  role: string
-  entered_by_role: string
-  requirement: string
-  priority_rank: number
-  perspective_value_pct: number
-  estimated_cost_cr: string
-  cost_confidence: string
-  notes: string
-  status: string
-}
+const FONT = "'JetBrains Mono', monospace"
 
 interface PublishResult {
   stored: boolean
@@ -21,8 +12,6 @@ interface PublishResult {
   requirements_stored: number
   status: string
 }
-
-const FONT = "'JetBrains Mono', monospace"
 
 /* ── Shared primitives ─────────────────────────────────────────────────── */
 function Lbl({ children, color }: { children: string; color?: string }) {
@@ -73,28 +62,6 @@ function InfoCard({ title, children, accent }: {
     </div>
   )
 }
-
-/* ── Role selector ─────────────────────────────────────────────────────── */
-const ROLES = [
-  { key: 'management',           label: 'Management',           desc: 'Strategic decisions, budget approval, final sign-off' },
-  { key: 'doctor',               label: 'Doctor / Clinician',   desc: 'Clinical fit, workflow, patient care requirements' },
-  { key: 'technician',           label: 'Technician',           desc: 'Technical specs, calibration, maintenance needs' },
-  { key: 'biomedical_engineer',  label: 'Biomedical Engineer',  desc: 'Infrastructure, power, site, safety compliance' },
-  { key: 'procurement_officer',  label: 'Procurement Officer',  desc: 'Vendor terms, contract, compliance, lifecycle cost' },
-] as const
-
-type Role = typeof ROLES[number]['key']
-
-/* ── Expectation profiles ──────────────────────────────────────────────── */
-const PROFILES = [
-  { key: 'premium_clinical',    label: 'Premium Clinical',       desc: 'Best-in-class clinical capability, cost secondary' },
-  { key: 'balanced',            label: 'Balanced Cost & Service',desc: 'Optimal balance of capability, cost, and service' },
-  { key: 'lowest_lifecycle',    label: 'Lowest Lifecycle Cost',  desc: 'Minimize total cost over equipment lifetime' },
-  { key: 'fastest_deployment',  label: 'Fastest Deployment',     desc: 'Speed of delivery and commissioning is priority' },
-  { key: 'strict_compliance',   label: 'Strict Compliance',      desc: 'Regulatory, audit, and policy requirements first' },
-] as const
-
-type Profile = typeof PROFILES[number]['key']
 
 /* ── Decision criteria ─────────────────────────────────────────────────── */
 interface CriterionDef {
@@ -175,7 +142,6 @@ function CriteriaSection({
   )
 }
 
-/* ── Criteria list input (mandatory / negotiable) ──────────────────────── */
 function CriteriaList({
   label, items, onChange, accent,
 }: {
@@ -230,7 +196,7 @@ function CriteriaList({
   )
 }
 
-/* ── Output panel ──────────────────────────────────────────────────────── */
+/* ── Guidance output panel ─────────────────────────────────────────────── */
 function GuidanceOutput({ result, mode }: { result: UiGuidanceResult; mode: 'rfq_intake' | 'negotiation' }) {
   const { theme: C } = useTheme()
   const rfq = result.rfq_intake ?? {}
@@ -239,7 +205,6 @@ function GuidanceOutput({ result, mode }: { result: UiGuidanceResult; mode: 'rfq
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-      {/* Feature weight feedback */}
       {fw.length > 0 && (
         <InfoCard title="Weight Feedback" accent={C.orange}>
           {fw.map((f, i) => (
@@ -257,7 +222,6 @@ function GuidanceOutput({ result, mode }: { result: UiGuidanceResult; mode: 'rfq
               </div>
             </InfoCard>
           )}
-
           {(rfq.missing_inputs?.length ?? 0) > 0 && (
             <InfoCard title="Missing Inputs" accent={C.orange}>
               {rfq.missing_inputs!.map((m, i) => (
@@ -265,7 +229,6 @@ function GuidanceOutput({ result, mode }: { result: UiGuidanceResult; mode: 'rfq
               ))}
             </InfoCard>
           )}
-
           {(rfq.suggested_requirements?.length ?? 0) > 0 && (
             <InfoCard title="Suggested Requirements" accent={C.cyan}>
               {rfq.suggested_requirements!.map((r, i) => (
@@ -273,7 +236,6 @@ function GuidanceOutput({ result, mode }: { result: UiGuidanceResult; mode: 'rfq
               ))}
             </InfoCard>
           )}
-
           {(rfq.minimum_criteria?.length ?? 0) > 0 && (
             <InfoCard title="Recommended Minimum Criteria">
               {rfq.minimum_criteria!.map((c, i) => (
@@ -296,7 +258,6 @@ function GuidanceOutput({ result, mode }: { result: UiGuidanceResult; mode: 'rfq
           ))}
         </InfoCard>
       )}
-
       {(neg.contract_conditions?.length ?? 0) > 0 && (
         <InfoCard title="Contract Conditions to Include">
           {neg.contract_conditions!.map((c, i) => (
@@ -304,7 +265,6 @@ function GuidanceOutput({ result, mode }: { result: UiGuidanceResult; mode: 'rfq
           ))}
         </InfoCard>
       )}
-
       {(neg.cost_or_lifecycle_items?.length ?? 0) > 0 && (
         <InfoCard title="Lifecycle & Cost Items to Negotiate">
           {neg.cost_or_lifecycle_items!.map((c, i) => (
@@ -312,13 +272,11 @@ function GuidanceOutput({ result, mode }: { result: UiGuidanceResult; mode: 'rfq
           ))}
         </InfoCard>
       )}
-
       {neg.vendor_message_draft && (
         <InfoCard title="Draft Vendor Message" accent={C.cyan}>
           <div style={{
             fontSize: 13, color: '#aaa', fontFamily: FONT, lineHeight: 1.75,
-            whiteSpace: 'pre-wrap',
-            background: '#050505', border: `1px solid ${C.border}`,
+            whiteSpace: 'pre-wrap', background: '#050505', border: `1px solid ${C.border}`,
             borderRadius: 2, padding: '12px 14px',
           }}>
             {neg.vendor_message_draft}
@@ -328,7 +286,6 @@ function GuidanceOutput({ result, mode }: { result: UiGuidanceResult; mode: 'rfq
           </div>
         </InfoCard>
       )}
-
       {(result.evidence?.length ?? 0) > 0 && (
         <InfoCard title="Evidence">
           {result.evidence!.slice(0, 5).map((e, i) => (
@@ -336,7 +293,6 @@ function GuidanceOutput({ result, mode }: { result: UiGuidanceResult; mode: 'rfq
           ))}
         </InfoCard>
       )}
-
       {(result.guardrails?.length ?? 0) > 0 && (
         <InfoCard title="Guardrails Applied">
           {result.guardrails!.map((g, i) => (
@@ -355,71 +311,33 @@ export function RfqNegotiation() {
   const { theme: C } = useTheme()
   const [tab, setTab] = useState<'rfq' | 'publish' | 'negotiation'>('rfq')
 
-  /* RFQ intake state */
-  const [role, setRole]                 = useState<Role>('management')
-  const [profile, setProfile]           = useState<Profile>('balanced')
-  const [budgetCr, setBudgetCr]         = useState('')
-  const [budgetTol, setBudgetTol]       = useState('10')
-  const [freeText, setFreeText]         = useState('')
-  const [mandatory, setMandatory]       = useState<string[]>([])
-  const [negotiable, setNegotiable]     = useState<string[]>([])
-  const [weights, setWeights]           = useState<Record<string, number>>(
+  /* ── Shared requirements (chat → publish) */
+  const [chatReqs, setChatReqs]     = useState<RfqReq[]>([])
+  const [chatBudget, setChatBudget] = useState('18')
+
+  /* ── Negotiation / guidance tab */
+  const [mandatory, setMandatory]   = useState<string[]>([])
+  const [negotiable, setNegotiable] = useState<string[]>([])
+  const [weights, setWeights]       = useState<Record<string, number>>(
     Object.fromEntries(DEFAULT_CRITERIA.map(c => [c.key, c.defaultWeight]))
   )
-
-  /* Negotiation state */
-  const [negBidId, setNegBidId]         = useState('')
-  const [negQuoteId, setNegQuoteId]     = useState('')
-  const [negFreeText, setNegFreeText]   = useState('')
-
-  /* Shared async state */
-  const [busy, setBusy]                 = useState(false)
-  const [result, setResult]             = useState<UiGuidanceResult | null>(null)
-  const [error, setError]               = useState<string | null>(null)
-
-  /* ── Section visibility (accordion for long form) */
+  const [negBidId, setNegBidId]     = useState('')
+  const [negQuoteId, setNegQuoteId] = useState('')
+  const [negFreeText, setNegFreeText] = useState('')
   const [showCriteria, setShowCriteria] = useState(false)
   const [showWeights, setShowWeights]   = useState(false)
 
-  /* ── Publish RFQ state */
-  const [pubName, setPubName]       = useState('')
-  const [pubEquip, setPubEquip]     = useState('')
-  const [pubBudget, setPubBudget]   = useState('')
-  const [pubReqs, setPubReqs]       = useState<PubReq[]>([])
-  const [pubResult, setPubResult]   = useState<PublishResult | null>(null)
-  const [pubError, setPubError]     = useState<string | null>(null)
-  const [pubBusy, setPubBusy]       = useState(false)
+  /* ── AI guidance shared async */
+  const [busy, setBusy]     = useState(false)
+  const [result, setResult] = useState<UiGuidanceResult | null>(null)
+  const [error, setError]   = useState<string | null>(null)
 
-  async function runRfq() {
-    setBusy(true); setError(null); setResult(null)
-    try {
-      const body = {
-        mode: 'rfq_intake',
-        role,
-        expectation_profile: profile,
-        free_text: freeText,
-        static_inputs: {
-          budget_cr: parseFloat(budgetCr) || 0,
-          budget_tolerance_pct: parseFloat(budgetTol) || 10,
-        },
-        feature_weights: weights,
-        minimum_criteria: mandatory,
-        negotiable_criteria: negotiable,
-        store_history: false,
-      }
-      const r = await fetch('/api/ui-guidance/rfq-negotiation', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
-      })
-      if (!r.ok) throw new Error(`HTTP ${r.status}`)
-      setResult(await r.json())
-    } catch (e) {
-      setError(e instanceof Error ? e.message : String(e))
-    } finally {
-      setBusy(false)
-    }
-  }
+  /* ── Publish state */
+  const [pubName, setPubName]     = useState('')
+  const [pubEquip, setPubEquip]   = useState('')
+  const [pubResult, setPubResult] = useState<PublishResult | null>(null)
+  const [pubError, setPubError]   = useState<string | null>(null)
+  const [pubBusy, setPubBusy]     = useState(false)
 
   async function runNegotiation() {
     if (!negFreeText.trim()) return
@@ -449,57 +367,19 @@ export function RfqNegotiation() {
     }
   }
 
-  function makePubReq(rank: number): PubReq {
-    return {
-      id: `REQ-${String(rank).padStart(3, '0')}`,
-      role: 'management', entered_by_role: 'management',
-      requirement: '', priority_rank: rank,
-      perspective_value_pct: 0, estimated_cost_cr: '',
-      cost_confidence: 'unknown', notes: '', status: 'accepted',
-    }
-  }
-
-  function addPubReq() {
-    setPubReqs(rs => [...rs, makePubReq(rs.length + 1)])
-  }
-
-  function removePubReq(idx: number) {
-    setPubReqs(rs => rs.filter((_, i) => i !== idx).map((r, i) => ({ ...r, priority_rank: i + 1, id: `REQ-${String(i + 1).padStart(3, '0')}` })))
-  }
-
-  function updatePubReq(idx: number, patch: Partial<PubReq>) {
-    setPubReqs(rs => rs.map((r, i) => i === idx ? { ...r, ...patch } : r))
-  }
-
-  function importFromIntake() {
-    const all: PubReq[] = [
-      ...mandatory.map((req, i) => ({
-        ...makePubReq(i + 1),
-        role: 'management', entered_by_role: 'management',
-        requirement: req, perspective_value_pct: 20,
-      })),
-      ...negotiable.map((req, i) => ({
-        ...makePubReq(mandatory.length + i + 1),
-        role: 'procurement_officer', entered_by_role: 'procurement_officer',
-        requirement: req, perspective_value_pct: 10,
-      })),
-    ]
-    if (all.length) setPubReqs(all)
-  }
-
   async function runPublish() {
     if (!pubName.trim()) { setPubError('Procurement name is required.'); return }
-    if (!pubReqs.length) { setPubError('Add at least one requirement before publishing.'); return }
-    if (pubReqs.some(r => !r.requirement.trim())) { setPubError('All requirements must have text.'); return }
+    if (!chatReqs.length) { setPubError('Build requirements in the RFQ INTAKE tab first.'); return }
+    if (chatReqs.some(r => !r.requirement.trim())) { setPubError('All requirements must have text.'); return }
     setPubBusy(true); setPubError(null); setPubResult(null)
     try {
       const body = {
         procurement_name: pubName.trim(),
         equipment_type: pubEquip.trim(),
-        budget_cr: parseFloat(pubBudget) || 0,
+        budget_cr: parseFloat(chatBudget) || 0,
         minimum_criteria: mandatory,
         negotiable_criteria: negotiable,
-        requirements: pubReqs.map(r => ({
+        requirements: chatReqs.map(r => ({
           id: r.id,
           role: r.role,
           entered_by_role: r.entered_by_role,
@@ -507,8 +387,9 @@ export function RfqNegotiation() {
           requirement: r.requirement.trim(),
           priority_rank: r.priority_rank,
           perspective_value_pct: r.perspective_value_pct,
-          estimated_cost_cr: r.estimated_cost_cr ? parseFloat(r.estimated_cost_cr) : null,
+          estimated_cost_cr: r.estimated_cost_cr,
           cost_confidence: r.cost_confidence,
+          cost_source: r.cost_source,
           notes: r.notes.trim(),
           status: r.status,
         })),
@@ -538,19 +419,23 @@ export function RfqNegotiation() {
 
   return (
     <div style={{ flex: 1, overflowY: 'auto', background: C.bg, fontFamily: FONT }}>
-      <div style={{ maxWidth: 720, margin: '0 auto', padding: '28px 28px 80px' }}>
+      <div style={{ maxWidth: 960, margin: '0 auto', padding: '28px 28px 80px' }}>
 
         {/* Page header */}
         <div style={{ marginBottom: 24 }}>
-          <Lbl>RFQ / Negotiation Guidance</Lbl>
+          <Lbl>RFQ / Negotiation</Lbl>
           <div style={{ fontSize: 11, color: '#2a2a2a', fontFamily: FONT, marginTop: 4, letterSpacing: '0.08em', lineHeight: 1.6 }}>
-            Capture organisation requirements before vendor quotes arrive, or prepare negotiation questions after bid evaluation.
+            Build requirements by role in the intake chat, then publish the RFQ or get AI negotiation guidance after bid evaluation.
           </div>
         </div>
 
         {/* Tab bar */}
         <div style={{ display: 'flex', gap: 2, marginBottom: 28, borderBottom: `1px solid ${C.border}`, paddingBottom: 12 }}>
-          {([['rfq', 'RFQ INTAKE'], ['publish', 'PUBLISH RFQ'], ['negotiation', 'NEGOTIATION GUIDANCE']] as const).map(([key, lbl]) => (
+          {([
+            ['rfq', 'RFQ INTAKE CHAT'],
+            ['publish', 'PUBLISH RFQ'],
+            ['negotiation', 'NEGOTIATION GUIDANCE'],
+          ] as const).map(([key, lbl]) => (
             <button
               key={key}
               onClick={() => { setTab(key); setResult(null); setError(null) }}
@@ -560,177 +445,47 @@ export function RfqNegotiation() {
                 borderRadius: 2, padding: '5px 16px', fontSize: 13,
                 letterSpacing: '0.14em', textTransform: 'uppercase', fontFamily: FONT,
                 color: tab === key ? C.text : C.muted, cursor: 'pointer',
+                position: 'relative',
               }}
             >
               {lbl}
+              {key === 'publish' && chatReqs.length > 0 && (
+                <span style={{
+                  position: 'absolute', top: -4, right: -4,
+                  background: C.cyan, color: '#080808',
+                  borderRadius: 999, fontSize: 8, fontWeight: 700,
+                  padding: '1px 5px', fontFamily: FONT,
+                }}>
+                  {chatReqs.length}
+                </span>
+              )}
             </button>
           ))}
         </div>
 
-        {/* ── RFQ INTAKE tab ─────────────────────────────────────────── */}
+        {/* ── RFQ INTAKE CHAT tab ─────────────────────────────────────── */}
         {tab === 'rfq' && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-
-            {/* Role */}
-            <div>
-              <Lbl>Your Role</Lbl>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 8 }}>
-                {ROLES.map(r => (
-                  <button
-                    key={r.key}
-                    onClick={() => setRole(r.key)}
-                    title={r.desc}
-                    style={{
-                      background: role === r.key ? '#001a1a' : '#0a0a0a',
-                      border: `1px solid ${role === r.key ? C.cyan + '55' : C.border}`,
-                      borderRadius: 2, padding: '6px 14px', fontSize: 13,
-                      letterSpacing: '0.1em', textTransform: 'uppercase', fontFamily: FONT,
-                      color: role === r.key ? C.cyan : '#444', cursor: 'pointer',
-                    }}
-                  >
-                    {r.label}
-                  </button>
-                ))}
-              </div>
-              <div style={{ marginTop: 6, fontSize: 11, color: '#2e2e2e', fontFamily: FONT }}>
-                {ROLES.find(r => r.key === role)?.desc}
-              </div>
-            </div>
-
-            {/* Expectation profile */}
-            <div>
-              <Lbl>Expectation Profile</Lbl>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6, marginTop: 8 }}>
-                {PROFILES.map(p => (
-                  <button
-                    key={p.key}
-                    onClick={() => setProfile(p.key)}
-                    style={{
-                      background: profile === p.key ? '#001a1a' : '#0a0a0a',
-                      border: `1px solid ${profile === p.key ? C.cyan + '55' : C.border}`,
-                      borderRadius: 2, padding: '8px 12px', fontSize: 11, textAlign: 'left',
-                      fontFamily: FONT, cursor: 'pointer',
-                    }}
-                  >
-                    <div style={{ fontSize: 13, color: profile === p.key ? C.cyan : '#666', fontWeight: 600, marginBottom: 3 }}>
-                      {p.label}
-                    </div>
-                    <div style={{ fontSize: 10, color: '#2a2a2a', lineHeight: 1.4 }}>{p.desc}</div>
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Budget */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 120px', gap: 10 }}>
-              <div>
-                <Lbl>Budget (₹ Cr)</Lbl>
-                <input
-                  type="number" min="0" value={budgetCr} placeholder="e.g. 18"
-                  onChange={e => setBudgetCr(e.target.value)}
-                  style={{ ...fieldStyle, marginTop: 6 }}
-                />
-              </div>
-              <div>
-                <Lbl>Tolerance %</Lbl>
-                <input
-                  type="number" min="0" max="50" value={budgetTol} placeholder="10"
-                  onChange={e => setBudgetTol(e.target.value)}
-                  style={{ ...fieldStyle, marginTop: 6 }}
-                />
-              </div>
-            </div>
-
-            {/* Requirements free text */}
-            <div>
-              <Lbl>Requirements, Concerns, or Context</Lbl>
-              <textarea
-                value={freeText}
-                onChange={e => setFreeText(e.target.value)}
-                placeholder="Describe what the organisation needs, any clinical constraints, existing infrastructure gaps, compliance requirements, or known vendor concerns…"
-                rows={4}
-                style={{
-                  ...fieldStyle, marginTop: 6, resize: 'vertical', lineHeight: 1.6,
-                }}
-              />
-            </div>
-
-            {/* Mandatory criteria (collapsible) */}
-            <div style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 2, padding: '12px 16px' }}>
-              <button
-                onClick={() => setShowCriteria(o => !o)}
-                style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex', alignItems: 'center', gap: 8, width: '100%' }}
-              >
-                <Lbl>Mandatory & Negotiable Criteria</Lbl>
-                <span style={{ marginLeft: 'auto', fontSize: 13, color: '#2e2e2e', fontFamily: FONT }}>
-                  {mandatory.length + negotiable.length > 0 ? `${mandatory.length + negotiable.length} added ` : ''}{showCriteria ? '▲' : '▼'}
-                </span>
-              </button>
-              {showCriteria && (
-                <div style={{ marginTop: 16, display: 'flex', flexDirection: 'column', gap: 16 }}>
-                  <CriteriaList
-                    label="Hard cutoffs — must meet"
-                    items={mandatory}
-                    onChange={setMandatory}
-                    accent={C.accent}
-                  />
-                  <CriteriaList
-                    label="Negotiable gaps — preferred but flexible"
-                    items={negotiable}
-                    onChange={setNegotiable}
-                    accent={C.orange}
-                  />
-                </div>
-              )}
-            </div>
-
-            {/* Feature weights (collapsible) */}
-            <div style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 2, padding: '12px 16px' }}>
-              <button
-                onClick={() => setShowWeights(o => !o)}
-                style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex', alignItems: 'center', gap: 8, width: '100%' }}
-              >
-                <Lbl>Decision Criteria & Weights</Lbl>
-                <span style={{ marginLeft: 'auto', fontSize: 13, color: '#2e2e2e', fontFamily: FONT }}>
-                  {showWeights ? '▲' : '▼'}
-                </span>
-              </button>
-              {showWeights && (
-                <div style={{ marginTop: 16 }}>
-                  <CriteriaSection weights={weights} onChange={setWeights} />
-                </div>
-              )}
-            </div>
-
-            {/* Action */}
-            <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-              <button
-                onClick={runRfq}
-                disabled={busy}
-                style={{
-                  background: busy ? '#1a0808' : C.cyan,
-                  color: busy ? '#5a2a2a' : '#080808',
-                  border: `1px solid ${busy ? '#3a1010' : C.cyan}`,
-                  borderRadius: 2, padding: '8px 24px', fontSize: 13,
-                  letterSpacing: '0.16em', textTransform: 'uppercase',
-                  fontFamily: FONT, fontWeight: 700,
-                  cursor: busy ? 'not-allowed' : 'pointer',
-                }}
-              >
-                {busy ? 'ANALYZING···' : 'GENERATE RFQ GUIDANCE'}
-              </button>
-              {result && (
-                <GhostBtn onClick={() => { setResult(null); setError(null) }} style={{ padding: '7px 14px' }}>
-                  CLEAR
-                </GhostBtn>
-              )}
-            </div>
-          </div>
+          <RfqChat
+            requirements={chatReqs}
+            budget={chatBudget}
+            onRequirementsChange={setChatReqs}
+            onBudgetChange={setChatBudget}
+          />
         )}
 
         {/* ── PUBLISH RFQ tab ─────────────────────────────────────────── */}
         {tab === 'publish' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+
+            {chatReqs.length === 0 && (
+              <div style={{
+                padding: '16px 18px', background: '#0a0a00',
+                border: `1px solid #2a2a00`, borderRadius: 2,
+                fontSize: 13, color: '#666633', fontFamily: FONT, lineHeight: 1.65,
+              }}>
+                No requirements yet. Go to the RFQ INTAKE CHAT tab to build requirements by role, then return here to publish.
+              </div>
+            )}
 
             {/* Procurement details */}
             <div>
@@ -754,141 +509,65 @@ export function RfqNegotiation() {
               <div>
                 <Lbl>Budget (₹ Cr)</Lbl>
                 <input
-                  type="number" min="0" value={pubBudget}
-                  onChange={e => setPubBudget(e.target.value)}
+                  type="number" min="0" value={chatBudget}
+                  onChange={e => setChatBudget(e.target.value)}
                   placeholder="e.g. 18"
                   style={{ ...fieldStyle, marginTop: 6 }}
                 />
               </div>
             </div>
 
-            {/* Requirements builder */}
-            <div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
-                <Lbl>Requirements</Lbl>
-                <span style={{
-                  fontSize: 10, fontFamily: FONT, letterSpacing: '0.08em',
-                  color: pubReqs.length ? C.cyan : '#333',
-                  background: pubReqs.length ? '#001a1a' : '#0a0a0a',
-                  border: `1px solid ${pubReqs.length ? '#003333' : C.border}`,
-                  borderRadius: 2, padding: '1px 8px',
-                }}>
-                  {pubReqs.length} added
-                </span>
-                <div style={{ marginLeft: 'auto', display: 'flex', gap: 6 }}>
-                  {(mandatory.length + negotiable.length) > 0 && (
-                    <GhostBtn onClick={importFromIntake} style={{ fontSize: 10, padding: '3px 10px' }}>
-                      IMPORT FROM INTAKE
-                    </GhostBtn>
-                  )}
-                  <GhostBtn onClick={addPubReq} style={{ fontSize: 10, padding: '3px 10px' }}>
-                    + ADD
-                  </GhostBtn>
+            {/* Requirements review */}
+            {chatReqs.length > 0 && (
+              <div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
+                  <Lbl>Requirements</Lbl>
+                  <span style={{
+                    fontSize: 10, fontFamily: FONT, letterSpacing: '0.08em',
+                    color: C.cyan, background: '#001a1a', border: `1px solid #003333`,
+                    borderRadius: 2, padding: '1px 8px',
+                  }}>
+                    {chatReqs.length} from intake chat
+                  </span>
+                  <div style={{ fontSize: 9, color: '#2a2a2a', fontFamily: FONT, marginLeft: 'auto' }}>
+                    EDIT IN RFQ INTAKE CHAT TAB
+                  </div>
+                </div>
+
+                {/* Per-role value summary */}
+                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 14 }}>
+                  {Object.entries(RFQ_ROLES).map(([r, meta]) => {
+                    const total = chatReqs.filter(req => req.role === r)
+                      .reduce((s, req) => s + req.perspective_value_pct, 0)
+                    if (!total) return null
+                    const over = total > 100
+                    return (
+                      <div key={r} style={{
+                        background: over ? '#1a0808' : C.surface,
+                        border: `1px solid ${over ? '#3a1010' : C.border}`,
+                        borderRadius: 2, padding: '5px 10px',
+                      }}>
+                        <div style={{ fontSize: 9, color: over ? '#cc7777' : '#2a2a2a', fontFamily: FONT }}>{meta.avatar}</div>
+                        <div style={{ fontSize: 13, fontWeight: 700, fontFamily: FONT, color: over ? C.orange : '#666' }}>
+                          {total.toFixed(0)}%
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+
+                <div style={{ overflowY: 'auto', maxHeight: 400 }}>
+                  {chatReqs.map(req => (
+                    <ReqRow
+                      key={req.id}
+                      req={req}
+                      onRemove={() => setChatReqs(rs => rs.filter(r => r.id !== req.id))}
+                      onUpdate={patch => setChatReqs(rs => rs.map(r => r.id === req.id ? { ...r, ...patch } : r))}
+                    />
+                  ))}
                 </div>
               </div>
-
-              {pubReqs.length === 0 && (
-                <div style={{
-                  padding: '20px 18px', background: '#050505',
-                  border: `1px dashed ${C.border}`, borderRadius: 2,
-                  fontSize: 12, color: '#2a2a2a', fontFamily: FONT, textAlign: 'center', lineHeight: 1.8,
-                }}>
-                  No requirements yet.<br />
-                  Click + ADD to create one, or IMPORT FROM INTAKE to pull from the RFQ Intake tab.
-                </div>
-              )}
-
-              {pubReqs.map((req, idx) => (
-                <div key={req.id} style={{
-                  background: '#050505', border: `1px solid ${C.border}`,
-                  borderLeft: `2px solid ${C.cyan}22`,
-                  borderRadius: 2, padding: '12px 14px', marginBottom: 8,
-                }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
-                    <span style={{ fontSize: 10, color: '#333', fontFamily: FONT }}>{req.id}</span>
-                    <span style={{
-                      fontSize: 10, fontFamily: FONT, letterSpacing: '0.1em',
-                      background: '#001a1a', color: C.cyan, border: `1px solid #003333`,
-                      borderRadius: 2, padding: '1px 7px',
-                    }}>
-                      RANK {req.priority_rank}
-                    </span>
-                    <button
-                      onClick={() => removePubReq(idx)}
-                      style={{ marginLeft: 'auto', background: 'none', border: 'none', color: '#3a3a3a', cursor: 'pointer', fontSize: 17, lineHeight: 1, padding: 0 }}
-                    >
-                      ×
-                    </button>
-                  </div>
-
-                  {/* Requirement text */}
-                  <textarea
-                    value={req.requirement}
-                    onChange={e => updatePubReq(idx, { requirement: e.target.value })}
-                    placeholder="Describe the requirement clearly and measurably…"
-                    rows={2}
-                    style={{
-                      ...fieldStyle, marginBottom: 10, resize: 'vertical', lineHeight: 1.5,
-                      borderColor: !req.requirement.trim() ? '#3a1010' : C.border,
-                    }}
-                  />
-
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 80px 100px', gap: 8, marginBottom: 8 }}>
-                    {/* Perspective role */}
-                    <div>
-                      <div style={{ fontSize: 9, color: '#333', fontFamily: FONT, letterSpacing: '0.1em', marginBottom: 4 }}>STAKEHOLDER ROLE</div>
-                      <select
-                        value={req.role}
-                        onChange={e => updatePubReq(idx, { role: e.target.value, entered_by_role: e.target.value })}
-                        style={{ ...fieldStyle, fontSize: 12 }}
-                      >
-                        {ROLES.map(r => <option key={r.key} value={r.key}>{r.label}</option>)}
-                      </select>
-                    </div>
-                    {/* Cost confidence */}
-                    <div>
-                      <div style={{ fontSize: 9, color: '#333', fontFamily: FONT, letterSpacing: '0.1em', marginBottom: 4 }}>COST CONFIDENCE</div>
-                      <select
-                        value={req.cost_confidence}
-                        onChange={e => updatePubReq(idx, { cost_confidence: e.target.value })}
-                        style={{ ...fieldStyle, fontSize: 12 }}
-                      >
-                        {['unknown', 'low', 'medium', 'high'].map(c => <option key={c} value={c}>{c}</option>)}
-                      </select>
-                    </div>
-                    {/* Value % */}
-                    <div>
-                      <div style={{ fontSize: 9, color: '#333', fontFamily: FONT, letterSpacing: '0.1em', marginBottom: 4 }}>VALUE %</div>
-                      <input
-                        type="number" min={0} max={100}
-                        value={req.perspective_value_pct}
-                        onChange={e => updatePubReq(idx, { perspective_value_pct: parseFloat(e.target.value) || 0 })}
-                        style={{ ...fieldStyle, fontSize: 13 }}
-                      />
-                    </div>
-                    {/* Est. cost */}
-                    <div>
-                      <div style={{ fontSize: 9, color: '#333', fontFamily: FONT, letterSpacing: '0.1em', marginBottom: 4 }}>EST. COST ₹ Cr</div>
-                      <input
-                        type="number" min={0} step="0.1"
-                        value={req.estimated_cost_cr}
-                        onChange={e => updatePubReq(idx, { estimated_cost_cr: e.target.value })}
-                        placeholder="optional"
-                        style={{ ...fieldStyle, fontSize: 13 }}
-                      />
-                    </div>
-                  </div>
-
-                  {/* Notes */}
-                  <input
-                    value={req.notes}
-                    onChange={e => updatePubReq(idx, { notes: e.target.value })}
-                    placeholder="Notes (optional)…"
-                    style={{ ...fieldStyle, fontSize: 12 }}
-                  />
-                </div>
-              ))}
-            </div>
+            )}
 
             {/* Publish action */}
             <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
@@ -914,7 +593,6 @@ export function RfqNegotiation() {
               )}
             </div>
 
-            {/* Publish error */}
             {pubError && (
               <div style={{
                 padding: '12px 16px', background: '#1a0808',
@@ -925,7 +603,6 @@ export function RfqNegotiation() {
               </div>
             )}
 
-            {/* Publish success */}
             {pubResult && (
               <div style={{
                 padding: '16px 18px', background: '#001a00',
@@ -950,11 +627,10 @@ export function RfqNegotiation() {
                 </div>
               </div>
             )}
-
           </div>
         )}
 
-        {/* ── NEGOTIATION tab ────────────────────────────────────────── */}
+        {/* ── NEGOTIATION GUIDANCE tab ────────────────────────────────── */}
         {tab === 'negotiation' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
 
@@ -962,7 +638,7 @@ export function RfqNegotiation() {
               padding: '12px 16px', background: '#001a0a', border: `1px solid #003322`,
               borderRadius: 2, fontSize: 13, color: '#336655', fontFamily: FONT, lineHeight: 1.65,
             }}>
-              Run this after Bid Evaluation completes. Load a bid and quote ID to get vendor-specific negotiation questions and a draft message.
+              Run this after Bid Evaluation completes. Load a bid and quote ID to get vendor-specific negotiation questions and a draft vendor message.
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
@@ -995,21 +671,36 @@ export function RfqNegotiation() {
               />
             </div>
 
-            {/* Shared criteria for negotiation context */}
             <div style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 2, padding: '12px 16px' }}>
               <button
                 onClick={() => setShowCriteria(o => !o)}
                 style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex', alignItems: 'center', gap: 8, width: '100%' }}
               >
-                <Lbl>Management Criteria (for context)</Lbl>
+                <Lbl>Criteria for Context</Lbl>
                 <span style={{ marginLeft: 'auto', fontSize: 13, color: '#2e2e2e', fontFamily: FONT }}>
-                  {showCriteria ? '▲' : '▼'}
+                  {mandatory.length + negotiable.length > 0 ? `${mandatory.length + negotiable.length} added ` : ''}{showCriteria ? '▲' : '▼'}
                 </span>
               </button>
               {showCriteria && (
                 <div style={{ marginTop: 16, display: 'flex', flexDirection: 'column', gap: 16 }}>
                   <CriteriaList label="Hard cutoffs" items={mandatory} onChange={setMandatory} accent={C.accent} />
                   <CriteriaList label="Negotiable gaps" items={negotiable} onChange={setNegotiable} accent={C.orange} />
+                </div>
+              )}
+            </div>
+
+            <div style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 2, padding: '12px 16px' }}>
+              <button
+                onClick={() => setShowWeights(o => !o)}
+                style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex', alignItems: 'center', gap: 8, width: '100%' }}
+              >
+                <Lbl>Decision Criteria & Weights</Lbl>
+                <span style={{ marginLeft: 'auto', fontSize: 13, color: '#2e2e2e', fontFamily: FONT }}>
+                  {showWeights ? '▲' : '▼'}
+                </span>
+              </button>
+              {showWeights && (
+                <div style={{ marginTop: 16 }}>
                   <CriteriaSection weights={weights} onChange={setWeights} />
                 </div>
               )}
@@ -1040,8 +731,8 @@ export function RfqNegotiation() {
           </div>
         )}
 
-        {/* ── Error ── */}
-        {tab !== 'publish' && error && (
+        {/* ── Shared error / output ────────────────────────────────────── */}
+        {tab === 'negotiation' && error && (
           <div style={{
             marginTop: 20, padding: '12px 16px', background: '#1a0808',
             border: `1px solid #3a1010`, borderRadius: 2, fontSize: 13, color: '#cc7777', fontFamily: FONT,
@@ -1050,8 +741,7 @@ export function RfqNegotiation() {
           </div>
         )}
 
-        {/* ── Output ── */}
-        {tab !== 'publish' && result && (
+        {tab === 'negotiation' && result && (
           <div style={{ marginTop: 28 }}>
             <div style={{ borderTop: `1px solid ${C.border}`, paddingTop: 20, marginBottom: 16 }}>
               <Lbl color={C.cyan}>Guidance Output</Lbl>
@@ -1061,7 +751,7 @@ export function RfqNegotiation() {
                 </span>
               )}
             </div>
-            <GuidanceOutput result={result} mode={tab === 'rfq' ? 'rfq_intake' : 'negotiation'} />
+            <GuidanceOutput result={result} mode="negotiation" />
           </div>
         )}
 

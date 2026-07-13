@@ -36,7 +36,7 @@ export function LandingPage({
   onProcurement: () => void
   onBidEvaluation: () => void
 }) {
-  const { theme: C, mode } = useTheme()
+  const { mode } = useTheme()
   const modeRef = useRef(mode)
   useEffect(() => { modeRef.current = mode }, [mode])
 
