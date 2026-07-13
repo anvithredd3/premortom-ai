@@ -15,80 +15,84 @@ def publish_rfq(payload: dict[str, Any]) -> dict[str, Any]:
     rfq_id = str(payload.get("rfq_id") or _new_rfq_id())
     requirements = list(payload.get("requirements") or [])
     now = datetime.now(timezone.utc)
-    with _connect() as conn:
-        with conn.cursor() as cur:
-            _ensure_schema(cur)
-            cur.execute(
-                """
-                INSERT INTO rfq_sessions (
-                  id,
-                  procurement_name,
-                  equipment_type,
-                  budget_cr,
-                  status,
-                  snapshot,
-                  published_at,
-                  updated_at
-                )
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
-                ON CONFLICT (id) DO UPDATE SET
-                  procurement_name = EXCLUDED.procurement_name,
-                  equipment_type = EXCLUDED.equipment_type,
-                  budget_cr = EXCLUDED.budget_cr,
-                  status = EXCLUDED.status,
-                  snapshot = EXCLUDED.snapshot,
-                  published_at = EXCLUDED.published_at,
-                  updated_at = EXCLUDED.updated_at
-                """,
-                (
-                    rfq_id,
-                    str(payload.get("procurement_name") or ""),
-                    str(payload.get("equipment_type") or ""),
-                    float(payload.get("budget_cr") or 0),
-                    "published",
-                    Json(payload),
-                    now,
-                    now,
-                ),
-            )
-            cur.execute("DELETE FROM rfq_requirements WHERE rfq_id = %s", (rfq_id,))
-            for index, req in enumerate(requirements, start=1):
-                requirement_id = str(req.get("id") or f"REQ-{index:03d}")
+    conn = _connect()
+    try:
+        with conn:
+            with conn.cursor() as cur:
+                _ensure_schema(cur)
                 cur.execute(
                     """
-                    INSERT INTO rfq_requirements (
+                    INSERT INTO rfq_sessions (
                       id,
-                      rfq_id,
-                      entered_by_role,
-                      perspective_role,
-                      requirement,
-                      priority_rank,
-                      perspective_value_pct,
-                      estimated_cost_cr,
-                      cost_confidence,
-                      cost_source,
-                      notes,
+                      procurement_name,
+                      equipment_type,
+                      budget_cr,
                       status,
-                      raw_requirement
+                      snapshot,
+                      published_at,
+                      updated_at
                     )
-                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+                    ON CONFLICT (id) DO UPDATE SET
+                      procurement_name = EXCLUDED.procurement_name,
+                      equipment_type = EXCLUDED.equipment_type,
+                      budget_cr = EXCLUDED.budget_cr,
+                      status = EXCLUDED.status,
+                      snapshot = EXCLUDED.snapshot,
+                      published_at = EXCLUDED.published_at,
+                      updated_at = EXCLUDED.updated_at
                     """,
                     (
-                        requirement_id,
                         rfq_id,
-                        str(req.get("entered_by_role") or ""),
-                        str(req.get("role") or req.get("perspective_role") or ""),
-                        str(req.get("requirement") or ""),
-                        int(req.get("priority_rank") or 0),
-                        float(req.get("perspective_value_pct") or 0),
-                        _optional_float(req.get("estimated_cost_cr")),
-                        str(req.get("cost_confidence") or "unknown"),
-                        str(req.get("cost_source") or "unknown"),
-                        str(req.get("notes") or ""),
-                        str(req.get("status") or "accepted"),
-                        Json(req),
+                        str(payload.get("procurement_name") or ""),
+                        str(payload.get("equipment_type") or ""),
+                        float(payload.get("budget_cr") or 0),
+                        "published",
+                        Json(payload),
+                        now,
+                        now,
                     ),
                 )
+                cur.execute("DELETE FROM rfq_requirements WHERE rfq_id = %s", (rfq_id,))
+                for index, req in enumerate(requirements, start=1):
+                    requirement_id = str(req.get("id") or f"REQ-{index:03d}")
+                    cur.execute(
+                        """
+                        INSERT INTO rfq_requirements (
+                          id,
+                          rfq_id,
+                          entered_by_role,
+                          perspective_role,
+                          requirement,
+                          priority_rank,
+                          perspective_value_pct,
+                          estimated_cost_cr,
+                          cost_confidence,
+                          cost_source,
+                          notes,
+                          status,
+                          raw_requirement
+                        )
+                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                        """,
+                        (
+                            requirement_id,
+                            rfq_id,
+                            str(req.get("entered_by_role") or ""),
+                            str(req.get("role") or req.get("perspective_role") or ""),
+                            str(req.get("requirement") or ""),
+                            int(req.get("priority_rank") or 0),
+                            float(req.get("perspective_value_pct") or 0),
+                            _optional_float(req.get("estimated_cost_cr")),
+                            str(req.get("cost_confidence") or "unknown"),
+                            str(req.get("cost_source") or "unknown"),
+                            str(req.get("notes") or ""),
+                            str(req.get("status") or "accepted"),
+                            Json(req),
+                        ),
+                    )
+    finally:
+        conn.close()
     return {
         "stored": True,
         "rfq_id": rfq_id,
