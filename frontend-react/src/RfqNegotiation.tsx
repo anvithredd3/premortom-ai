@@ -2,6 +2,26 @@ import { useState } from 'react'
 import type { UiGuidanceResult } from './types'
 import { useTheme } from './theme'
 
+interface PubReq {
+  id: string
+  role: string
+  entered_by_role: string
+  requirement: string
+  priority_rank: number
+  perspective_value_pct: number
+  estimated_cost_cr: string
+  cost_confidence: string
+  notes: string
+  status: string
+}
+
+interface PublishResult {
+  stored: boolean
+  rfq_id: string
+  requirements_stored: number
+  status: string
+}
+
 const FONT = "'JetBrains Mono', monospace"
 
 /* ── Shared primitives ─────────────────────────────────────────────────── */
@@ -333,7 +353,7 @@ function GuidanceOutput({ result, mode }: { result: UiGuidanceResult; mode: 'rfq
    ════════════════════════════════════════════════════════════════════════ */
 export function RfqNegotiation() {
   const { theme: C } = useTheme()
-  const [tab, setTab] = useState<'rfq' | 'negotiation'>('rfq')
+  const [tab, setTab] = useState<'rfq' | 'publish' | 'negotiation'>('rfq')
 
   /* RFQ intake state */
   const [role, setRole]                 = useState<Role>('management')
@@ -360,6 +380,15 @@ export function RfqNegotiation() {
   /* ── Section visibility (accordion for long form) */
   const [showCriteria, setShowCriteria] = useState(false)
   const [showWeights, setShowWeights]   = useState(false)
+
+  /* ── Publish RFQ state */
+  const [pubName, setPubName]       = useState('')
+  const [pubEquip, setPubEquip]     = useState('')
+  const [pubBudget, setPubBudget]   = useState('')
+  const [pubReqs, setPubReqs]       = useState<PubReq[]>([])
+  const [pubResult, setPubResult]   = useState<PublishResult | null>(null)
+  const [pubError, setPubError]     = useState<string | null>(null)
+  const [pubBusy, setPubBusy]       = useState(false)
 
   async function runRfq() {
     setBusy(true); setError(null); setResult(null)
@@ -420,6 +449,87 @@ export function RfqNegotiation() {
     }
   }
 
+  function makePubReq(rank: number): PubReq {
+    return {
+      id: `REQ-${String(rank).padStart(3, '0')}`,
+      role: 'management', entered_by_role: 'management',
+      requirement: '', priority_rank: rank,
+      perspective_value_pct: 0, estimated_cost_cr: '',
+      cost_confidence: 'unknown', notes: '', status: 'accepted',
+    }
+  }
+
+  function addPubReq() {
+    setPubReqs(rs => [...rs, makePubReq(rs.length + 1)])
+  }
+
+  function removePubReq(idx: number) {
+    setPubReqs(rs => rs.filter((_, i) => i !== idx).map((r, i) => ({ ...r, priority_rank: i + 1, id: `REQ-${String(i + 1).padStart(3, '0')}` })))
+  }
+
+  function updatePubReq(idx: number, patch: Partial<PubReq>) {
+    setPubReqs(rs => rs.map((r, i) => i === idx ? { ...r, ...patch } : r))
+  }
+
+  function importFromIntake() {
+    const all: PubReq[] = [
+      ...mandatory.map((req, i) => ({
+        ...makePubReq(i + 1),
+        role: 'management', entered_by_role: 'management',
+        requirement: req, perspective_value_pct: 20,
+      })),
+      ...negotiable.map((req, i) => ({
+        ...makePubReq(mandatory.length + i + 1),
+        role: 'procurement_officer', entered_by_role: 'procurement_officer',
+        requirement: req, perspective_value_pct: 10,
+      })),
+    ]
+    if (all.length) setPubReqs(all)
+  }
+
+  async function runPublish() {
+    if (!pubName.trim()) { setPubError('Procurement name is required.'); return }
+    if (!pubReqs.length) { setPubError('Add at least one requirement before publishing.'); return }
+    if (pubReqs.some(r => !r.requirement.trim())) { setPubError('All requirements must have text.'); return }
+    setPubBusy(true); setPubError(null); setPubResult(null)
+    try {
+      const body = {
+        procurement_name: pubName.trim(),
+        equipment_type: pubEquip.trim(),
+        budget_cr: parseFloat(pubBudget) || 0,
+        minimum_criteria: mandatory,
+        negotiable_criteria: negotiable,
+        requirements: pubReqs.map(r => ({
+          id: r.id,
+          role: r.role,
+          entered_by_role: r.entered_by_role,
+          perspective_role: r.role,
+          requirement: r.requirement.trim(),
+          priority_rank: r.priority_rank,
+          perspective_value_pct: r.perspective_value_pct,
+          estimated_cost_cr: r.estimated_cost_cr ? parseFloat(r.estimated_cost_cr) : null,
+          cost_confidence: r.cost_confidence,
+          notes: r.notes.trim(),
+          status: r.status,
+        })),
+      }
+      const resp = await fetch('/api/rfq/publish', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      })
+      if (!resp.ok) {
+        const msg = await resp.text()
+        throw new Error(`HTTP ${resp.status}: ${msg}`)
+      }
+      setPubResult(await resp.json())
+    } catch (e) {
+      setPubError(e instanceof Error ? e.message : String(e))
+    } finally {
+      setPubBusy(false)
+    }
+  }
+
   const fieldStyle: React.CSSProperties = {
     background: '#0a0a0a', border: `1px solid ${C.border}`,
     borderRadius: 2, padding: '7px 10px', fontSize: 14,
@@ -440,7 +550,7 @@ export function RfqNegotiation() {
 
         {/* Tab bar */}
         <div style={{ display: 'flex', gap: 2, marginBottom: 28, borderBottom: `1px solid ${C.border}`, paddingBottom: 12 }}>
-          {([['rfq', 'RFQ INTAKE'], ['negotiation', 'NEGOTIATION GUIDANCE']] as const).map(([key, lbl]) => (
+          {([['rfq', 'RFQ INTAKE'], ['publish', 'PUBLISH RFQ'], ['negotiation', 'NEGOTIATION GUIDANCE']] as const).map(([key, lbl]) => (
             <button
               key={key}
               onClick={() => { setTab(key); setResult(null); setError(null) }}
@@ -618,6 +728,232 @@ export function RfqNegotiation() {
           </div>
         )}
 
+        {/* ── PUBLISH RFQ tab ─────────────────────────────────────────── */}
+        {tab === 'publish' && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+
+            {/* Procurement details */}
+            <div>
+              <Lbl>Procurement Name</Lbl>
+              <input
+                value={pubName} onChange={e => setPubName(e.target.value)}
+                placeholder="e.g. AIIMS New Delhi — 3T MRI Scanner"
+                style={{ ...fieldStyle, marginTop: 6 }}
+              />
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 160px', gap: 10 }}>
+              <div>
+                <Lbl>Equipment / Category</Lbl>
+                <input
+                  value={pubEquip} onChange={e => setPubEquip(e.target.value)}
+                  placeholder="e.g. Medical Equipment — MRI"
+                  style={{ ...fieldStyle, marginTop: 6 }}
+                />
+              </div>
+              <div>
+                <Lbl>Budget (₹ Cr)</Lbl>
+                <input
+                  type="number" min="0" value={pubBudget}
+                  onChange={e => setPubBudget(e.target.value)}
+                  placeholder="e.g. 18"
+                  style={{ ...fieldStyle, marginTop: 6 }}
+                />
+              </div>
+            </div>
+
+            {/* Requirements builder */}
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
+                <Lbl>Requirements</Lbl>
+                <span style={{
+                  fontSize: 10, fontFamily: FONT, letterSpacing: '0.08em',
+                  color: pubReqs.length ? C.cyan : '#333',
+                  background: pubReqs.length ? '#001a1a' : '#0a0a0a',
+                  border: `1px solid ${pubReqs.length ? '#003333' : C.border}`,
+                  borderRadius: 2, padding: '1px 8px',
+                }}>
+                  {pubReqs.length} added
+                </span>
+                <div style={{ marginLeft: 'auto', display: 'flex', gap: 6 }}>
+                  {(mandatory.length + negotiable.length) > 0 && (
+                    <GhostBtn onClick={importFromIntake} style={{ fontSize: 10, padding: '3px 10px' }}>
+                      IMPORT FROM INTAKE
+                    </GhostBtn>
+                  )}
+                  <GhostBtn onClick={addPubReq} style={{ fontSize: 10, padding: '3px 10px' }}>
+                    + ADD
+                  </GhostBtn>
+                </div>
+              </div>
+
+              {pubReqs.length === 0 && (
+                <div style={{
+                  padding: '20px 18px', background: '#050505',
+                  border: `1px dashed ${C.border}`, borderRadius: 2,
+                  fontSize: 12, color: '#2a2a2a', fontFamily: FONT, textAlign: 'center', lineHeight: 1.8,
+                }}>
+                  No requirements yet.<br />
+                  Click + ADD to create one, or IMPORT FROM INTAKE to pull from the RFQ Intake tab.
+                </div>
+              )}
+
+              {pubReqs.map((req, idx) => (
+                <div key={req.id} style={{
+                  background: '#050505', border: `1px solid ${C.border}`,
+                  borderLeft: `2px solid ${C.cyan}22`,
+                  borderRadius: 2, padding: '12px 14px', marginBottom: 8,
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
+                    <span style={{ fontSize: 10, color: '#333', fontFamily: FONT }}>{req.id}</span>
+                    <span style={{
+                      fontSize: 10, fontFamily: FONT, letterSpacing: '0.1em',
+                      background: '#001a1a', color: C.cyan, border: `1px solid #003333`,
+                      borderRadius: 2, padding: '1px 7px',
+                    }}>
+                      RANK {req.priority_rank}
+                    </span>
+                    <button
+                      onClick={() => removePubReq(idx)}
+                      style={{ marginLeft: 'auto', background: 'none', border: 'none', color: '#3a3a3a', cursor: 'pointer', fontSize: 17, lineHeight: 1, padding: 0 }}
+                    >
+                      ×
+                    </button>
+                  </div>
+
+                  {/* Requirement text */}
+                  <textarea
+                    value={req.requirement}
+                    onChange={e => updatePubReq(idx, { requirement: e.target.value })}
+                    placeholder="Describe the requirement clearly and measurably…"
+                    rows={2}
+                    style={{
+                      ...fieldStyle, marginBottom: 10, resize: 'vertical', lineHeight: 1.5,
+                      borderColor: !req.requirement.trim() ? '#3a1010' : C.border,
+                    }}
+                  />
+
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 80px 100px', gap: 8, marginBottom: 8 }}>
+                    {/* Perspective role */}
+                    <div>
+                      <div style={{ fontSize: 9, color: '#333', fontFamily: FONT, letterSpacing: '0.1em', marginBottom: 4 }}>STAKEHOLDER ROLE</div>
+                      <select
+                        value={req.role}
+                        onChange={e => updatePubReq(idx, { role: e.target.value, entered_by_role: e.target.value })}
+                        style={{ ...fieldStyle, fontSize: 12 }}
+                      >
+                        {ROLES.map(r => <option key={r.key} value={r.key}>{r.label}</option>)}
+                      </select>
+                    </div>
+                    {/* Cost confidence */}
+                    <div>
+                      <div style={{ fontSize: 9, color: '#333', fontFamily: FONT, letterSpacing: '0.1em', marginBottom: 4 }}>COST CONFIDENCE</div>
+                      <select
+                        value={req.cost_confidence}
+                        onChange={e => updatePubReq(idx, { cost_confidence: e.target.value })}
+                        style={{ ...fieldStyle, fontSize: 12 }}
+                      >
+                        {['unknown', 'low', 'medium', 'high'].map(c => <option key={c} value={c}>{c}</option>)}
+                      </select>
+                    </div>
+                    {/* Value % */}
+                    <div>
+                      <div style={{ fontSize: 9, color: '#333', fontFamily: FONT, letterSpacing: '0.1em', marginBottom: 4 }}>VALUE %</div>
+                      <input
+                        type="number" min={0} max={100}
+                        value={req.perspective_value_pct}
+                        onChange={e => updatePubReq(idx, { perspective_value_pct: parseFloat(e.target.value) || 0 })}
+                        style={{ ...fieldStyle, fontSize: 13 }}
+                      />
+                    </div>
+                    {/* Est. cost */}
+                    <div>
+                      <div style={{ fontSize: 9, color: '#333', fontFamily: FONT, letterSpacing: '0.1em', marginBottom: 4 }}>EST. COST ₹ Cr</div>
+                      <input
+                        type="number" min={0} step="0.1"
+                        value={req.estimated_cost_cr}
+                        onChange={e => updatePubReq(idx, { estimated_cost_cr: e.target.value })}
+                        placeholder="optional"
+                        style={{ ...fieldStyle, fontSize: 13 }}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Notes */}
+                  <input
+                    value={req.notes}
+                    onChange={e => updatePubReq(idx, { notes: e.target.value })}
+                    placeholder="Notes (optional)…"
+                    style={{ ...fieldStyle, fontSize: 12 }}
+                  />
+                </div>
+              ))}
+            </div>
+
+            {/* Publish action */}
+            <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+              <button
+                onClick={runPublish}
+                disabled={pubBusy}
+                style={{
+                  background: pubBusy ? '#1a0808' : C.cyan,
+                  color: pubBusy ? '#5a2a2a' : '#080808',
+                  border: `1px solid ${pubBusy ? '#3a1010' : C.cyan}`,
+                  borderRadius: 2, padding: '8px 24px', fontSize: 13,
+                  letterSpacing: '0.16em', textTransform: 'uppercase',
+                  fontFamily: FONT, fontWeight: 700,
+                  cursor: pubBusy ? 'not-allowed' : 'pointer',
+                }}
+              >
+                {pubBusy ? 'PUBLISHING···' : 'PUBLISH RFQ TO STORE'}
+              </button>
+              {pubResult && (
+                <GhostBtn onClick={() => { setPubResult(null); setPubError(null) }} style={{ padding: '7px 14px' }}>
+                  CLEAR
+                </GhostBtn>
+              )}
+            </div>
+
+            {/* Publish error */}
+            {pubError && (
+              <div style={{
+                padding: '12px 16px', background: '#1a0808',
+                border: `1px solid #3a1010`, borderRadius: 2,
+                fontSize: 13, color: '#cc7777', fontFamily: FONT,
+              }}>
+                ERROR: {pubError}
+              </div>
+            )}
+
+            {/* Publish success */}
+            {pubResult && (
+              <div style={{
+                padding: '16px 18px', background: '#001a00',
+                border: `1px solid #003a00`, borderRadius: 2, fontFamily: FONT,
+              }}>
+                <div style={{ fontSize: 11, color: C.cyan, letterSpacing: '0.16em', marginBottom: 10 }}>
+                  RFQ PUBLISHED
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                  <div style={{ fontSize: 13, color: '#aaa' }}>
+                    <span style={{ color: '#555' }}>RFQ ID: </span>
+                    <span style={{ fontWeight: 700, color: C.cyan }}>{pubResult.rfq_id}</span>
+                  </div>
+                  <div style={{ fontSize: 13, color: '#aaa' }}>
+                    <span style={{ color: '#555' }}>Requirements stored: </span>
+                    {pubResult.requirements_stored}
+                  </div>
+                  <div style={{ fontSize: 13, color: '#aaa' }}>
+                    <span style={{ color: '#555' }}>Status: </span>
+                    {pubResult.status}
+                  </div>
+                </div>
+              </div>
+            )}
+
+          </div>
+        )}
+
         {/* ── NEGOTIATION tab ────────────────────────────────────────── */}
         {tab === 'negotiation' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
@@ -705,7 +1041,7 @@ export function RfqNegotiation() {
         )}
 
         {/* ── Error ── */}
-        {error && (
+        {tab !== 'publish' && error && (
           <div style={{
             marginTop: 20, padding: '12px 16px', background: '#1a0808',
             border: `1px solid #3a1010`, borderRadius: 2, fontSize: 13, color: '#cc7777', fontFamily: FONT,
@@ -715,7 +1051,7 @@ export function RfqNegotiation() {
         )}
 
         {/* ── Output ── */}
-        {result && (
+        {tab !== 'publish' && result && (
           <div style={{ marginTop: 28 }}>
             <div style={{ borderTop: `1px solid ${C.border}`, paddingTop: 20, marginBottom: 16 }}>
               <Lbl color={C.cyan}>Guidance Output</Lbl>
