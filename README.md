@@ -168,12 +168,15 @@ should not be treated as the main differentiator.
 
 ## Screens
 
-1. **Procurement Input** — enter data or upload a document (auto-fills fields).
-2. **Agent Investigation Board** — live agent cards with status, risk score, evidence, reasoning.
-3. **Agent Debate Room** — simulated multi-agent debate + consensus.
-4. **Executive Dashboard** — risk gauge, heatmap, radar, agent contributions, scenario timeline.
-5. **PreMortem Report** — executive report with PDF / Word / JSON export.
-6. **★ Bonus Lab** — Digital Twin What-If simulator & failure-loss sensitivity curve.
+1. **RFQ Intake** — chat-first requirement design with role perspectives, value map, cost meter, and publish action.
+2. **Vendor Procurement Input** — enter vendor proposal data or upload a document.
+3. **Agent Investigation Board** — live agent cards with status, risk score, evidence, reasoning.
+4. **Agent Debate Room** — simulated multi-agent debate + consensus.
+5. **Procurement Risk Analysis** — risk gauge, heatmap, radar, agent contributions, scenario timeline.
+6. **PreMortem Report** — executive report with PDF / Word / JSON export.
+7. **Database / Memory** — local pgvector memory and decision-history status.
+8. **Market Research** — latest market-research artifact for a bid run.
+9. **★ Bonus Lab** — Digital Twin What-If simulator & failure-loss sensitivity curve.
 
 ---
 
@@ -184,7 +187,8 @@ should not be treated as the main differentiator.
 ```bash
 cd premortem-ai
 cp .env.example .env          # optionally add OPENAI_API_KEY
-docker compose up --build
+docker compose build backend frontend
+docker compose up db backend frontend
 ```
 
 - UI:      http://localhost:8501

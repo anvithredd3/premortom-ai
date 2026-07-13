@@ -27,6 +27,7 @@ from .services import (
     document_parser,
     input_bids,
     report as report_service,
+    rfq_store,
 )
 from .services.llm import has_api_key
 from .services.decision_history_pgvector import store_ui_guidance_agent_history
@@ -62,6 +63,31 @@ class UiGuidanceRequest(BaseModel):
     quote_id: str = ""
     vendor_proposal: dict[str, Any] = Field(default_factory=dict)
     store_history: bool = True
+
+
+class RfqRequirementRequest(BaseModel):
+    id: str
+    entered_by_role: str = ""
+    role: str = ""
+    perspective_role: str = ""
+    requirement: str
+    priority_rank: int
+    perspective_value_pct: float
+    estimated_cost_cr: float | None = None
+    cost_confidence: str = "unknown"
+    cost_source: str = "unknown"
+    notes: str = ""
+    status: str = "accepted"
+
+
+class RfqPublishRequest(BaseModel):
+    rfq_id: str = ""
+    procurement_name: str
+    equipment_type: str = ""
+    budget_cr: float = 0
+    requirements: list[RfqRequirementRequest] = Field(default_factory=list)
+    minimum_criteria: list[str] = Field(default_factory=list)
+    negotiable_criteria: list[str] = Field(default_factory=list)
 
 app.add_middleware(
     CORSMiddleware,
@@ -104,6 +130,25 @@ def health():
 @app.get("/db/status")
 def database_status():
     return db_status.get_database_status()
+
+
+@app.post("/rfq/publish")
+def publish_rfq(payload: RfqPublishRequest):
+    if not payload.requirements:
+        raise HTTPException(status_code=400, detail="Cannot publish RFQ without requirements.")
+    if payload.budget_cr < 0:
+        raise HTTPException(status_code=400, detail="RFQ budget cannot be negative.")
+    for req in payload.requirements:
+        if req.priority_rank < 1:
+            raise HTTPException(status_code=400, detail=f"{req.id}: priority must be 1 or higher.")
+        if req.perspective_value_pct < 0 or req.perspective_value_pct > 100:
+            raise HTTPException(status_code=400, detail=f"{req.id}: value percentage must be 0-100.")
+        if req.estimated_cost_cr is not None and req.estimated_cost_cr < 0:
+            raise HTTPException(status_code=400, detail=f"{req.id}: cost cannot be negative.")
+    try:
+        return rfq_store.publish_rfq(payload.model_dump(mode="json"))
+    except Exception as exc:
+        raise HTTPException(status_code=503, detail=f"RFQ publish storage failed: {exc}") from exc
 
 
 @app.get("/sample", response_model=ProcurementInput)

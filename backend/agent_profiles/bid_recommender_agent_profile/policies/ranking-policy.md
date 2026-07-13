@@ -19,16 +19,21 @@ The core ranking should be deterministic and auditable.
 The recommender should compare quotes in this order:
 
 1. **Minimum qualification criteria**
-2. **Management criteria and weights**
-3. **Risk and execution guardrails**
-4. **Value, service, and lifecycle tradeoffs**
-5. **External market/specification benchmarks when available**
+2. **Published RFQ requirement coverage and value weights**
+3. **Management criteria and weights**
+4. **Risk and execution guardrails**
+5. **Value, service, and lifecycle tradeoffs**
+6. **External market/specification benchmarks when available**
 
 ## Minimum Qualification Criteria
 
 Minimum criteria are the baseline requirements a quote must satisfy before it
 can be recommended. Initially, these should come from management or the bid
 criteria configured for the procurement.
+
+When a published RFQ exists, minimum criteria should be derived first from the
+accepted RFQ requirements marked as mandatory or high-priority/core. Management
+criteria can add to them, but should not silently override the published RFQ.
 
 Examples:
 
@@ -81,9 +86,10 @@ is needed.
 
 ## Management Criteria And Weights
 
-After minimum eligibility, the recommender should apply management's comparison
-criteria and weights when available. These criteria represent the organization's
-decision priorities, not just the vendor's submitted claims.
+After minimum eligibility and RFQ coverage scoring, the recommender should apply
+management's comparison criteria and weights when available. These criteria
+represent the organization's decision priorities, not just the vendor's
+submitted claims.
 
 Examples:
 
@@ -100,6 +106,34 @@ Examples:
 If management criteria are missing, the recommender should state that the
 ranking is based mainly on available contract-review signals and should be
 treated as a provisional shortlist.
+
+## Published RFQ Requirement Coverage
+
+When the bid is linked to a published RFQ, accepted requirements and value
+percentages become the buyer-defined value model.
+
+For each quote:
+
+- Use Vendor Proposal Agent coverage for each requirement:
+  `met`, `partial`, `missing`, or `unclear`.
+- Score high-value and core requirements before optional differentiators.
+- Treat `partial` and `unclear` coverage as negotiable gaps or penalties,
+  depending on priority and value percentage.
+- Treat `missing` mandatory/core requirements as hard blockers or shortlist
+  conditions.
+- Do not give positive value credit for vendor features that do not map to
+  accepted RFQ requirements.
+- Include role/perspective explanations so management can see whether doctor,
+  finance, biomedical engineering, procurement, or management value is driving
+  the recommendation.
+
+The recommendation should report:
+
+- weighted RFQ value covered
+- mandatory/core gaps
+- cost against budget
+- risk guardrails
+- negotiation conditions
 
 ## Risk And Execution Guardrails
 

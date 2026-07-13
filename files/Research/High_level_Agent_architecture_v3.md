@@ -192,32 +192,46 @@ should own the actual state changes, saved RFQ data, and accepted criteria.
 
 The RFQ Intake and Negotiation UI Guidance Agent has two components:
 
-#### Static Role-Based Intake Component
+#### Chat-First RFQ Value Design Component
 
-The static component is similar to the current first frontend screen, but it is
-intended for management, doctors, technicians, biomedical engineering teams, and
+The first implemented RFQ component should be treated as a chat-first RFQ value
+design workspace rather than a large static form. It is intended for
+management, doctors, biomedical engineering/service teams, finance, and
 procurement users before vendor proposals are submitted.
 
 Instead of capturing vendor proposal values, it captures the organization's
 expectations and constraints.
 
-The static intake should allow the user to:
+The RFQ value design workspace should allow the user to:
 
-- Select role, such as management, doctor, technician, biomedical engineer, or
-  procurement officer.
-- Choose expectation profile, such as premium clinical capability, balanced
-  cost and service, lowest total lifecycle cost, fastest deployment, or strict
-  compliance.
-- Enter budget and allowed tolerance, such as budget plus or minus a percentage.
-- Enter mandatory minimum criteria and negotiable criteria.
-- Enter desired values for technical, operational, service, training, warranty,
-  delivery, installation, and lifecycle-cost expectations.
-- Mark which features are hard cutoffs, negotiable gaps, or scoring preferences.
-- Capture local context such as hospital size, expected patient volume,
-  clinical department needs, existing infrastructure, and staffing readiness.
+- Select the active chat role, such as management, doctor, biomedical engineer,
+  finance, or procurement officer.
+- Add requirements through chat rather than a large form.
+- Enter a requirement from any role while assigning it to the correct
+  stakeholder perspective. For example, management may enter a doctor/clinical
+  requirement.
+- Map known requirements to predefined role templates when possible.
+- Allow custom requirements only when priority, value percentage, and cost or
+  unknown-cost status are supplied.
+- Confirm every proposed requirement before adding it to the accepted RFQ table.
+- Edit accepted requirements in a role-grouped table.
+- Visualize stakeholder value as a role polygon where max value is the full
+  outer polygon and current value is the area of the accepted-requirement
+  polygon.
+- Visualize cost with a cost meter where max is proposed procurement/device
+  cost and actual is currently costed accepted requirements.
+- Publish the accepted RFQ requirement snapshot for the later vendor input and
+  proposal review flow.
+- Publish the accepted RFQ package to vendors through a dedicated vendor
+  publication page. For the demo, this can generate a vendor-facing RFQ package,
+  select target vendors, and track draft/sent status without requiring real
+  email or portal integration.
+- Treat social-media publication channels such as X or Facebook as future
+  optional distribution connectors. They should not be part of the core demo
+  flow and should require explicit human approval, compliance review, and
+  organization policy checks before posting.
 
-This static component produces structured management criteria that downstream
-agents can use:
+This component produces structured RFQ criteria that downstream agents can use:
 
 ```text
 management expectation profile
@@ -225,8 +239,85 @@ management expectation profile
   -> weighted preferences
   -> budget and tolerance
   -> negotiable feature ranges
-	  -> RFQ draft inputs
-	```
+  -> chat-proposed requirements
+  -> accepted role/perspective requirement records
+  -> RFQ draft inputs
+  -> vendor-facing RFQ publication package
+  -> quote-comparison criteria for recommendation
+```
+
+#### Vendor RFQ Publication Component
+
+After an RFQ is published to the database, the next screen should package the
+accepted requirements for vendor distribution. This is separate from database
+publish: database publish freezes the buyer-approved RFQ state, while vendor
+publication sends or prepares that state for vendors.
+
+Immediate demo requirements:
+
+- Load the latest published RFQ from `rfq_sessions` and `rfq_requirements`.
+- Show a vendor-facing summary grouped by role/perspective, including mandatory
+  requirements, value-weighted preferences, budget, delivery assumptions, and
+  missing-cost flags.
+- Let the user select or enter vendors for distribution.
+- Generate a draft vendor message and attachment-style RFQ text for review.
+- Track publication status such as `draft`, `ready`, `sent manually`, or
+  `cancelled`.
+- Require explicit user approval before marking anything as vendor-published.
+
+Future connector requirements:
+
+- Email or procurement-portal publication.
+- Vendor acknowledgement tracking.
+- Addendum and RFQ version distribution history.
+- Optional social-media publication through X, Facebook, or similar channels
+  only when procurement policy allows public posting. These channels must be
+  human-approved and should never post automatically from an agent.
+
+#### RFQ-Driven Quote Comparison
+
+The accepted RFQ requirements and their values should become a first-class input
+to vendor proposal review and bid recommendation.
+
+The comparison flow should evolve as follows:
+
+```text
+Published RFQ requirements
+  -> Vendor Proposal Agent maps quote evidence to each requirement
+  -> Contract/Risk agents identify gaps, risks, and ambiguous vendor claims
+  -> Bid Recommender applies minimum criteria, role value weights, cost, and
+     risk guardrails
+  -> Recommendation explains which quote best satisfies the buyer-defined RFQ
+```
+
+Recommendation should use the RFQ requirement values as the buyer-defined value
+model. A quote should not win only because it is low risk or low cost if it does
+not satisfy high-value core requirements. Likewise, an expensive feature should
+not be rewarded unless it maps to accepted RFQ value.
+
+Current demo note:
+
+For the hackathon submission, the UI may present the full loop while the
+existing recommendation output remains the displayed recommendation. Dynamic
+RFQ-specific ground-truth validation is deferred. The correct future evaluation
+method is to use versioned RFQ snapshots, scenario-specific quote sets, and
+rubric/metamorphic tests instead of reusing a static winner label after the RFQ
+requirements change.
+
+Important data model distinction:
+
+```text
+entered_by_role != perspective_role
+```
+
+`entered_by_role` is the user role currently speaking in chat. `perspective_role`
+is the stakeholder perspective that owns the requirement. Management can enter
+requirements on behalf of doctors, finance, biomedical engineering, procurement,
+or management.
+
+Accepted RFQ requirements should carry requirement text, entered-by role,
+perspective role, priority rank, perspective value percentage, estimated cost in
+crore, cost confidence, cost source, and draft/accepted status.
 
 #### Backend and Frontend API Requirement
 
@@ -1927,13 +2018,16 @@ tonight or explicitly moved to later.
 
 ### Implementation Gaps
 
-1. Frontend RFQ / Negotiation Guidance page is not implemented yet.
-   It should collect role, static expectation inputs, free text, feature
-   weights, minimum criteria, and negotiable criteria, then display the API
-   output.
+1. Vendor RFQ publication page is the next demo-facing gap.
+   The RFQ design page and database publish flow exist, but the next page should
+   package the published RFQ for vendors and track draft/ready/sent-manually
+   status.
 
-2. UI Guidance API exists as the backend integration point, but it still needs
-   Docker verification and frontend wiring.
+2. Dynamic RFQ-ground-truth validation is deferred.
+   Because user-defined RFQ requirements can change the correct recommendation,
+   the old static sample winner should not be treated as universal ground truth.
+   Later evaluation should use versioned RFQ snapshots, scenario golden sets,
+   rubric checks, and metamorphic tests.
 
 3. Recommender use of agent-level history should become explicit.
    The database can store per-agent history now, but recommender retrieval
