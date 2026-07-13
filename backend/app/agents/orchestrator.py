@@ -128,6 +128,7 @@ def _process_one_quote(quote: dict, bid_id: str) -> tuple[dict, dict]:
         raw_document_text=text,
     )
     result = contract_agent.analyze(data)
+    extracted_fields = document_parser.extract_fields(text)
     review = {
         "quote_id": quote["quote_id"],
         "vendor_name": quote.get("vendor_name", ""),
@@ -135,6 +136,7 @@ def _process_one_quote(quote: dict, bid_id: str) -> tuple[dict, dict]:
         "risk_level": result.risk_level.value,
         "findings": result.findings,
         "recommendation": result.recommendation,
+        "contract_value_cr": extracted_fields.get("contract_value_cr"),
     }
     return vp, review
 

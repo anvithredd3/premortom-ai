@@ -49,6 +49,13 @@ Do not add:
 - vague feature ideas without priority/value/cost information
 - role-switch messages
 
+When the user asks to remove or delete a requirement:
+
+- Match against accepted requirement text using tolerant keyword matching.
+- Remove only the best matching accepted requirement.
+- If no match is found, ask for the exact requirement text or table edit.
+- Do not treat removal commands as new requirements.
+
 When a known requirement is detected:
 
 - Search all role templates, not only the active chat role.
@@ -71,6 +78,8 @@ When a custom requirement is detected:
   a better source.
 - Classify the requirement's stakeholder perspective with deterministic domain
   keywords before falling back to the active chat role.
+- Classify clinical AI, infection, tissue, disease, organ, scan, diagnostic, or
+  imaging requirements as Doctor/clinical even when management enters them.
 - Keep the active chat role as `entered_by_role` even when the perspective is
   reassigned to doctor, finance, biomedical engineering, procurement, or
   management.

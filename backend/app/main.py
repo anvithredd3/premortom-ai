@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 from pathlib import Path
 from typing import Any
 
@@ -56,6 +57,11 @@ class BidCreateRequest(BaseModel):
 class BidRunRequest(BaseModel):
     bid_id: str
     quote_ids: list[str] = []
+
+
+class DemoRunRequest(ProcurementInput):
+    selected_bid_id: str = "BID-001"
+    selected_quote_id: str = ""
 
 
 class UiGuidanceRequest(BaseModel):
@@ -187,11 +193,64 @@ def analyze(data: ProcurementInput):
     return report
 
 
+@app.post("/analyze/demo-run")
+def analyze_and_start_demo_bid_run(data: DemoRunRequest):
+    """Run the existing single analysis and also add it to the BID-001 bid flow."""
+    print("Demo run: starting Screen 1 single-case analysis.", flush=True)
+    source_data = ProcurementInput(
+        **data.model_dump(exclude={"selected_bid_id", "selected_quote_id"})
+    )
+    if source_data.raw_document_text:
+        source_data, _ = extraction_agent.extract(source_data.raw_document_text)
+
+    report = run_premortem(source_data)
+    print("Demo run: single-case analysis complete.", flush=True)
+    inferred_bid_id, inferred_quote_id = _quote_id_from_text(data.raw_document_text or "")
+    selected_quote_id = data.selected_quote_id or inferred_quote_id
+    bid_id = data.selected_bid_id or inferred_bid_id or "BID-001"
+    sample: dict[str, Any] = {}
+    if selected_quote_id:
+        quote_ids = _demo_quote_ids_for_selected(bid_id, selected_quote_id)
+        print(
+            f"Demo run: using selected existing quote {selected_quote_id}; "
+            "no new Screen 1 sample registered.",
+            flush=True,
+        )
+    else:
+        sample = input_bids.save_procurement_input_sample(
+            bid_id,
+            source_data.model_dump(),
+        )
+        print(
+            f"Demo run: registered current Screen 1 input as {sample['sample_id']}.",
+            flush=True,
+        )
+        quote_ids = _demo_quote_ids_for_selected(bid_id, sample["quote_id"])
+    run = bid_outputs.create_run(bid_id, quote_ids)
+    print(
+        f"Demo run: starting bid recommender workflow {run['run_id']} "
+        f"with {len(quote_ids)} quotes: {', '.join(quote_ids)}.",
+        flush=True,
+    )
+    run_bid_evaluation(run["run_id"], bid_id, quote_ids)
+    print(f"Demo run: bid recommender workflow {run['run_id']} complete.", flush=True)
+    return {
+        "report": report.model_dump(mode="json"),
+        "bid_id": bid_id,
+        "sample_id": sample.get("sample_id", ""),
+        "quote_id": selected_quote_id or sample.get("quote_id", ""),
+        "quote_ids": quote_ids,
+        "sample": sample,
+        "bid_run": run,
+    }
+
+
 @app.post("/upload")
 async def upload(file: UploadFile = File(...)):
     content = await file.read()
     text = document_parser.extract_text(file.filename, content)
     extracted_input, missing = extraction_agent.extract(text)
+    selected_bid_id, selected_quote_id = _quote_id_from_filename(file.filename)
     return {
         "filename": file.filename,
         "characters": len(text),
@@ -199,7 +258,36 @@ async def upload(file: UploadFile = File(...)):
         "missing_fields": missing,
         "text_preview": text[:2000],
         "raw_document_text": text,
+        "selected_bid_id": selected_bid_id,
+        "selected_quote_id": selected_quote_id,
     }
+
+
+def _quote_id_from_filename(filename: str) -> tuple[str, str]:
+    match = re.search(r"(BID-\d{3,})-Q(\d{2,})", filename or "", flags=re.I)
+    if not match:
+        return "", ""
+    bid_id = match.group(1).upper()
+    return bid_id, f"{bid_id}-Q{match.group(2)}"
+
+
+def _quote_id_from_text(text: str) -> tuple[str, str]:
+    match = re.search(r"(BID-\d{3,})-Q(\d{2,})", text or "", flags=re.I)
+    if not match:
+        return "", ""
+    bid_id = match.group(1).upper()
+    return bid_id, f"{bid_id}-Q{match.group(2)}"
+
+
+def _demo_quote_ids_for_selected(bid_id: str, selected_quote_id: str) -> list[str]:
+    baseline = [f"{bid_id}-Q{idx:02d}" for idx in range(1, 6)]
+    if selected_quote_id not in baseline:
+        baseline.append(selected_quote_id)
+    available = {
+        quote["quote_id"]
+        for quote in input_bids.list_quotes(bid_id)["quotes"]
+    }
+    return [quote_id for quote_id in baseline if quote_id in available]
 
 
 @app.post("/ui-guidance/rfq-negotiation")

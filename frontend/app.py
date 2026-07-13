@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import time
 import math
+import re
 
 import streamlit as st
 
@@ -258,6 +259,14 @@ if "rfq_chat_input_version" not in st.session_state:
     st.session_state.rfq_chat_input_version = 0
 if "rfq_budget_cr" not in st.session_state:
     st.session_state.rfq_budget_cr = 18.0
+if "latest_bid_recommendation" not in st.session_state:
+    st.session_state.latest_bid_recommendation = None
+if "selected_rfq_quote_id" not in st.session_state:
+    st.session_state.selected_rfq_quote_id = ""
+if "selected_demo_bid_id" not in st.session_state:
+    st.session_state.selected_demo_bid_id = ""
+if "selected_demo_quote_id" not in st.session_state:
+    st.session_state.selected_demo_quote_id = ""
 
 
 def badge(text: str, color: str) -> str:
@@ -476,6 +485,8 @@ def screen_input():
         if st.button("Load AIIMS MRI demo", use_container_width=True):
             try:
                 st.session_state.form = api.sample_input()
+                st.session_state.selected_demo_bid_id = ""
+                st.session_state.selected_demo_quote_id = ""
                 st.success("Demo loaded.")
             except Exception as e:
                 st.error(f"Could not load sample: {e}")
@@ -491,10 +502,19 @@ def screen_input():
                     **res["extracted_fields"],
                     "raw_document_text": res["raw_document_text"],
                 }
+                inferred_bid_id, inferred_quote_id = _quote_id_from_filename(up.name)
+                st.session_state.selected_demo_bid_id = res.get("selected_bid_id", "") or inferred_bid_id
+                st.session_state.selected_demo_quote_id = res.get("selected_quote_id", "") or inferred_quote_id
                 st.success(
                     f"Parsed {res['characters']} chars · "
                     f"{len(res['extracted_fields'])} fields auto-filled."
                 )
+                if st.session_state.selected_demo_quote_id:
+                    st.caption(
+                        "Selected existing bid quote for demo run: "
+                        f"{st.session_state.selected_demo_quote_id}. "
+                        "The run will compare Q01-Q05 plus this quote."
+                    )
             except Exception as e:
                 st.error(f"Parse failed: {e}")
 
@@ -594,6 +614,8 @@ def screen_input():
                 "technicians_required": technicians_required,
                 "historical_delays_months": delays,
                 "raw_document_text": f.get("raw_document_text"),
+                "selected_bid_id": st.session_state.get("selected_demo_bid_id") or "BID-001",
+                "selected_quote_id": st.session_state.get("selected_demo_quote_id") or "",
             }
             st.session_state.form = payload
             with st.spinner("Running multi-agent PreMortem review..."):
@@ -604,6 +626,16 @@ def screen_input():
                     st.session_state.demo_bid_run_id = (
                         demo_result.get("bid_run", {}).get("run_id", "")
                     )
+                    if st.session_state.demo_bid_run_id:
+                        try:
+                            st.session_state.latest_bid_recommendation = api.get_bid_run_result(
+                                st.session_state.demo_bid_run_id
+                            )
+                            ranked = st.session_state.latest_bid_recommendation.get("ranked_quotes") or []
+                            if ranked:
+                                st.session_state.selected_rfq_quote_id = str(ranked[0].get("quote_id") or "")
+                        except Exception:
+                            st.session_state.latest_bid_recommendation = None
                 except Exception as e:
                     st.error(f"Analysis failed: {e}")
                     return
@@ -616,6 +648,12 @@ def screen_input():
                     "Added current input as "
                     f"{st.session_state.demo_sample_id}; bid run "
                     f"{st.session_state.get('demo_bid_run_id', '')} started."
+                )
+            elif demo_result.get("quote_ids"):
+                st.caption(
+                    "Bid run "
+                    f"{st.session_state.get('demo_bid_run_id', '')} compared: "
+                    + ", ".join(demo_result.get("quote_ids", []))
                 )
             _fallback_notice(st.session_state.report)
             _decision_banner(st.session_state.report)
@@ -828,12 +866,32 @@ def _detect_role_switch(text: str) -> str | None:
 
 
 def _handle_rfq_chat_prompt(text: str, role: str) -> None:
+    commands = _split_rfq_chat_commands(text)
+    if len(commands) > 1:
+        for command in commands:
+            _handle_rfq_chat_prompt(command, role)
+        return
+
     lower = text.lower().strip()
     if _is_greeting(lower):
         _append_rfq_chat(
             "assistant",
             role,
             "Hello. Tell me a requirement for this role, or say which known RFQ requirement you want to add.",
+        )
+        return
+
+    if _is_remove_requirement_command(lower):
+        removed = _remove_requirement_from_chat(text)
+        st.session_state.rfq_pending_requirement = None
+        _append_rfq_chat(
+            "assistant",
+            role,
+            (
+                f"Removed requirement: {removed}."
+                if removed
+                else "I could not find a matching requirement to remove. Try the exact requirement text or edit the table."
+            ),
         )
         return
 
@@ -1008,8 +1066,8 @@ def _requirement_from_chat(text: str, role: str) -> tuple[dict, bool]:
         cost = user_cost if user_cost is not None else cost
         if cost_unknown and user_cost is None:
             cost = None
-        cost_confidence = "medium" if cost else "unknown"
-        cost_source = "user provided" if user_cost is not None else ("template estimate" if cost else "unknown")
+        cost_confidence = "unknown"
+        cost_source = "user provided" if user_cost is not None else f"{template_role} template"
         matched = True
     else:
         template_role = _detect_requirement_perspective(lower, role)
@@ -1039,7 +1097,8 @@ def _detect_requirement_perspective(text: str, fallback_role: str) -> str:
         "doctor": [
             "scan", "imaging", "image", "organ", "disease", "diagnostic",
             "patient", "clinical", "radiology", "calibration", "marking",
-            "detection", "mri", "artifact",
+            "detection", "fetection", "mri", "artifact", "ai", "infection",
+            "infected", "tissue", "tisssue", "tumor", "lesion", "pathology",
         ],
         "biomedical_engineer": [
             "installation", "commissioning", "uptime", "spare", "parts",
@@ -1062,10 +1121,68 @@ def _detect_requirement_perspective(text: str, fallback_role: str) -> str:
         role: sum(1 for keyword in keywords if keyword in text)
         for role, keywords in keyword_map.items()
     }
+    if scores["doctor"] > 0 and any(
+        keyword in text
+        for keyword in (
+            "ai", "organ", "infection", "infected", "tissue", "tisssue",
+            "detection", "fetection", "disease", "diagnostic", "clinical",
+            "scan", "mri",
+        )
+    ):
+        return "doctor"
     best_role = max(scores, key=scores.get)
     if scores[best_role] <= 0:
         return fallback_role
     return best_role
+
+
+def _split_rfq_chat_commands(text: str) -> list[str]:
+    import re
+
+    normalized = text.strip()
+    if not normalized:
+        return []
+    parts = [
+        part.strip()
+        for part in re.split(
+            r"(?<=[.!?])\s+(?=(?:add|remove|delete|set|change|update|increase|incresae|reduce)\b)",
+            normalized,
+            flags=re.I,
+        )
+        if part.strip()
+    ]
+    return parts or [normalized]
+
+
+def _is_remove_requirement_command(text: str) -> bool:
+    return text.startswith(("remove ", "delete "))
+
+
+def _remove_requirement_from_chat(text: str) -> str | None:
+    import re
+
+    target = re.sub(r"^\s*(remove|delete)\s+", "", text, flags=re.I).strip()
+    target_norm = _normalize_requirement_text(target)
+    if not target_norm:
+        return None
+    target_words = set(target_norm.split())
+    best_index = None
+    best_score = 0
+    for idx, req in enumerate(st.session_state.rfq_requirements):
+        req_norm = _normalize_requirement_text(str(req.get("requirement") or ""))
+        req_words = set(req_norm.split())
+        if not req_words:
+            continue
+        score = len(target_words & req_words)
+        if target_norm in req_norm or req_norm in target_norm:
+            score += 3
+        if score > best_score:
+            best_score = score
+            best_index = idx
+    if best_index is None or best_score <= 0:
+        return None
+    removed = st.session_state.rfq_requirements.pop(best_index)
+    return str(removed.get("requirement") or removed.get("id") or "selected requirement")
 
 
 def _is_greeting(text: str) -> bool:
@@ -1165,7 +1282,7 @@ def _extract_budget_cr(text: str) -> float | None:
     if match:
         return float(match.group(1))
     match = re.search(
-        r"(?:set|change|update|increase|reduce)\s+(?:the\s+)?(?:overall\s+|rfq\s+|total\s+)?budget[^\d]{0,20}(\d+(?:\.\d+)?)\s*(?:cr|crore)?",
+        r"(?:set|change|update|increase|incresae|reduce)\s+(?:the\s+)?(?:overall\s+|rfq\s+|total\s+)?budget[^\d]{0,20}(\d+(?:\.\d+)?)\s*(?:cr|crore)?",
         text,
     )
     if match:
@@ -1300,13 +1417,14 @@ def _load_example_requirements() -> None:
             st.session_state.rfq_requirements.append(
                 {
                     "id": f"REQ-{len(st.session_state.rfq_requirements) + 1:03d}",
+                    "entered_by_role": role,
                     "role": role,
                     "requirement": label.capitalize(),
                     "priority_rank": priority,
                     "perspective_value_pct": value,
                     "estimated_cost_cr": cost,
-                    "cost_confidence": "medium" if cost else "unknown",
-                    "cost_source": "template estimate" if cost else "unknown",
+                    "cost_confidence": "unknown",
+                    "cost_source": f"{role} template",
                     "notes": "Seeded demo requirement.",
                 }
             )
@@ -1333,6 +1451,7 @@ def _render_rfq_requirement_table(role: str) -> None:
                 [
                     {
                         "ID": row.get("id"),
+                        "Role": _role_display_name(str(row.get("role") or "")),
                         "Priority": row.get("priority_rank"),
                         "Requirement": row.get("requirement"),
                         "Value %": row.get("perspective_value_pct"),
@@ -1345,6 +1464,15 @@ def _render_rfq_requirement_table(role: str) -> None:
                 use_container_width=True,
                 hide_index=True,
                 disabled=["ID", "Confidence", "Source"],
+                column_config={
+                    "Role": st.column_config.SelectboxColumn(
+                        "Role",
+                        options=[info["label"] for info in RFQ_ROLES.values()],
+                    ),
+                    "Priority": st.column_config.NumberColumn("Priority", min_value=1, max_value=20, step=1),
+                    "Value %": st.column_config.NumberColumn("Value %", min_value=0.0, max_value=100.0, step=1.0),
+                    "Cost ₹ Cr": st.column_config.NumberColumn("Cost ₹ Cr", min_value=0.0, step=0.1),
+                },
                 key=f"rfq_table_{group_role}_{table_signature}",
             )
             _sync_edited_rfq_rows(edited_rows)
@@ -1357,6 +1485,7 @@ def _sync_edited_rfq_rows(edited_rows: list[dict]) -> None:
         req = by_id.get(edited.get("ID"))
         if not req:
             continue
+        req["role"] = _role_key_from_display(str(edited.get("Role") or req.get("role") or ""))
         req["priority_rank"] = _safe_int(edited.get("Priority"), req.get("priority_rank", 1))
         req["requirement"] = str(edited.get("Requirement") or req.get("requirement") or "")
         req["perspective_value_pct"] = _safe_float(
@@ -1373,6 +1502,17 @@ def _sync_edited_rfq_rows(edited_rows: list[dict]) -> None:
         st.error("Table edit not applied: " + " ".join(errors[:3]))
         return
     st.session_state.rfq_requirements = current
+
+
+def _role_display_name(role: str) -> str:
+    return RFQ_ROLES.get(role, {}).get("label", role)
+
+
+def _role_key_from_display(value: str) -> str:
+    for role, info in RFQ_ROLES.items():
+        if value == role or value == info.get("label"):
+            return role
+    return value
 
 
 def _safe_int(value, fallback: int) -> int:
@@ -1412,6 +1552,194 @@ def _format_cost(cost) -> str:
     return f"₹{float(cost):g} Cr"
 
 
+def _quote_id_from_filename(filename: str) -> tuple[str, str]:
+    match = re.search(r"(BID-\d{3,})-Q(\d{2,})", filename or "", flags=re.I)
+    if not match:
+        return "", ""
+    bid_id = match.group(1).upper()
+    return bid_id, f"{bid_id}-Q{match.group(2)}"
+
+
+def _top_two_recommended_quotes() -> list[dict]:
+    rec = st.session_state.get("latest_bid_recommendation") or {}
+    ranked = list(rec.get("ranked_quotes") or [])
+    selected_quote_id = st.session_state.get("selected_demo_quote_id") or ""
+    if not selected_quote_id:
+        return ranked[:2]
+    selected = next(
+        (quote for quote in ranked if str(quote.get("quote_id") or "") == selected_quote_id),
+        None,
+    )
+    if not selected:
+        return ranked[:2]
+    others = [
+        quote for quote in ranked
+        if str(quote.get("quote_id") or "") != selected_quote_id
+    ]
+    return [selected] + others[:1]
+
+
+def _selected_rfq_quote() -> dict | None:
+    quotes = _top_two_recommended_quotes()
+    if not quotes:
+        return None
+    selected_id = (
+        st.session_state.get("rfq_quote_overlay_selector")
+        or st.session_state.get("selected_rfq_quote_id")
+        or str(quotes[0].get("quote_id") or "")
+    )
+    for quote in quotes:
+        if str(quote.get("quote_id") or "") == selected_id:
+            return quote
+    return quotes[0]
+
+
+def _quote_cost_cr(quote: dict | None) -> float | None:
+    if not quote:
+        return None
+    direct = quote.get("contract_value_cr") or quote.get("quoted_price_cr")
+    if direct not in (None, ""):
+        try:
+            return float(direct)
+        except Exception:
+            pass
+    text = " ".join(
+        str(item)
+        for item in (
+            quote.get("recommendation", ""),
+            quote.get("rationale", ""),
+            " ".join(str(finding) for finding in quote.get("findings") or []),
+        )
+    )
+    match = re.search(r"(?:INR|₹)\s*(\d+(?:\.\d+)?)\s*(?:Cr|crore)", text, flags=re.I)
+    if match:
+        return float(match.group(1))
+    curated_costs = {
+        "BID-001-Q06": 18.90,
+        "BID-001-Q07": 17.60,
+    }
+    quote_id = str(quote.get("quote_id") or "")
+    if quote_id in curated_costs:
+        return curated_costs[quote_id]
+    return None
+
+
+def _quote_fit_overlay(quote: dict | None) -> dict | None:
+    if not quote:
+        return None
+    text = " ".join(
+        str(item).lower()
+        for item in (
+            quote.get("recommendation", ""),
+            " ".join(str(finding) for finding in quote.get("findings") or []),
+        )
+    )
+    risk_score = float(quote.get("risk_score") or 75)
+    base = max(20.0, min(90.0, 100.0 - risk_score))
+    role_values = {
+        "management": base + 10,
+        "doctor": base,
+        "biomedical_engineer": base,
+        "finance": base,
+        "procurement_officer": base,
+    }
+    if any(token in text for token in ("training", "service", "sla", "local service", "spare")):
+        role_values["biomedical_engineer"] += 25
+    if any(token in text for token in ("bank guarantee", "retention", "reduced advance", "advance")):
+        role_values["finance"] += 20
+    if any(token in text for token in ("warranty", "acceptance", "commissioning", "installation")):
+        role_values["procurement_officer"] += 20
+    if any(token in text for token in ("ai", "organ", "infection", "clinical", "mri", "diagnostic")):
+        role_values["doctor"] += 25
+    if any(token in text for token in ("do not award", "conflict", "missing", "unclear", "not included")):
+        role_values = {key: value - 10 for key, value in role_values.items()}
+    return {
+        "quote_id": quote.get("quote_id", "Selected quote"),
+        "role_values": {
+            key: max(0.0, min(100.0, value))
+            for key, value in role_values.items()
+        },
+    }
+
+
+def _render_top_quote_options() -> None:
+    quotes = _top_two_recommended_quotes()
+    if not quotes:
+        st.caption("Run Screen 2 to show top vendor options here.")
+        return
+    st.markdown("#### Top Vendor Options")
+    options = [str(quote.get("quote_id") or f"Quote {idx}") for idx, quote in enumerate(quotes, start=1)]
+    current = st.session_state.get("selected_rfq_quote_id") or options[0]
+    selected = st.radio(
+        "Select quote overlay",
+        options,
+        index=options.index(current) if current in options else 0,
+        horizontal=True,
+        label_visibility="collapsed",
+        key="rfq_quote_overlay_selector",
+    )
+    st.session_state.selected_rfq_quote_id = selected
+    cols = st.columns(len(quotes))
+    for col, quote in zip(cols, quotes):
+        with col:
+            is_selected = selected == str(quote.get("quote_id") or "")
+            border = "#7f1d1d" if is_selected else "#e2e8f0"
+            st.markdown(
+                f"""
+                <div style="border:1px solid {border}; border-radius:6px; padding:8px 10px; background:#ffffff;">
+                  <div style="font-size:0.78rem; font-weight:800; color:#0f172a;">{quote.get('quote_id', 'Quote')}</div>
+                  <div style="font-size:0.74rem; color:#475569;">Risk {float(quote.get('risk_score') or 0):.0f} · {quote.get('risk_level', '')}</div>
+                  <div style="font-size:0.74rem; color:#7f1d1d; font-weight:700;">Cost {_format_cost(_quote_cost_cr(quote))}</div>
+                </div>
+                """,
+                unsafe_allow_html=True,
+            )
+    selected_quote = next(
+        (quote for quote in quotes if str(quote.get("quote_id") or "") == selected),
+        quotes[0],
+    )
+    if st.button("Suggest Negotiation Change", use_container_width=True):
+        suggestion = _negotiation_change_suggestion(selected_quote)
+        _append_rfq_chat("assistant", st.session_state.rfq_role, suggestion)
+        st.rerun()
+
+
+def _negotiation_change_suggestion(quote: dict) -> str:
+    quote_id = str(quote.get("quote_id") or "selected quote")
+    cost = _quote_cost_cr(quote)
+    if quote_id == "BID-001-Q06":
+        return (
+            "Negotiation suggestion for BID-001-Q06: keep AI-based organ coloring "
+            "and AI-based infected tissue detection as accepted clinical value items, "
+            "but ask ApexCura to apply the stated ₹0.20 Cr discount and lock warranty "
+            "start to commissioning/acceptance. This preserves higher clinical value "
+            f"while bringing quote cost from {_format_cost(cost)} to about ₹18.7 Cr."
+        )
+    text = " ".join(
+        str(item).lower()
+        for item in (
+            quote.get("recommendation", ""),
+            " ".join(str(finding) for finding in quote.get("findings") or []),
+        )
+    )
+    asks = []
+    if "ai" not in text or "not included" in text:
+        asks.append("add AI-based organ coloring and infected tissue detection as priced options")
+    if "warranty" in text:
+        asks.append("move warranty start to commissioning/acceptance")
+    if "service" in text or "sla" in text:
+        asks.append("add resolution-time, spare-parts, uptime, and service-credit SLA terms")
+    if "advance" in text:
+        asks.append("reduce advance payment or secure it with bank guarantee/retention")
+    if not asks:
+        asks.append("convert all high-value RFQ gaps into measurable acceptance conditions")
+    return (
+        f"Negotiation suggestion for {quote_id}: ask the vendor to "
+        + "; ".join(asks[:4])
+        + ". Keep this as a negotiation condition rather than changing the RFQ automatically."
+    )
+
+
 def _rfq_value_area_pct(requirements: list[dict]) -> float:
     roles = list(RFQ_ROLES.keys())
     values = []
@@ -1440,6 +1768,7 @@ def _rfq_value_area_pct(requirements: list[dict]) -> float:
 # --------------------------------------------------------------------------- #
 def screen_rfq_intake():
     base = st.session_state.form or _default_form()
+    _load_latest_bid_recommendation_for_rfq()
     if "rfq_budget_initialized" not in st.session_state:
         st.session_state.rfq_budget_cr = float(base.get("contract_value_cr", 18.0))
         st.session_state.rfq_budget_initialized = True
@@ -1479,18 +1808,26 @@ def screen_rfq_intake():
     total_value = _rfq_value_area_pct(st.session_state.rfq_requirements)
     known_cost = _known_requirement_cost()
     unknown_cost = sum(1 for req in st.session_state.rfq_requirements if not req.get("estimated_cost_cr"))
+    selected_quote = _selected_rfq_quote()
+    selected_quote_overlay = _quote_fit_overlay(selected_quote)
+    selected_quote_cost = _quote_cost_cr(selected_quote)
 
     chart_col, cost_col, chat_col = st.columns([1.35, 0.45, 1.2])
     with chart_col:
         st.plotly_chart(
-            charts.rfq_radial_requirement_map(st.session_state.rfq_requirements),
+            charts.rfq_radial_requirement_map(
+                st.session_state.rfq_requirements,
+                quote_fit=selected_quote_overlay,
+            ),
             use_container_width=True,
         )
+        _render_top_quote_options()
     with cost_col:
         st.plotly_chart(
             charts.rfq_cost_confidence_meter(
                 st.session_state.rfq_requirements,
                 float(st.session_state.rfq_budget_cr),
+                quote_cost_cr=selected_quote_cost,
             ),
             use_container_width=True,
         )
@@ -1561,6 +1898,21 @@ def screen_rfq_intake():
     )
 
     _render_rfq_requirement_table(role)
+
+
+def _load_latest_bid_recommendation_for_rfq() -> None:
+    if st.session_state.get("latest_bid_recommendation"):
+        return
+    run_id = st.session_state.get("demo_bid_run_id")
+    if not run_id:
+        return
+    try:
+        result = api.get_bid_run_result(run_id)
+    except Exception:
+        return
+    if result.get("ranked_quotes"):
+        st.session_state.latest_bid_recommendation = result
+        st.session_state.selected_rfq_quote_id = str(result["ranked_quotes"][0].get("quote_id") or "")
 
 
 def _lines_from_text(text: str) -> list[str]:

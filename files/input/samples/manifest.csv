@@ -1,6 +1,8 @@
 bid_id,quote_id,vendor_name,equipment_type,archetype,weighted_decision_score,pdf_path,is_top_1,is_top_2
 BID-001,BID-001-Q01,StartCare Devices 01,MRI Machine,strong_contender,72.6,bids/BID-001/BID-001-Q01.pdf,False,False
-BID-001,BID-001-Q02,PrimeHealth Diagnostics 02,MRI Machine,strong_contender,83.7,bids/BID-001/BID-001-Q02.pdf,False,True
+BID-001,BID-001-Q02,PrimeHealth Diagnostics 02,MRI Machine,strong_contender,83.7,bids/BID-001/BID-001-Q02.pdf,False,False
 BID-001,BID-001-Q03,SecondCycle Healthcare 03,MRI Machine,strong_contender,68.3,bids/BID-001/BID-001-Q03.pdf,False,False
-BID-001,BID-001-Q04,MediBridge Systems 04,MRI Machine,ground_truth_winner,90.4,bids/BID-001/BID-001-Q04.pdf,True,True
+BID-001,BID-001-Q04,MediBridge Systems 04,MRI Machine,ground_truth_winner,90.4,bids/BID-001/BID-001-Q04.pdf,False,True
 BID-001,BID-001-Q05,BudgetMed Devices 05,MRI Machine,close_runner_up,75.65,bids/BID-001/BID-001-Q05.pdf,False,False
+BID-001,BID-001-Q06,ApexCura Imaging Systems,MRI Machine,rfq_value_winner,96.0,bids/BID-001/BID-001-Q06.pdf,True,True
+BID-001,BID-001-Q07,ValueMed Diagnostics,MRI Machine,rfq_lower_cost_comparator,78.0,bids/BID-001/BID-001-Q07.pdf,False,False

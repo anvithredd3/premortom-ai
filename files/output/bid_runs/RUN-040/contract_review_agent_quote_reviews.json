@@ -2,35 +2,36 @@
   "run_id": "RUN-040",
   "quote_reviews": [
     {
-      "quote_id": "BID-001-Q03",
-      "vendor_name": "",
-      "risk_score": 55.0,
-      "risk_level": "MODERATE",
-      "findings": [
-        "Warranty start is conflicting: raw document states 'On Installation' while fixed fields state 'On Delivery'.",
-        "Advance payment is 60%, which is high and increases financial exposure, especially without mention of a bank guarantee.",
-        "Installation responsibility is shared according to the raw document, conflicting with fixed fields stating buyer responsibility.",
-        "Training is included according to the raw document, conflicting with fixed fields stating training is not included.",
-        "Regulatory approval is pending, which could delay commissioning and operational use.",
-        "Electrical readiness is pending, which could delay installation and commissioning.",
-        "Historical delays in similar projects suggest potential for further delays."
-      ],
-      "recommendation": "Clarify and confirm the warranty start, installation responsibility, and training inclusion terms to ensure they align with the vendor's quote. Negotiate for a bank guarantee to secure the advance payment. Ensure regulatory approval and electrical readiness are prioritized to avoid delays."
-    },
-    {
       "quote_id": "BID-001-Q04",
       "vendor_name": "",
       "risk_score": 55.0,
       "risk_level": "MODERATE",
       "findings": [
-        "Warranty starts on installation according to the raw document text, conflicting with the fixed fields stating 'On Delivery'.",
-        "Advance payment is 10% according to the raw document text, conflicting with the fixed fields stating 60%.",
+        "Warranty starts on installation according to the raw document text, which is favorable compared to the fixed field stating 'On Delivery'.",
+        "Advance payment is 10% according to the raw document text, which is lower than the 60% stated in fixed fields, reducing financial exposure.",
         "Installation responsibility is on the buyer, which increases risk if site readiness is delayed.",
         "Training is not included, which could affect operational readiness.",
+        "Service response target is 18 hours, which is reasonable but should be confirmed for enforceability.",
         "Regulatory approval is pending, which could delay commissioning.",
-        "Technicians required for installation are not available, posing a risk to timely installation."
+        "Electrical readiness is pending, which could delay installation."
       ],
-      "recommendation": "Clarify and confirm the warranty start, advance payment terms, and installation responsibility to ensure they align with the vendor's quote. Verify the availability of technicians and expedite regulatory approval to avoid delays. Consider negotiating for training inclusion to enhance operational readiness."
+      "recommendation": "Clarify and confirm the warranty start, advance payment terms, and installation responsibility with the vendor. Ensure regulatory approval and electrical readiness are prioritized to avoid delays. Consider negotiating for training inclusion or support to mitigate operational risks."
+    },
+    {
+      "quote_id": "BID-001-Q03",
+      "vendor_name": "",
+      "risk_score": 50.0,
+      "risk_level": "MODERATE",
+      "findings": [
+        "Warranty start is conflicting: raw document text states 'On Installation' while fixed fields state 'On Delivery'.",
+        "Advance payment is 60% with no mention of a bank guarantee, which is high and increases financial exposure.",
+        "Installation responsibility is shared according to the raw document text, but fixed fields state it is the buyer's responsibility.",
+        "Training is included according to the raw document text, conflicting with fixed fields stating it is not included.",
+        "Service response target is 96 hours, which is relatively long for critical medical equipment.",
+        "Regulatory approval is pending, which could delay commissioning and operational use.",
+        "Technicians required for installation are not available, posing a risk to timely installation and commissioning."
+      ],
+      "recommendation": "Clarify and confirm the warranty start, installation responsibility, and training inclusion terms to ensure they align with the vendor's quote. Negotiate for a bank guarantee to secure the advance payment. Ensure regulatory approval is prioritized to avoid delays. Address the technician availability issue to ensure timely installation."
     },
     {
       "quote_id": "BID-001-Q02",
@@ -39,14 +40,14 @@
       "risk_level": "MODERATE",
       "findings": [
         "Warranty starts on delivery, which is risky given the potential for site readiness delays and buyer responsibility for installation.",
-        "Advance payment is 50% according to the raw document text, which is lower than the 60% stated in fixed fields, reducing financial exposure.",
-        "Installation responsibility is conflicting: raw document states 'Vendor' while fixed fields state 'Buyer'.",
-        "Training is included according to the raw document, conflicting with the fixed fields stating it is not included.",
+        "Advance payment is 50% according to the raw document text, which is lower than the 60% stated in fixed fields, but still high without mention of a bank guarantee.",
+        "Installation responsibility is on the vendor according to the raw document text, which reduces risk compared to the fixed field stating buyer responsibility.",
+        "Training is included according to the raw document text, contrary to the fixed field stating it is not included.",
         "Regulatory approval is pending, which could delay commissioning and operational use.",
         "Electrical readiness is pending, which could delay installation and commissioning.",
-        "Technicians required for installation are not available, posing a risk to timely installation."
+        "Technicians required for operation are not yet available, which could delay operational readiness."
       ],
-      "recommendation": "Clarify and confirm the warranty start, installation responsibility, and training inclusion terms to ensure they align with the vendor's quote. Resolve the conflict between the advance payment terms. Ensure regulatory approval and electrical readiness are prioritized to avoid delays. Verify the availability of technicians for installation."
+      "recommendation": "Clarify and confirm the warranty start, installation responsibility, and training inclusion terms to ensure they align with the vendor's quote. Negotiate for a bank guarantee to secure the advance payment. Ensure regulatory approval and electrical readiness are prioritized to avoid delays. Verify technician availability to meet operational requirements."
     },
     {
       "quote_id": "BID-001-Q05",
@@ -54,14 +55,15 @@
       "risk_score": 55.0,
       "risk_level": "MODERATE",
       "findings": [
-        "Advance payment is 70% according to the raw document text, which is higher than the 60% stated in fixed fields, increasing financial exposure.",
         "Warranty starts on delivery, which is risky given the potential for site readiness delays and buyer responsibility for installation.",
-        "Installation responsibility is conflicting: raw document states 'Vendor' while fixed fields state 'Buyer'.",
-        "Training is included according to the raw document text, conflicting with the fixed fields stating training is not included.",
+        "Advance payment is 70%, which is higher than the 60% stated in fixed fields and above industry norms, increasing financial exposure.",
+        "Installation responsibility is on the vendor according to the raw document text, conflicting with the fixed field stating buyer responsibility.",
+        "Training is included according to the raw document text, conflicting with the fixed field stating training is not included.",
         "Regulatory approval is pending, which could delay commissioning and operational use.",
+        "Electrical readiness is pending, which could delay installation and commissioning.",
         "Historical delays in similar projects suggest potential for further delays."
       ],
-      "recommendation": "Clarify and confirm the advance payment terms, warranty start, installation responsibility, and training inclusion to ensure they align with the vendor's quote. Negotiate for a bank guarantee to secure the advance payment. Ensure regulatory approval is prioritized to avoid delays."
+      "recommendation": "Clarify and confirm the warranty start, installation responsibility, and training inclusion terms to ensure they align with the vendor's quote. Negotiate for a bank guarantee to secure the advance payment. Ensure regulatory approval is prioritized to avoid delays. Verify compliance claims during technical evaluation."
     },
     {
       "quote_id": "BID-001-Q01",
@@ -69,14 +71,14 @@
       "risk_score": 55.0,
       "risk_level": "MODERATE",
       "findings": [
-        "Warranty starts on commissioning according to the raw document text, conflicting with the fixed fields stating warranty starts on delivery.",
-        "Advance payment is 50% according to the raw document text, which is lower than the 60% stated in fixed fields, reducing financial exposure.",
+        "Warranty starts on delivery according to fixed fields, but raw document text states it starts on commissioning, indicating a conflict.",
+        "Advance payment is 60% according to fixed fields, but raw document text states 50%, indicating a conflict.",
         "Installation responsibility is on the buyer, which increases risk if site readiness is delayed.",
         "Training is not included, which could affect operational readiness.",
         "Regulatory approval and electrical readiness are pending, which could delay commissioning.",
-        "The vendor is a new entrant with limited history, increasing the risk of performance uncertainty."
+        "Historical delays in similar projects suggest potential for further delays."
       ],
-      "recommendation": "Clarify and confirm the warranty start, advance payment terms, and installation responsibility to ensure they align with the vendor's quote. Negotiate for a bank guarantee to secure the advance payment. Ensure regulatory approval and electrical readiness are prioritized to avoid delays. Consider including training to enhance operational readiness."
+      "recommendation": "Clarify and confirm the warranty start and advance payment terms to ensure they align with the vendor's quote. Negotiate for the warranty to start at commissioning to mitigate risk. Ensure regulatory approval and electrical readiness are prioritized to avoid delays. Consider including training to enhance operational readiness."
     }
   ]
 }

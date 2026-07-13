@@ -178,7 +178,7 @@ def whatif_curve(delays: List[float], losses: List[float]) -> go.Figure:
     return fig
 
 
-def rfq_radial_requirement_map(requirements: List[dict]) -> go.Figure:
+def rfq_radial_requirement_map(requirements: List[dict], quote_fit: dict | None = None) -> go.Figure:
     """Show role-level value coverage as a clean radar map."""
     roles = list(ROLE_COLORS.keys())[:5]
     values_by_role = {role: 0.0 for role in roles}
@@ -196,18 +196,42 @@ def rfq_radial_requirement_map(requirements: List[dict]) -> go.Figure:
         f"{label}<br>Value coverage: {value:.0f}%<br>Requirements: {counts_by_role[role]}"
         for label, value, role in zip(labels, values, roles)
     ]
-    fig = go.Figure(
+    fig = go.Figure()
+    fig.add_trace(
         go.Scatterpolar(
             r=values + [values[0]],
             theta=labels + [labels[0]],
             fill="toself",
             mode="lines",
+            name="RFQ value",
             line_color="#2563eb",
             fillcolor="rgba(37,99,235,0.20)",
             hovertext=hover + [hover[0]],
             hoverinfo="text",
         )
     )
+    if quote_fit:
+        quote_values = [
+            min(100, float((quote_fit.get("role_values") or {}).get(role, 0)))
+            for role in roles
+        ]
+        quote_name = str(quote_fit.get("quote_id") or "Selected quote")
+        fig.add_trace(
+            go.Scatterpolar(
+                r=quote_values + [quote_values[0]],
+                theta=labels + [labels[0]],
+                fill="toself",
+                mode="lines",
+                name=quote_name,
+                line=dict(color="#7f1d1d", width=3),
+                fillcolor="rgba(127,29,29,0.18)",
+                hovertext=[
+                    f"{label}<br>{quote_name} fit: {value:.0f}%"
+                    for label, value in zip(labels, quote_values)
+                ] + [f"{labels[0]}<br>{quote_name} fit: {quote_values[0]:.0f}%"],
+                hoverinfo="text",
+            )
+        )
     fig.update_layout(
         title=dict(text="Procurement Value Map", font=dict(size=14)),
         polar=dict(
@@ -220,13 +244,17 @@ def rfq_radial_requirement_map(requirements: List[dict]) -> go.Figure:
         ),
         height=380,
         margin=dict(l=20, r=20, t=50, b=20),
-        showlegend=False,
+        showlegend=bool(quote_fit),
         font=dict(size=13),
     )
     return fig
 
 
-def rfq_cost_confidence_meter(requirements: List[dict], device_cost_cr: float) -> go.Figure:
+def rfq_cost_confidence_meter(
+    requirements: List[dict],
+    device_cost_cr: float,
+    quote_cost_cr: float | None = None,
+) -> go.Figure:
     """Vertical overlapped cost meter: budget range with actual cost marker."""
     known = [
         req for req in requirements
@@ -234,7 +262,8 @@ def rfq_cost_confidence_meter(requirements: List[dict], device_cost_cr: float) -
     ]
     actual_cost = sum(float(req.get("estimated_cost_cr") or 0) for req in known)
     budget_cost = float(device_cost_cr or 0)
-    max_cost = max(budget_cost, actual_cost, 1)
+    quote_cost = float(quote_cost_cr or 0)
+    max_cost = max(budget_cost, actual_cost, quote_cost, 1)
     fig = go.Figure()
     fig.add_shape(
         type="line",
@@ -272,6 +301,28 @@ def rfq_cost_confidence_meter(requirements: List[dict], device_cost_cr: float) -
             showlegend=False,
         )
     )
+    if quote_cost > 0:
+        fig.add_shape(
+            type="line",
+            x0=0.63,
+            x1=0.63,
+            y0=0,
+            y1=quote_cost,
+            line=dict(color="#7f1d1d", width=8),
+        )
+        fig.add_trace(
+            go.Scatter(
+                x=[0.63],
+                y=[quote_cost],
+                mode="markers+text",
+                marker=dict(color="#7f1d1d", size=20, line=dict(color="#ffffff", width=3)),
+                text=[f"₹{quote_cost:.1f}"],
+                textposition=["middle right"],
+                hovertext=[f"Selected quote cost<br>₹{quote_cost:.2f} Cr"],
+                hoverinfo="text",
+                showlegend=False,
+            )
+        )
     fig.update_layout(
         title=dict(text="Cost Meter", font=dict(size=16), x=0.5, xanchor="center"),
         yaxis=dict(

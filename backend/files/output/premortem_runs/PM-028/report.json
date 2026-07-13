@@ -1,0 +1,298 @@
+{
+  "procurement_name": "Boeing 747-8",
+  "equipment_type": "",
+  "contract_value_cr": 8500.0,
+  "overall_risk_score": 46.0,
+  "failure_probability_pct": 57.0,
+  "confidence_pct": 72.0,
+  "predicted_delay_months": 2.0,
+  "projected_financial_loss_cr": 132.22,
+  "predicted_failure_mode": "Value committed ahead of verified readiness.",
+  "supporting_evidence": [
+    "Electrical readiness is pending, which is critical for hangar operations.",
+    "Warranty starts on delivery, which is standard for aviation but can be risky if there are delays in commissioning or operational readiness.",
+    "There are more technicians available than required for the Boeing 747-8, indicating a surplus of personnel.",
+    "\u20b91700 Cr released as advance payment, representing 20% of the contract value.",
+    "Historical projects show significant delays when infrastructure readiness is below 70%."
+  ],
+  "predicted_outcomes": [
+    "Installation delay: 1.5-3.0 months",
+    "Projected financial loss: \u20b9132.22 Cr",
+    "Idle asset exposure: \u20b9680.00 Cr / year",
+    "Warranty loss: ~2 months of coverage consumed while idle",
+    "High probability of underutilisation"
+  ],
+  "recommended_decision": "GO WITH CONDITIONS",
+  "conditions": [
+    "Electrical readiness completed and energised.",
+    "Warranty revised to start at commissioning date."
+  ],
+  "agent_results": [
+    {
+      "agent": "Contract Risk Agent",
+      "status": "completed",
+      "risk_score": 25.0,
+      "risk_level": "LOW",
+      "findings": [
+        "Warranty starts on delivery, which is standard for aviation but can be risky if there are delays in commissioning or operational readiness.",
+        "Advance payment is 20%, which is below the industry norm for aviation contracts, reducing financial risk.",
+        "Vendor is responsible for installation, which aligns with industry standards and reduces buyer-side risk.",
+        "Training is included, which is critical for operational readiness and reduces risk.",
+        "Regulatory approval status is approved, mitigating compliance risk.",
+        "Electrical readiness is pending, which could delay commissioning and operational readiness."
+      ],
+      "evidence": [
+        "Warranty start: 'On Delivery'",
+        "Advance payment percentage: 20.0%",
+        "Installation responsibility: 'Vendor'",
+        "Training included: true",
+        "Regulatory approval status: 'Approved'",
+        "Electrical readiness: 'Pending'"
+      ],
+      "reasoning": "The procurement of a Boeing 747-8 involves significant capital investment and long lead times. The warranty starting on delivery is typical in aviation but poses a risk if there are delays in achieving operational readiness. The advance payment of 20% is favorable compared to industry norms, reducing financial exposure. Vendor responsibility for installation and included training are positive factors that align with industry standards and reduce buyer-side risks. The pending electrical readiness is a potential bottleneck that could delay the project, but the approved regulatory status mitigates compliance concerns.",
+      "recommendation": "Ensure that electrical readiness is addressed promptly to avoid delays in commissioning. Monitor the vendor's installation progress closely to ensure timelines are met. Consider negotiating for the warranty to start at commissioning to mitigate risks associated with delivery delays.",
+      "metrics": {
+        "advance_released_cr": 1700.0,
+        "warranty_start": "On Delivery",
+        "vendor_emphasis": [
+          "Installation responsibility",
+          "Training inclusion",
+          "Regulatory approval"
+        ],
+        "missing_contract_information": [
+          "Specific commissioning timeline",
+          "Detailed service level agreements"
+        ],
+        "extra_contract_information": [
+          "MRO contract included",
+          "DGCA approval status"
+        ],
+        "unusual_terms": [],
+        "evidence_quality": "strong",
+        "marketing_vs_specificity": "specific",
+        "implementation_specificity": "high",
+        "follow_up_questions": [
+          "What is the timeline for achieving electrical readiness?",
+          "Can the warranty start be negotiated to begin at commissioning?"
+        ]
+      },
+      "tokens_in": 2921,
+      "tokens_out": 517,
+      "time_ms": 7302.4,
+      "model": "gpt-4o-2024-08-06"
+    },
+    {
+      "agent": "Infrastructure Readiness Agent",
+      "status": "completed",
+      "risk_score": 45.0,
+      "risk_level": "MODERATE",
+      "findings": [
+        "Electrical readiness is pending, which is critical for hangar operations.",
+        "Regulatory approval status is approved, reducing potential delays.",
+        "Construction completion is at 100%, indicating physical readiness of the hangar.",
+        "DGCA approval status is approved, which is essential for aviation operations."
+      ],
+      "evidence": [
+        "construction_completion_pct: 100.0",
+        "electrical_readiness: Pending",
+        "regulatory_approval_status: Approved",
+        "dgca_approval_status: Approved"
+      ],
+      "reasoning": "The site is physically ready with 100% construction completion, which is crucial for the installation of aviation equipment like the Boeing 747-8. However, the pending electrical readiness poses a significant risk as it is essential for the operation of hangar facilities, including lighting, maintenance equipment, and safety systems. Although regulatory approvals are in place, the lack of electrical readiness could delay operational readiness and affect the installation timeline.",
+      "recommendation": "Ensure that electrical infrastructure is fully operational and tested before accepting delivery. Confirm that all necessary hangar systems are powered and functional to support the aircraft's maintenance and operational needs.",
+      "metrics": {
+        "readiness_pct": 80,
+        "construction_pct": 100,
+        "predicted_delay_months": 2.0,
+        "delay_range": "1.5-3.0 months"
+      },
+      "tokens_in": 756,
+      "tokens_out": 308,
+      "time_ms": 3162.7,
+      "model": "gpt-4o-2024-08-06"
+    },
+    {
+      "agent": "Workforce Readiness Agent",
+      "status": "completed",
+      "risk_score": 30.0,
+      "risk_level": "LOW",
+      "findings": [
+        "There are more technicians available than required for the Boeing 747-8, indicating a surplus of personnel.",
+        "Training is included in the contract, which mitigates the risk of operational delays due to lack of trained personnel.",
+        "Regulatory approval status is approved, reducing the risk of compliance-related delays."
+      ],
+      "evidence": [
+        "technicians_available: 12",
+        "technicians_required: 10",
+        "training_included: true",
+        "regulatory_approval_status: Approved"
+      ],
+      "reasoning": "The procurement of a Boeing 747-8 is well-supported by the availability of more technicians than required, which suggests that staffing will not be a bottleneck. The inclusion of training in the contract further reduces operational risk, ensuring that personnel will be adequately prepared to operate and maintain the aircraft upon delivery. Regulatory approval is already secured, which is crucial for aviation assets. These factors collectively lower the risk of the asset being unusable on arrival.",
+      "recommendation": "Ensure that the training program is comprehensive and aligns with the specific requirements of the Boeing 747-8. Monitor the vendor's adherence to the delivery timeline to mitigate historical delays.",
+      "metrics": {
+        "staff_readiness_pct": 100,
+        "operator_gap": 0
+      },
+      "tokens_in": 665,
+      "tokens_out": 243,
+      "time_ms": 2748.7,
+      "model": "gpt-4o-2024-08-06"
+    },
+    {
+      "agent": "Financial Exposure Agent",
+      "status": "completed",
+      "risk_score": 65.0,
+      "risk_level": "HIGH",
+      "findings": [
+        "\u20b91700 Cr released as advance payment, representing 20% of the contract value.",
+        "\u20b9113.33 Cr potential idle cost due to a predicted 2-month delay.",
+        "\u20b918.89 Cr potential warranty erosion due to the delay."
+      ],
+      "evidence": [
+        "advance_cr = 8500.0 \u00d7 20.0 / 100 = 1700.0",
+        "idle_cost_cr = 8500.0 \u00d7 0.08 \u00d7 (2 / 12) = 113.33",
+        "warranty_loss_cr = 8500.0 \u00d7 (2 / 36) \u00d7 0.04 = 18.89",
+        "projected_loss_cr = 113.33 + 18.89 = 132.22",
+        "annual_idle_cost_cr = 8500.0 \u00d7 0.08 = 680.0"
+      ],
+      "reasoning": "The advance payment of \u20b91700 Cr exposes significant funds before the aircraft is operational, typical in aviation due to high customization and manufacturing lead times. The predicted 2-month delay incurs an idle cost of \u20b9113.33 Cr, reflecting the opportunity cost of the aircraft not being in service. Warranty erosion of \u20b918.89 Cr arises as the warranty period effectively shortens due to the delay. These factors highlight the financial exposure before the aircraft can generate value.",
+      "recommendation": "To mitigate financial risks, consider securing a performance bond or bank guarantee to cover potential losses from delays. Additionally, negotiate terms for partial payments tied to delivery milestones rather than upfront, and ensure comprehensive insurance coverage for the aircraft during the delay period.",
+      "metrics": {
+        "advance_cr": 1700.0,
+        "idle_cost_cr": 113.33,
+        "warranty_loss_cr": 18.89,
+        "projected_loss_cr": 132.22,
+        "annual_idle_cost_cr": 680.0
+      },
+      "tokens_in": 665,
+      "tokens_out": 426,
+      "time_ms": 3138.6,
+      "model": "gpt-4o-2024-08-06"
+    },
+    {
+      "agent": "Historical Intelligence Agent",
+      "status": "completed",
+      "risk_score": 65.0,
+      "risk_level": "HIGH",
+      "findings": [
+        "Historical projects show significant delays when infrastructure readiness is below 70%.",
+        "Projects with pending electrical readiness and incomplete construction have experienced delays and idle costs.",
+        "Vendor responsibility for installation without adequate infrastructure readiness has led to underutilization and warranty issues.",
+        "High capital investment projects with long lead times are prone to delays due to complex coordination requirements."
+      ],
+      "evidence": [
+        "AIIMS-MRI-2019: Equipment idle 9 months, warranty partially lost.",
+        "STATE-CT-2020: 7-month delay, underutilised for first year.",
+        "DISTRICT-LINAC-2018: 11-month delay, significant idle-cost exposure.",
+        "AIIMS-MRI-72CR-2017: Asset unused; landmark procurement failure."
+      ],
+      "reasoning": "The procurement of a Boeing 747-8 is complex due to its high capital investment and long lead times, similar to large medical equipment procurements. Historical data indicates that projects with infrastructure readiness below 70% at the time of delivery, such as pending electrical readiness, often face significant delays. The aviation category, characterized by limited suppliers and high customization, exacerbates these risks. The current procurement's electrical readiness is pending, which aligns with failure patterns seen in benchmark projects where infrastructure was not fully prepared, leading to delays and idle periods.",
+      "recommendation": "Ensure electrical readiness and complete construction before delivery. Implement a readiness check protocol similar to successful projects. Coordinate closely with the vendor to align installation timelines with infrastructure completion. Consider contingency plans for potential idle periods.",
+      "metrics": {
+        "avg_delay_months": 8.75,
+        "failure_probability_pct": 70,
+        "delay_probability_pct": 85,
+        "benchmark_ids": [
+          "AIIMS-MRI-2019",
+          "STATE-CT-2020",
+          "DISTRICT-LINAC-2018",
+          "AIIMS-MRI-72CR-2017"
+        ]
+      },
+      "tokens_in": 956,
+      "tokens_out": 429,
+      "time_ms": 4069.4,
+      "model": "gpt-4o-2024-08-06"
+    }
+  ],
+  "debate": [
+    {
+      "agent": "Infrastructure Agent",
+      "statements": [
+        "Facility readiness is only 100%.",
+        "Installation is impossible until civil and electrical works close.",
+        "Predicted installation delay: 1.5-3.0 months."
+      ]
+    },
+    {
+      "agent": "Contract Agent",
+      "statements": [
+        "Warranty begins at On Delivery.",
+        "Coverage loss is expected while the asset sits idle."
+      ]
+    },
+    {
+      "agent": "Financial Agent",
+      "statements": [
+        "\u20b91700.00 Crore released before a usable asset exists.",
+        "Projected loss of \u20b9132.22 Crore."
+      ]
+    },
+    {
+      "agent": "Workforce Agent",
+      "statements": [
+        "Staffing is adequate.",
+        "Equipment likely idle even after installation."
+      ]
+    },
+    {
+      "agent": "Historical Agent",
+      "statements": [
+        "Comparable projects averaged 8.75 months of delay.",
+        "Failure probability from precedent: 70%."
+      ]
+    }
+  ],
+  "scenarios": [
+    {
+      "name": "Best Case",
+      "timeline_months": 1.0,
+      "financial_impact_cr": 56.67,
+      "operational_impact": "Fast-tracked readiness; limited idle period and high eventual utilisation.",
+      "probability_pct": 17.0
+    },
+    {
+      "name": "Expected Case",
+      "timeline_months": 2.0,
+      "financial_impact_cr": 113.33,
+      "operational_impact": "Installation delayed pending civil, electrical and regulatory closure; asset idle through the gap.",
+      "probability_pct": 57.0
+    },
+    {
+      "name": "Worst Case",
+      "timeline_months": 3.2,
+      "financial_impact_cr": 181.33,
+      "operational_impact": "Prolonged idleness, warranty expiry before go-live and chronic underutilisation of the asset.",
+      "probability_pct": 32.0
+    }
+  ],
+  "generated_at": "2026-07-13T02:23:47.987122+00:00",
+  "run_id": "PM-028",
+  "created_at": "2026-07-13T02:23:47.989975+00:00",
+  "input": {
+    "procurement_name": "Boeing 747-8",
+    "equipment_type": "",
+    "contract_value_cr": 8500.0,
+    "advance_payment_pct": 20.0,
+    "delivery_timeline_months": 24.0,
+    "warranty_start": "On Delivery",
+    "installation_responsibility": "Vendor",
+    "training_included": true,
+    "construction_completion_pct": 100.0,
+    "electrical_readiness": "Pending",
+    "regulatory_approval_status": "Approved",
+    "technicians_available": 12,
+    "technicians_required": 10,
+    "historical_delays_months": [
+      3.0,
+      6.0
+    ],
+    "category": "aviation",
+    "item_research_context": "Procuring a Boeing 747-8 involves long lead times due to manufacturing and customization processes. Key considerations include regulatory approvals, pilot training, and maintenance contracts. The market is characterized by a limited number of suppliers and high capital investment.",
+    "extra_fields": {
+      "fleet_size": 120,
+      "dgca_approval_status": "Approved",
+      "mro_contract_included": true
+    }
+  }
+}

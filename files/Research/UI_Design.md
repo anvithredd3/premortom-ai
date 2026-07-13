@@ -128,18 +128,17 @@ The UI should show:
 
 This keeps the manually uploaded data path and generated data path aligned through the same `bids_database.csv` registry.
 
-### RFQ / Negotiation Guidance Page
+### RFQ Intake / Negotiation Guidance Page
 
-This new page supports the RFQ Intake and Negotiation UI Guidance Agent. It is
-part of the frontend experience, not a replacement for the Streamlit UI itself.
-It should sit beside the current `Screen 1 - Procurement Input` rather than
-modify that screen immediately.
+This page supports the RFQ Intake and Negotiation UI Guidance Agent. In the
+current Streamlit app it is the first screen, `1 · RFQ Intake`, and acts as the
+buyer-side value design workspace before vendor quote review.
 
 Primary modes:
 
 1. RFQ intake.
-   Help management, doctors, technicians, or procurement users define realistic
-   requirements before vendor quotes are submitted.
+   Help management, doctors, biomedical engineers, finance, and procurement
+   users define realistic requirements before vendor quotes are submitted.
 
 2. Vendor negotiation.
    Use ranked recommendations, Vendor Proposal Agent intelligence, and user
@@ -147,35 +146,46 @@ Primary modes:
 
 Inputs:
 
-- User role, such as management, doctor, technician, procurement, or finance.
-- Static expectation fields similar to the existing procurement input screen,
-  but representing buyer expectations instead of vendor proposal values.
-- Budget limit and budget tolerance.
-- Feature weights for clinical fit, total cost, service readiness, compliance,
-  implementation readiness, and strategic value.
-- Minimum cutoff criteria and negotiable criteria.
-- Free-text requirement, concern, or negotiation question.
+- Active chat role, such as management, doctor, biomedical engineer, finance, or
+  procurement officer.
+- RFQ name and equipment/service type.
+- Budget limit.
+- Chat-entered requirements with perspective role, priority, value percentage,
+  estimated cost, cost confidence, and source.
+- Accepted requirements in a role-grouped editable table.
 - Optional `bid_id` and `quote_id` so negotiation mode can load a Vendor
   Proposal Agent artifact.
 
 Frontend API call:
 
 ```text
+POST /rfq/publish
 POST /ui-guidance/rfq-negotiation
 ```
 
 The UI should display:
 
-- RFQ recommendations.
-- Missing or unclear inputs.
-- Suggested changes to static expectation values.
-- Tradeoffs between budget, features, service, and compliance.
-- Negotiation questions for the vendor.
-- Draft vendor clarification or negotiation message.
-- Source context showing which bid, quote, and proposal artifact were used.
+- Procurement Value Map: blue buyer-defined RFQ value polygon by role.
+- Cost Meter: blue accepted requirement cost, gray budget, and selected quote
+  cost when available.
+- Role chat with compact avatars.
+- Editable requirement table grouped by perspective role.
+- Publish status and database-backed RFQ id after successful publish.
+- After `2 · Vendor Procurement Input` completes a bid run, show the top two
+  Bid Recommender options below the value map.
+- Selecting one top option overlays a maroon quote-fit polygon on the value map
+  and a maroon quote-cost marker on the cost meter.
+- Provide a `Suggest Negotiation Change` action for the selected quote. It
+  should draft a negotiation suggestion into chat without changing accepted RFQ
+  requirements automatically.
 
 The UI should not silently change saved RFQ values. It should let the user review
 and accept recommendations before saving final criteria.
+
+The top-two quote overlay is a demo visualization bridge. It helps users see how
+vendor options compare against buyer-defined RFQ value, but it does not yet
+replace the Bid Recommender's current risk-based ranking with dynamic RFQ-aware
+scoring.
 
 ### Bid Run Screen
 

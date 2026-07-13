@@ -920,6 +920,12 @@ actual role polygon area / maximum outer polygon area
 
 - The maximum value is the polygon with every role vertex at 100.
 - The current value is the polygon generated from accepted requirements.
+- After a bid run completes from `2 · Vendor Procurement Input`, the RFQ page
+  can load the latest Bid Recommender result and show the top two ranked vendor
+  options below this map.
+- Selecting one top option overlays a maroon quote-fit polygon on top of the
+  blue RFQ value polygon. This is a demo visualization bridge, not final
+  RFQ-aware scoring.
 
 ### Cost Meter
 
@@ -928,6 +934,7 @@ actual role polygon area / maximum outer polygon area
 - The meter shows:
   - blue line/dot: actual known cost from accepted requirements
   - gray line/dot: proposed procurement budget
+  - maroon line/dot: selected recommended quote cost when a top quote is chosen
   - rupee labels only
 - The cost meter should not be described as total cost of ownership unless
   lifecycle costs are explicitly included.
@@ -954,6 +961,11 @@ actual role polygon area / maximum outer polygon area
   stakeholder perspectives are missing, or role coverage is very low.
 - A successful publish persists the RFQ session and accepted requirements to the
   database; session state only keeps the latest published response for the UI.
+- Adding or accepting a requirement in chat is not a database write. The
+  requirement is persisted only after the user clicks Publish.
+- Seeded/default requirements should be marked with their perspective role as
+  `entered_by_role` and a role-template cost source. Cost confidence remains
+  `unknown` for now, even when a demo template includes an estimated cost.
 
 ### Next Step: Vendor Publication
 
@@ -977,6 +989,13 @@ actual role polygon area / maximum outer polygon area
   conditions.
 - For the hackathon submission, keep showing the existing recommendation output
   while presenting the RFQ flow as the source of future RFQ-aware comparison.
+- Current UI bridge: show top two Bid Recommender options on RFQ Intake, allow
+  one selected quote, overlay maroon quote-fit on the value map, and show maroon
+  quote cost on the cost meter.
+- Add a `Suggest Negotiation Change` action for the selected top quote. The
+  action should draft a chat-visible negotiation suggestion, such as keeping
+  high-value AI requirements while requesting a discount or stronger warranty /
+  service terms. It should not mutate accepted RFQ requirements automatically.
 - Do not validate dynamic RFQ requirements against the old static sample winner.
   Add versioned RFQ scenarios, rubric checks, and metamorphic tests after the
   demo deadline.

@@ -25,3 +25,5 @@ PM-023,AIIMS MRI Scanner,MRI Machine,85.0,NO-GO,87.0,2026-07-10T19:14:06.791776+
 PM-024,AIIMS MRI Scanner,MRI Machine,86.0,NO-GO,88.0,2026-07-12T17:45:37.112873+00:00,files/output/premortem_runs/PM-024/report.json
 PM-025,AIIMS MRI Scanner,MRI Machine,86.0,NO-GO,88.0,2026-07-12T19:01:26.419967+00:00,files/output/premortem_runs/PM-025/report.json
 PM-026,AIIMS MRI Scanner,MRI Machine,85.0,NO-GO,87.0,2026-07-13T01:16:15.729493+00:00,files/output/premortem_runs/PM-026/report.json
+PM-027,Boeing 747-8,Aircraft,64.0,NO-GO,71.0,2026-07-13T01:59:50.379368+00:00,files/output/premortem_runs/PM-027/report.json
+PM-028,Boeing 747-8,,46.0,GO WITH CONDITIONS,57.0,2026-07-13T02:23:47.989975+00:00,files/output/premortem_runs/PM-028/report.json
