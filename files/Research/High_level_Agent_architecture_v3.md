@@ -304,6 +304,20 @@ method is to use versioned RFQ snapshots, scenario-specific quote sets, and
 rubric/metamorphic tests instead of reusing a static winner label after the RFQ
 requirements change.
 
+The current frontend bridge shows this loop visually on `1 · RFQ Intake` after
+`2 · Vendor Procurement Input` completes a bid run:
+
+- Load the latest Bid Recommender result from the active bid run.
+- Show the top two ranked vendor options below the RFQ value map.
+- Let the user select one option for comparison.
+- Overlay the selected quote as a maroon value-fit polygon on top of the blue
+  buyer-defined RFQ value polygon.
+- Add a maroon quote-cost marker to the cost meter, alongside blue accepted RFQ
+  requirement cost and gray budget.
+
+This overlay is a demo visualization bridge. It does not yet replace the
+current recommender ranking with dynamic RFQ-aware scoring.
+
 Important data model distinction:
 
 ```text

@@ -145,6 +145,7 @@ def run_bid_evaluation(run_id: str, bid_id: str, quote_ids: List[str]) -> None:
             pdf_path = input_bids.SAMPLES_DIR / quote["pdf_path"]
             content = pdf_path.read_bytes()
             text = document_parser.extract_text(pdf_path.name, content)
+            extracted_fields = document_parser.extract_fields(text)
             vendor_proposals.append(
                 vendor_proposal_agent.analyze_quote(
                     quote=quote,
@@ -189,6 +190,7 @@ def run_bid_evaluation(run_id: str, bid_id: str, quote_ids: List[str]) -> None:
                 "risk_level": result.risk_level.value,
                 "findings": result.findings,
                 "recommendation": result.recommendation,
+                "contract_value_cr": extracted_fields.get("contract_value_cr"),
             }
             reviews.append(review)
             bid_outputs.write_contract_reviews(run_id, reviews)

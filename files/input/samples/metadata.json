@@ -8,7 +8,7 @@
     "pdf_base_url": "",
     "currency": "INR Crore",
     "new_bids_generated": 1,
-    "num_samples": 5,
+    "num_samples": 7,
     "new_samples_generated": 5
   },
   "criteria": [
@@ -311,20 +311,95 @@
           "weighted_decision_score": 75.65,
           "pdf_path": "bids/BID-001/BID-001-Q05.pdf",
           "pdf_url": ""
+        },
+        {
+          "quote_id": "BID-001-Q06",
+          "vendor_name": "ApexCura Imaging Systems",
+          "company_legal_name": "ApexCura Imaging Systems Private Limited",
+          "equipment_type": "MRI Machine",
+          "procurement_name": "MRI System",
+          "contract_value_cr": 18.9,
+          "delivery_timeline_months": 4.0,
+          "advance_payment_pct": 10,
+          "warranty_start": "On Commissioning",
+          "installation_responsibility": "Vendor",
+          "training_included": true,
+          "vendor_type": "international_premium_brand",
+          "vendor_type_label": "International premium brand",
+          "archetype": "rfq_value_winner",
+          "format_variation": "complete",
+          "weighted_decision_score": 96.0,
+          "criteria_scores": {
+            "clinical_fit": 96,
+            "total_cost_of_ownership": 88,
+            "service_maintenance_readiness": 96,
+            "infrastructure_workforce_readiness": 92,
+            "training_workforce_readiness": 96,
+            "strategic_business_value": 96,
+            "vendor_reliability": 94,
+            "financial_terms": 91,
+            "brand_market_acceptance": 93,
+            "regulatory_compliance": 96
+          },
+          "compliance_claims": [
+            "IEC 60601",
+            "ISO 13485",
+            "Local regulatory approval"
+          ],
+          "page_count_hint": 18,
+          "pdf_path": "bids/BID-001/BID-001-Q06.pdf",
+          "pdf_url": ""
+        },
+        {
+          "quote_id": "BID-001-Q07",
+          "vendor_name": "ValueMed Diagnostics",
+          "company_legal_name": "ValueMed Diagnostics Private Limited",
+          "equipment_type": "MRI Machine",
+          "procurement_name": "MRI System",
+          "contract_value_cr": 17.6,
+          "delivery_timeline_months": 4.5,
+          "advance_payment_pct": 25,
+          "warranty_start": "On Installation",
+          "installation_responsibility": "Shared",
+          "training_included": true,
+          "vendor_type": "local_supplier_strong_support",
+          "vendor_type_label": "Local supplier with strong support",
+          "archetype": "rfq_lower_cost_comparator",
+          "format_variation": "service_heavy",
+          "weighted_decision_score": 78.0,
+          "criteria_scores": {
+            "clinical_fit": 78,
+            "total_cost_of_ownership": 70,
+            "service_maintenance_readiness": 78,
+            "infrastructure_workforce_readiness": 74,
+            "training_workforce_readiness": 78,
+            "strategic_business_value": 78,
+            "vendor_reliability": 76,
+            "financial_terms": 73,
+            "brand_market_acceptance": 75,
+            "regulatory_compliance": 78
+          },
+          "compliance_claims": [
+            "IEC 60601",
+            "ISO 13485"
+          ],
+          "page_count_hint": 11,
+          "pdf_path": "bids/BID-001/BID-001-Q07.pdf",
+          "pdf_url": ""
         }
       ],
       "ground_truth": {
-        "top_1": "BID-001-Q04",
+        "top_1": "BID-001-Q06",
         "top_2": [
+          "BID-001-Q06",
+          "BID-001-Q04"
+        ],
+        "top_3": [
+          "BID-001-Q06",
           "BID-001-Q04",
           "BID-001-Q02"
         ],
-        "top_3": [
-          "BID-001-Q04",
-          "BID-001-Q02",
-          "BID-001-Q05"
-        ],
-        "notes": "Ground truth is based on weighted criteria score with guardrail-sensitive synthetic quote generation. Human review can replace this label for real datasets."
+        "notes": "Ground truth is based on the current static weighted criteria. Dynamic RFQ-specific validation remains a post-demo evaluation task."
       }
     }
   ]

@@ -12,6 +12,10 @@ import csv
 import json
 import math
 import random
+import shutil
+import subprocess
+import tempfile
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
@@ -123,7 +127,13 @@ def build_quote_text(
 
 
 def write_pdf(path: Path, title: str, body: str) -> None:
-    A4, get_styles, Paragraph, SimpleDocTemplate, Spacer = require_reportlab()
+    try:
+        A4, get_styles, Paragraph, SimpleDocTemplate, Spacer = require_reportlab()
+    except SystemExit:
+        if _write_libreoffice_pdf(path, title, body):
+            return
+        _write_simple_pdf(path, title, body)
+        return
     path.parent.mkdir(parents=True, exist_ok=True)
     styles = get_styles()
     doc = SimpleDocTemplate(str(path), pagesize=A4, title=title)
@@ -132,6 +142,349 @@ def write_pdf(path: Path, title: str, body: str) -> None:
         story.append(Paragraph(para.replace("\n", "<br/>"), styles["BodyText"]))
         story.append(Spacer(1, 8))
     doc.build(story)
+
+
+def _write_libreoffice_pdf(path: Path, title: str, body: str) -> bool:
+    soffice = shutil.which("libreoffice") or shutil.which("soffice")
+    if not soffice:
+        return False
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with tempfile.TemporaryDirectory() as tmp:
+        tmp_path = Path(tmp)
+        source = tmp_path / f"{path.stem}.txt"
+        source.write_text(f"{title}\n\n{body}\n", encoding="utf-8")
+        result = subprocess.run(
+            [
+                soffice,
+                "--headless",
+                "--convert-to",
+                "pdf",
+                "--outdir",
+                str(tmp_path),
+                str(source),
+            ],
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+            check=False,
+        )
+        converted = tmp_path / f"{path.stem}.pdf"
+        if result.returncode != 0 or not converted.exists():
+            return False
+        shutil.copyfile(converted, path)
+        return True
+
+
+def _write_simple_pdf(path: Path, title: str, body: str) -> None:
+    """Write a dependency-free, text-only PDF sufficient for parser demos."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    lines = [title, ""] + _wrap_pdf_lines(body)
+    content_lines = ["BT", "/F1 10 Tf", "50 790 Td", "14 TL"]
+    for line in lines[:52]:
+        content_lines.append(f"({_escape_pdf_text(line)}) Tj")
+        content_lines.append("T*")
+    content_lines.append("ET")
+    stream = "\n".join(content_lines).encode("latin-1", errors="replace")
+    objects = [
+        b"<< /Type /Catalog /Pages 2 0 R >>",
+        b"<< /Type /Pages /Kids [3 0 R] /Count 1 >>",
+        b"<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 4 0 R >> >> /Contents 5 0 R >>",
+        b"<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>",
+        b"<< /Length " + str(len(stream)).encode("ascii") + b" >>\nstream\n" + stream + b"\nendstream",
+    ]
+    pdf = bytearray(b"%PDF-1.4\n")
+    offsets = [0]
+    for idx, obj in enumerate(objects, start=1):
+        offsets.append(len(pdf))
+        pdf.extend(f"{idx} 0 obj\n".encode("ascii"))
+        pdf.extend(obj)
+        pdf.extend(b"\nendobj\n")
+    xref_at = len(pdf)
+    pdf.extend(f"xref\n0 {len(objects) + 1}\n".encode("ascii"))
+    pdf.extend(b"0000000000 65535 f \n")
+    for offset in offsets[1:]:
+        pdf.extend(f"{offset:010d} 00000 n \n".encode("ascii"))
+    pdf.extend(
+        (
+            f"trailer\n<< /Size {len(objects) + 1} /Root 1 0 R >>\n"
+            f"startxref\n{xref_at}\n%%EOF\n"
+        ).encode("ascii")
+    )
+    path.write_bytes(bytes(pdf))
+
+
+def _wrap_pdf_lines(text: str, width: int = 88) -> list[str]:
+    lines: list[str] = []
+    for para in text.split("\n\n"):
+        words = para.replace("\n", " ").split()
+        current: list[str] = []
+        for word in words:
+            if sum(len(item) + 1 for item in current) + len(word) > width:
+                lines.append(" ".join(current))
+                current = [word]
+            else:
+                current.append(word)
+        if current:
+            lines.append(" ".join(current))
+        lines.append("")
+    return lines
+
+
+def _escape_pdf_text(text: str) -> str:
+    return text.replace("\\", "\\\\").replace("(", "\\(").replace(")", "\\)")
+
+
+def write_demo_rfq_responses(output_dir: Path, bid_id: str = "BID-001") -> None:
+    """Write two curated MRI RFQ response PDFs for the RFQ-value demo loop."""
+    bid_dir = output_dir / "bids" / bid_id
+    quotes = [
+        {
+            "quote_id": f"{bid_id}-Q06",
+            "vendor_name": "ApexCura Imaging Systems",
+            "company_legal_name": "ApexCura Imaging Systems Private Limited",
+            "equipment_type": "MRI Machine",
+            "procurement_name": "MRI System",
+            "contract_value_cr": 18.90,
+            "delivery_timeline_months": 4.0,
+            "advance_payment_pct": 10,
+            "warranty_start": "On Commissioning",
+            "installation_responsibility": "Vendor",
+            "training_included": True,
+            "vendor_type": "international_premium_brand",
+            "vendor_type_label": "International premium brand",
+            "archetype": "rfq_value_winner",
+            "format_variation": "complete",
+            "weighted_decision_score": 96.0,
+            "criteria_scores": _demo_criteria_scores(96),
+            "compliance_claims": ["IEC 60601", "ISO 13485", "Local regulatory approval"],
+            "page_count_hint": 18,
+            "body": _demo_top_quote_text(f"{bid_id}-Q06"),
+        },
+        {
+            "quote_id": f"{bid_id}-Q07",
+            "vendor_name": "ValueMed Diagnostics",
+            "company_legal_name": "ValueMed Diagnostics Private Limited",
+            "equipment_type": "MRI Machine",
+            "procurement_name": "MRI System",
+            "contract_value_cr": 17.60,
+            "delivery_timeline_months": 4.5,
+            "advance_payment_pct": 25,
+            "warranty_start": "On Installation",
+            "installation_responsibility": "Shared",
+            "training_included": True,
+            "vendor_type": "local_supplier_strong_support",
+            "vendor_type_label": "Local supplier with strong support",
+            "archetype": "rfq_lower_cost_comparator",
+            "format_variation": "service_heavy",
+            "weighted_decision_score": 78.0,
+            "criteria_scores": _demo_criteria_scores(78),
+            "compliance_claims": ["IEC 60601", "ISO 13485"],
+            "page_count_hint": 11,
+            "body": _demo_comparator_quote_text(f"{bid_id}-Q07"),
+        },
+    ]
+    for quote in quotes:
+        pdf_path = bid_dir / f"{quote['quote_id']}.pdf"
+        write_pdf(pdf_path, f"{quote['quote_id']} Vendor RFQ Response", quote["body"])
+        quote["pdf_path"] = f"bids/{bid_id}/{quote['quote_id']}.pdf"
+        quote["pdf_url"] = ""
+        quote["original_filename"] = f"{quote['quote_id']}.pdf"
+    _upsert_bids_database(output_dir / "bids_database.csv", bid_id, quotes)
+    _upsert_demo_metadata(output_dir, bid_id, quotes)
+    print(f"Wrote {len(quotes)} curated RFQ response PDFs to {bid_dir}")
+    print(f"Registered {', '.join(quote['quote_id'] for quote in quotes)} in {output_dir / 'bids_database.csv'}")
+
+
+def _demo_criteria_scores(base: int) -> dict[str, int]:
+    return {
+        "clinical_fit": base,
+        "total_cost_of_ownership": max(0, base - 8),
+        "service_maintenance_readiness": base,
+        "infrastructure_workforce_readiness": max(0, base - 4),
+        "training_workforce_readiness": base,
+        "strategic_business_value": base,
+        "vendor_reliability": max(0, base - 2),
+        "financial_terms": max(0, base - 5),
+        "brand_market_acceptance": max(0, base - 3),
+        "regulatory_compliance": base,
+    }
+
+
+def _demo_top_quote_text(quote_id: str) -> str:
+    return "\n\n".join(
+        [
+            f"Vendor Quote: {quote_id}",
+            "Vendor: ApexCura Imaging Systems (Premium integrated MRI and AI diagnostics supplier)",
+            "Legal Entity: ApexCura Imaging Systems Private Limited",
+            "Registered Address: 402 Medical Technology Park, Bengaluru, India",
+            "Contact: Dr. Meera Shah, rfq-response@apexcura.example, +91-98765-21045",
+            "Company Profile: 18 years in operation, 52 similar hospital MRI installations, local service offices in Mumbai, Pune, Bengaluru, Delhi, and Hyderabad.",
+            "Procurement: MRI System - MRI Machine",
+            "Commercial Offer: INR 18.90 Cr total package price. This is higher than the base budget because it includes AI-based organ coloring, AI-based infected tissue detection support, scan calibration/focus control, installation, commissioning, and a five-year uptime-backed service plan. A negotiation discount of INR 0.20 Cr is offered if the buyer confirms AI-based organ coloring and infection-detection workflow as accepted RFQ value items during technical negotiation.",
+            "Advance Payment and Security: 10% advance payment against bank guarantee. 20% on delivery to site, 40% after installation and commissioning, 20% after acceptance testing, and 10% retention released after 90 days of successful operation.",
+            "Delivery and Warranty: Delivery in 4.0 months. Warranty starts on commissioning and buyer acceptance, not delivery. Full warranty duration is 36 months after acceptance.",
+            "Installation Responsibility: Vendor owns delivery coordination, installation, commissioning, calibration, acceptance testing, and handover. Buyer dependencies are limited to civil readiness, power availability, and site access dates agreed in the installation plan.",
+            "Clinical Capability: Includes core MRI imaging capability, scan calibration/focus control, patient throughput workflow, AI-based organ coloring/marking, AI-based infected tissue detection assistance, artifact flagging, and radiology workflow export. AI outputs are decision support only and must remain under doctor review.",
+            "Training and Handover: Training included for radiologists, MRI technicians, biomedical engineers, and administrators. Includes five onsite sessions, competency checklist, completion certificates, operating SOPs, preventive maintenance handover, and emergency escalation workflow.",
+            "Service Support: 12-hour response target, 48-hour resolution target for critical failures, 98% uptime commitment excluding force majeure and buyer-caused downtime, local service team, spare-parts buffer in India, quarterly preventive maintenance, escalation matrix, and service-credit remedy for missed SLA.",
+            "Compliance Claims: IEC 60601, ISO 13485, local regulatory approval, cybersecurity hardening note, DICOM workflow support, audit logs for AI module usage, and validation documentation available during technical evaluation.",
+            "Acceptance Criteria: Site acceptance test, image-quality phantom test, commissioning report, AI workflow demonstration, uptime monitoring setup, training completion evidence, and signed buyer acceptance are required before final payment milestone.",
+            "RFQ Requirement Coverage Statement: The vendor confirms coverage of high-value doctor requirements for MRI function, scan focus control, AI organ coloring, AI infected tissue detection, and patient workflow; biomedical engineering requirements for installation, commissioning, SLA, spares, maintenance, training, and handover; finance requirements for payment milestones, TCO visibility, AMC/CMC separation, and software subscription disclosure; procurement requirements for measurable delivery, warranty, vendor obligations, and comparable quote format.",
+            "Commercial Note: The quoted price is deliberately not the lowest offer. The vendor believes the added clinical AI features, commissioning-linked warranty, secured payment structure, and enforceable service plan provide higher buyer value and lower execution risk.",
+        ]
+    )
+
+
+def _demo_comparator_quote_text(quote_id: str) -> str:
+    return "\n\n".join(
+        [
+            f"Vendor Quote: {quote_id}",
+            "Vendor: ValueMed Diagnostics (Value-oriented MRI supplier)",
+            "Legal Entity: ValueMed Diagnostics Private Limited",
+            "Registered Address: 77 Healthcare Plaza, Pune, India",
+            "Contact: Rohan Mehta, sales@valuemed.example, +91-91234-55770",
+            "Company Profile: 9 years in operation, 17 similar hospital references, local support partner in Pune and Mumbai.",
+            "Procurement: MRI System - MRI Machine",
+            "Commercial Offer: INR 17.60 Cr base package price. Price includes MRI hardware, delivery, basic installation support, standard warranty, and first-year preventive maintenance. AI-based organ coloring and infected tissue detection are not included in the base price and are available only as future paid software options.",
+            "Advance Payment and Security: 25% advance payment. 35% on delivery, 30% after installation, and 10% after acceptance. Bank guarantee is available for the advance but must be requested in the purchase order.",
+            "Delivery and Warranty: Delivery in 4.5 months. Warranty starts on installation. Warranty duration is 24 months.",
+            "Installation Responsibility: Vendor provides installation supervision and commissioning support. Buyer is responsible for site readiness, electrical readiness, shielding readiness, and local rigging support.",
+            "Clinical Capability: Includes core MRI imaging, routine scan protocols, and standard radiology workflow export. Does not include AI organ coloring, AI infected tissue detection, or advanced artifact detection in the base quote.",
+            "Training and Handover: Training included for MRI technicians and biomedical engineering users. Radiologist workflow training is optional and separately quoted. Training plan gives two onsite sessions but does not define competency evidence.",
+            "Service Support: 24-hour response target, local service partner, annual preventive maintenance, and spare-parts support subject to availability. No explicit resolution-time target, uptime commitment, service credits, or remedy for missed SLA is stated.",
+            "Compliance Claims: IEC 60601 and ISO 13485 claimed. Local regulatory approval documentation will be submitted before final technical evaluation.",
+            "Acceptance Criteria: Installation report and basic image-quality demonstration are included. AI workflow demonstration is not applicable because AI modules are not included.",
+            "RFQ Requirement Coverage Statement: The vendor covers core MRI imaging and basic delivery obligations at a lower price, but clinical AI requirements, commissioning-linked warranty, detailed service remedies, and full lifecycle software disclosure require negotiation or add-on pricing.",
+            "Commercial Note: This quote is positioned as a lower-cost alternative. It may be suitable if the buyer reduces clinical AI value weighting or treats AI organ coloring and infected tissue detection as optional future modules.",
+        ]
+    )
+
+
+def _upsert_bids_database(path: Path, bid_id: str, quotes: list[dict[str, str]]) -> None:
+    fieldnames = [
+        "bid_id",
+        "quote_id",
+        "vendor_name",
+        "equipment_type",
+        "procurement_name",
+        "source",
+        "status",
+        "pdf_path",
+        "original_filename",
+        "created_at",
+        "updated_at",
+    ]
+    existing: list[dict[str, str]] = []
+    if path.exists():
+        with path.open("r", newline="", encoding="utf-8") as f:
+            reader = csv.DictReader(f)
+            existing = list(reader)
+    now = datetime.now(timezone.utc).isoformat()
+    skip_quote_ids = {quote["quote_id"] for quote in quotes}
+    rows = [
+        row for row in existing
+        if not (row.get("bid_id") == bid_id and row.get("quote_id") in skip_quote_ids)
+    ]
+    for quote in quotes:
+        rows.append(
+            {
+                "bid_id": bid_id,
+                "quote_id": quote["quote_id"],
+                "vendor_name": quote["vendor_name"],
+                "equipment_type": quote["equipment_type"],
+                "procurement_name": quote["procurement_name"],
+                "source": "synthetic_rfq_response",
+                "status": "ready",
+                "pdf_path": quote["pdf_path"],
+                "original_filename": quote["original_filename"],
+                "created_at": now,
+                "updated_at": now,
+            }
+        )
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=fieldnames)
+        writer.writeheader()
+        writer.writerows(rows)
+
+
+def _upsert_demo_metadata(output_dir: Path, bid_id: str, quotes: list[dict[str, Any]]) -> None:
+    metadata_path = output_dir / "metadata.json"
+    config = load_json(Path("files/input/criteria.json"))
+    if metadata_path.exists():
+        metadata = load_json(metadata_path)
+    else:
+        metadata = {
+            "experiment": config["experiment"],
+            "criteria": config["weighted_decision_criteria"],
+            "guardrails": config["guardrails"],
+            "bids": [],
+        }
+    bids = metadata.setdefault("bids", [])
+    bid = next((item for item in bids if item.get("bid_id") == bid_id), None)
+    if bid is None:
+        bid = {
+            "bid_id": bid_id,
+            "procurement_name": "MRI System",
+            "equipment_type": "MRI Machine",
+            "hospital_context": {
+                "hospital_type": "medium_hospital",
+                "city_tier": "tier_2",
+                "construction_completion_pct": 60,
+                "electrical_readiness": "Pending",
+                "regulatory_approval_status": "Pending",
+                "technicians_available": 0,
+                "technicians_required": 6,
+                "historical_delays_months": [8.0, 11.0, 7.0],
+            },
+            "published_bid_criteria": {
+                "contract_value_expected_cr": 18.0,
+                "delivery_timeline_expected_months": 4.0,
+                "warranty_start_preference": "On Commissioning",
+                "installation_responsibility_preference": "Vendor",
+                "compliance_required": ["IEC 60601", "ISO 13485"],
+                "training_required": True,
+            },
+            "quotes": [],
+        }
+        bids.append(bid)
+    existing = [
+        quote for quote in bid.get("quotes", [])
+        if quote.get("quote_id") not in {item["quote_id"] for item in quotes}
+    ]
+    sanitized_quotes = []
+    for quote in quotes:
+        sanitized = {key: value for key, value in quote.items() if key not in {"body", "original_filename"}}
+        sanitized_quotes.append(sanitized)
+    bid["quotes"] = existing + sanitized_quotes
+    _refresh_bid_ground_truth(bid)
+    metadata["experiment"] = {
+        **metadata.get("experiment", {}),
+        "num_bids": len(bids),
+        "num_samples": sum(len(item.get("quotes", [])) for item in bids),
+    }
+    write_json(metadata_path, metadata)
+    write_manifest(output_dir, bids)
+    write_dataset(output_dir, bids)
+    write_coverage(output_dir, config, bids)
+
+
+def _refresh_bid_ground_truth(bid: dict[str, Any]) -> None:
+    ranked = sorted(
+        bid.get("quotes", []),
+        key=lambda quote: float(quote.get("weighted_decision_score") or 0),
+        reverse=True,
+    )
+    if not ranked:
+        return
+    bid["ground_truth"] = {
+        "top_1": ranked[0]["quote_id"],
+        "top_2": [quote["quote_id"] for quote in ranked[:2]],
+        "top_3": [quote["quote_id"] for quote in ranked[:3]],
+        "notes": (
+            "Ground truth is based on the current static weighted criteria. "
+            "Dynamic RFQ-specific validation remains a post-demo evaluation task."
+        ),
+    }
 
 
 def make_vendor_name(rng: random.Random, vendor_type: str, index: int) -> str:
@@ -675,7 +1028,16 @@ def main() -> None:
         action="store_true",
         help="Rebuild manifest.csv, dataset.csv, and coverage.csv from existing metadata.json.",
     )
+    parser.add_argument(
+        "--demo-rfq-responses",
+        action="store_true",
+        help="Write curated BID-001-Q06/Q07 MRI RFQ response PDFs and register them.",
+    )
     args = parser.parse_args()
+
+    if args.demo_rfq_responses:
+        write_demo_rfq_responses(args.output)
+        return
 
     config = load_json(args.criteria)
     if args.from_metadata:

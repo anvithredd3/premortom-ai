@@ -54,6 +54,8 @@ def publish_rfq(payload: dict[str, Any]) -> dict[str, Any]:
             cur.execute("DELETE FROM rfq_requirements WHERE rfq_id = %s", (rfq_id,))
             for index, req in enumerate(requirements, start=1):
                 requirement_id = str(req.get("id") or f"REQ-{index:03d}")
+                perspective_role = str(req.get("role") or req.get("perspective_role") or "")
+                entered_by_role = str(req.get("entered_by_role") or perspective_role)
                 cur.execute(
                     """
                     INSERT INTO rfq_requirements (
@@ -76,8 +78,8 @@ def publish_rfq(payload: dict[str, Any]) -> dict[str, Any]:
                     (
                         requirement_id,
                         rfq_id,
-                        str(req.get("entered_by_role") or ""),
-                        str(req.get("role") or req.get("perspective_role") or ""),
+                        entered_by_role,
+                        perspective_role,
                         str(req.get("requirement") or ""),
                         int(req.get("priority_rank") or 0),
                         float(req.get("perspective_value_pct") or 0),

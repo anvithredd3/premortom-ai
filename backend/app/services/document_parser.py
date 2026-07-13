@@ -57,7 +57,10 @@ def extract_fields(text: str) -> Dict[str, object]:
 
     low = text.lower()
 
-    m = re.search(r"(?:contract value|value)[^\d]{0,20}([\d,.]+)\s*(?:cr|crore)", low)
+    m = re.search(
+        r"(?:contract value|commercial offer|quoted price|package price|total package price|value)[^\d]{0,30}([\d,.]+)\s*(?:cr|crore)",
+        low,
+    )
     if m:
         try:
             out["contract_value_cr"] = float(m.group(1).replace(",", ""))
