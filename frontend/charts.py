@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 from typing import List
+import math
 
 import plotly.graph_objects as go
 
@@ -11,6 +12,18 @@ RISK_COLORS = {
     "MODERATE": "#eab308",
     "HIGH": "#f97316",
     "CRITICAL": "#dc2626",
+}
+
+ROLE_COLORS = {
+    "management": "#334155",
+    "doctor": "#2563eb",
+    "biomedical_engineer": "#16a34a",
+    "finance": "#d97706",
+    "procurement_officer": "#7c3aed",
+    "it": "#0891b2",
+    "compliance_legal": "#be123c",
+    "operations": "#ea580c",
+    "patient_user": "#0d9488",
 }
 
 
@@ -163,3 +176,150 @@ def whatif_curve(delays: List[float], losses: List[float]) -> go.Figure:
         margin=dict(l=10, r=10, t=50, b=10),
     )
     return fig
+
+
+def rfq_radial_requirement_map(requirements: List[dict]) -> go.Figure:
+    """Show role-level value coverage as a clean radar map."""
+    roles = list(ROLE_COLORS.keys())[:5]
+    values_by_role = {role: 0.0 for role in roles}
+    counts_by_role = {role: 0 for role in roles}
+    for req in requirements:
+        role = req.get("role", "management")
+        if role not in values_by_role:
+            continue
+        values_by_role[role] += float(req.get("perspective_value_pct") or 0)
+        counts_by_role[role] += 1
+
+    labels = [_role_label(role) for role in roles]
+    values = [min(100, values_by_role[role]) for role in roles]
+    hover = [
+        f"{label}<br>Value coverage: {value:.0f}%<br>Requirements: {counts_by_role[role]}"
+        for label, value, role in zip(labels, values, roles)
+    ]
+    fig = go.Figure(
+        go.Scatterpolar(
+            r=values + [values[0]],
+            theta=labels + [labels[0]],
+            fill="toself",
+            mode="lines",
+            line_color="#2563eb",
+            fillcolor="rgba(37,99,235,0.20)",
+            hovertext=hover + [hover[0]],
+            hoverinfo="text",
+        )
+    )
+    fig.update_layout(
+        title=dict(text="Procurement Value Map", font=dict(size=14)),
+        polar=dict(
+            radialaxis=dict(
+                visible=True,
+                range=[0, 100],
+                tickfont=dict(size=12),
+            ),
+            angularaxis=dict(tickfont=dict(size=13)),
+        ),
+        height=380,
+        margin=dict(l=20, r=20, t=50, b=20),
+        showlegend=False,
+        font=dict(size=13),
+    )
+    return fig
+
+
+def rfq_cost_confidence_meter(requirements: List[dict], device_cost_cr: float) -> go.Figure:
+    """Vertical overlapped cost meter: budget range with actual cost marker."""
+    known = [
+        req for req in requirements
+        if req.get("estimated_cost_cr") not in (None, "", 0)
+    ]
+    actual_cost = sum(float(req.get("estimated_cost_cr") or 0) for req in known)
+    budget_cost = float(device_cost_cr or 0)
+    max_cost = max(budget_cost, actual_cost, 1)
+    fig = go.Figure()
+    fig.add_shape(
+        type="line",
+        x0=0.5,
+        x1=0.5,
+        y0=0,
+        y1=budget_cost,
+        line=dict(color="#cbd5e1", width=9),
+    )
+    fig.add_shape(
+        type="line",
+        x0=0.5,
+        x1=0.5,
+        y0=0,
+        y1=actual_cost,
+        line=dict(color="#2563eb", width=9),
+    )
+    fig.add_trace(
+        go.Scatter(
+            x=[0.5, 0.5],
+            y=[actual_cost, budget_cost],
+            mode="markers+text",
+            marker=dict(
+                color=["#2563eb", "#94a3b8"],
+                size=[22, 18],
+                line=dict(color="#ffffff", width=3),
+            ),
+            text=[f"₹{actual_cost:.1f}", f"₹{budget_cost:.1f}"],
+            textposition=["middle right", "top center"],
+            hovertext=[
+                f"Actual costed requirements<br>₹{actual_cost:.2f} Cr",
+                f"Budget / max cost<br>₹{budget_cost:.2f} Cr",
+            ],
+            hoverinfo="text",
+            showlegend=False,
+        )
+    )
+    fig.update_layout(
+        title=dict(text="Cost Meter", font=dict(size=16), x=0.5, xanchor="center"),
+        yaxis=dict(
+            range=[0, max_cost * 1.2],
+            visible=False,
+        ),
+        xaxis=dict(
+            range=[0, 1],
+            visible=True,
+            showticklabels=False,
+            ticks="",
+            title=dict(text="Rs Crores", font=dict(size=12)),
+            showline=False,
+            zeroline=False,
+            showgrid=False,
+        ),
+        height=300,
+        margin=dict(l=0, r=8, t=44, b=34),
+        showlegend=False,
+        font=dict(size=12),
+        annotations=[
+            dict(
+                x=0.5,
+                y=0,
+                text="₹0",
+                showarrow=False,
+                yshift=-12,
+                font=dict(size=12, color="#64748b"),
+            )
+        ],
+    )
+    return fig
+
+
+def _role_label(role: str) -> str:
+    return str(role).replace("_", " ").title()
+
+
+def _polygon_area_pct(values: List[float]) -> float:
+    if len(values) < 3:
+        return 0.0
+    theta = (2 * math.pi) / len(values)
+    area = 0.0
+    max_area = 0.0
+    for idx, value in enumerate(values):
+        next_value = values[(idx + 1) % len(values)]
+        area += value * next_value * math.sin(theta) / 2
+        max_area += 100 * 100 * math.sin(theta) / 2
+    if max_area <= 0:
+        return 0.0
+    return max(0.0, min(100.0, (area / max_area) * 100))

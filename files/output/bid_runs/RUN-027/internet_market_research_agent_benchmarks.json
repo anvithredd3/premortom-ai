@@ -2,37 +2,183 @@
   "run_id": "RUN-027",
   "market_research": {
     "provider": "openai_web_search",
-    "status": "skipped",
-    "retrieved_at": "2026-07-09T15:18:36.267922+00:00",
-    "equipment_type": "",
+    "retrieved_at": "2026-07-09T16:25:19.862088+00:00",
+    "equipment_type": "MRI Machine",
     "market_price_range": {
-      "summary": "",
+      "summary": "Public web sources found are not sufficient to establish a reliable current market price range for a new MRI system in the exact bid configuration. The bid quotes provided span roughly INR 13.76 Cr to INR 18.32 Cr, but those are bid-specific offers rather than market proof. Public manufacturer pages confirm that MRI systems are sold with service/training/warranty variations, and refurbished systems are marketed as lower-cost alternatives, but they do not provide a comparable current list price for a like-for-like new MRI system. Use the bid quotes as the primary commercial benchmark and treat any public web price inference as low-confidence context only.",
       "confidence": "low",
-      "sources": []
+      "sources": [
+        {
+          "url": "https://www.usa.philips.com/healthcare/refurbished-systems/refurbished-mri-systems",
+          "note": "Refurbished MRI systems marketed as a lower-cost alternative; no exact price list."
+        },
+        {
+          "url": "https://www.gehealthcare.com/en-us/products/goldseal-systems",
+          "note": "Refurbished MRI systems with warranty/training positioning; no exact price list."
+        },
+        {
+          "url": "https://www.usa.philips.com/healthcare/diagnostic-imaging/magnetic-resonance-imaging/mri-upgrades",
+          "note": "Upgrade positioning and downtime context; not a system price benchmark."
+        }
+      ]
     },
-    "typical_terms": {},
+    "typical_terms": {
+      "delivery_timeline": "Unknown from reliable public benchmark sources for this exact MRI configuration. The bid quotes indicate delivery windows around 3.7 to 5.7 months, which is plausible as bid context but not validated market norm.",
+      "advance_payment": "Unknown as a market norm from reliable public sources. The bid quotes show very high advance exposure, including 10% to 70% and several 60% references, which is a procurement risk signal rather than a benchmark norm.",
+      "warranty_start": "For MRI systems, warranty/service commencement is commonly tied to completion of installation, commissioning, or first patient use rather than delivery. Philips terms and schedules reference commencement upon completion of installation/availability for first patient use, and Philips MR warranty language references 12 months after completion of installation.",
+      "installation": "Installation and commissioning are commonly vendor-led or OEM-led in manufacturer/service terms, with site readiness and customer obligations still required. GE HealthCare service-shop warranty language explicitly distinguishes installation/start-up/commissioning from excluded items in some warranty codes, and Philips terms reference installation completion as the service commencement trigger.",
+      "training": "Training is commonly included or available as part of MRI system/service offerings, especially for clinical education and technical support. Philips and Siemens pages both emphasize training/education tied to MRI systems and lifecycle support.",
+      "service_sla": "Service agreements for MRI systems commonly include proactive maintenance, remote support, and education, but exact response/resolution SLAs vary by contract and are not standardized in the public sources reviewed. Philips describes flexible service agreements, proactive maintenance, e-alert, and staff education; GE HealthCare warranty language references onsite service and 24/7 phone support in some warranty codes."
+    },
     "regulatory_or_certification_expectations": {
-      "summary": "",
-      "confidence": "low",
-      "sources": []
+      "summary": "For MRI procurement, public manufacturer and service materials commonly reference IEC 60601 and ISO 13485-type compliance claims, but those claims should be verified against the exact model, configuration, and local registration requirements. Warranty/service documents also show that installation and commissioning may be tied to trained personnel and OEM instructions. Because the bid is in India, local regulatory approval and site compliance should be confirmed separately; the web sources reviewed do not establish India-specific approval sufficiency for this exact bid.",
+      "confidence": "medium",
+      "sources": [
+        {
+          "url": "https://www.usa.philips.com/c-dam/b2bhc/us/terms-conditions/magnetic-resonance-mr-pw-rev-23.pdf",
+          "note": "Philips MR warranty/installation language referencing trained personnel and OEM instructions."
+        },
+        {
+          "url": "https://services.gehealthcare.com/gehcstorefront/p/E8829TL?clear=true&lang=en&site=healthcareSite_US",
+          "note": "GE HealthCare warranty code descriptions showing installation/start-up/commissioning and training distinctions."
+        },
+        {
+          "url": "https://www.usa.philips.com/healthcare/support/terms-and-conditions",
+          "note": "Philips service terms and education-related exhibits for MRI-related offerings."
+        }
+      ]
     },
-    "vendor_or_product_reputation_signals": [],
+    "vendor_or_product_reputation_signals": [
+      {
+        "vendor": "Philips",
+        "signal": "Public MRI pages emphasize refurbished systems, service performance levels, training, and lifecycle support; this is a positive signal for service maturity, though not a direct comparison to the bid vendors.",
+        "confidence": "medium",
+        "sources": [
+          {
+            "url": "https://www.usa.philips.com/healthcare/refurbished-systems/refurbished-mri-systems",
+            "note": "Refurbished MRI systems with same warranty/service/training positioning."
+          },
+          {
+            "url": "https://www.usa.philips.com/healthcare/modality-services/mri-services",
+            "note": "MRI services page describing flexible service agreements, proactive maintenance, and staff education."
+          }
+        ]
+      },
+      {
+        "vendor": "GE HealthCare",
+        "signal": "Public materials show structured warranty code language, onsite service, 24/7 phone support in some cases, and training offerings for MRI-related products; this suggests mature service documentation and support infrastructure.",
+        "confidence": "medium",
+        "sources": [
+          {
+            "url": "https://services.gehealthcare.com/gehcstorefront/p/E8829TL?clear=true&lang=en&site=healthcareSite_US",
+            "note": "Warranty code descriptions including installation, commissioning, onsite service, and training distinctions."
+          },
+          {
+            "url": "https://www.gehealthcare.com/en-us/products/goldseal-systems",
+            "note": "Refurbished MRI systems with warranty and field service positioning."
+          },
+          {
+            "url": "https://services.gehealthcare.com/gehcstorefront/p/CR-0006501",
+            "note": "MRI training program page."
+          }
+        ]
+      },
+      {
+        "vendor": "Siemens Healthineers",
+        "signal": "Public MRI education and technical training pages emphasize onsite training, lifecycle education, and technical service training, indicating a mature support ecosystem.",
+        "confidence": "medium",
+        "sources": [
+          {
+            "url": "https://www.siemens-healthineers.com/en-us/education/personalized-education-by-solution/solution/imaging-and-therapy/magnetic-resonance-imaging/e-learning",
+            "note": "MRI education page referencing onsite training and lifecycle education."
+          },
+          {
+            "url": "https://www.siemens-healthineers.com/en-us/equipment-services/shared-services/technical-training",
+            "note": "Technical service training page for MRI-related service engineers."
+          }
+        ]
+      }
+    ],
     "consumables_and_lifecycle_costs": {
-      "summary": "",
-      "known_consumables": [],
-      "recurring_cost_risks": [],
-      "confidence": "low",
-      "sources": []
+      "summary": "MRI systems have meaningful lifecycle costs beyond purchase price, especially service contracts, preventive maintenance, software/service subscriptions, upgrades, and potential helium-related or system-specific support items depending on model. Public sources reviewed show recurring service agreements, subscriptions, education, and upgrade pathways; they do not provide a complete cost schedule for this bid. The main recurring-cost risk is that a low upfront quote may omit service, training refreshers, software updates, or upgrade/maintenance obligations.",
+      "known_consumables": [
+        "Service agreements and preventive maintenance",
+        "Software or subscription-based service coverage",
+        "Clinical/technical education and refresher training",
+        "Potential upgrade packages or lifecycle modernization items",
+        "Model-specific accessories or warranty-covered components"
+      ],
+      "recurring_cost_risks": [
+        "Omitted service contract pricing",
+        "Excluded installation/start-up/commissioning charges",
+        "Training charged separately after award",
+        "Software or subscription renewal costs",
+        "Upgrade or obsolescence costs over the system lifecycle"
+      ],
+      "confidence": "medium",
+      "sources": [
+        {
+          "url": "https://www.usa.philips.com/healthcare/modality-services/mri-services",
+          "note": "Service agreements, proactive maintenance, e-alert, and staff education."
+        },
+        {
+          "url": "https://www.usa.philips.com/healthcare/support/terms-and-conditions",
+          "note": "MRI-related service and clinical education training terms/exhibits."
+        },
+        {
+          "url": "https://www.usa.philips.com/healthcare/diagnostic-imaging/magnetic-resonance-imaging/mri-upgrades",
+          "note": "Upgrade/lifecycle modernization context."
+        },
+        {
+          "url": "https://services.gehealthcare.com/gehcstorefront/p/E8829TL?clear=true&lang=en&site=healthcareSite_US",
+          "note": "Warranty code descriptions showing installation, parts, onsite service, and training may be included or excluded depending on code."
+        }
+      ]
     },
     "current_market_or_future_trends": {
-      "summary": "",
-      "signals": [],
-      "confidence": "low",
-      "sources": []
+      "summary": "The public market signals reviewed point toward stronger emphasis on lifecycle service, remote monitoring, proactive maintenance, training, and upgradeability rather than just initial hardware price. Philips highlights e-alert, flexible service agreements, and subscription/service models; Siemens emphasizes lifecycle education and technical training; Philips also markets refurbished MRI systems as a lower-cost, sustainable alternative. These are relevant trends for procurement benchmarking, but they do not prove the best commercial value for this bid.",
+      "signals": [
+        "Growth in service-led MRI offerings and proactive maintenance",
+        "Remote monitoring / alerting for downtime prevention",
+        "Training bundled into lifecycle support",
+        "Refurbished and circular-edition MRI systems as lower-cost alternatives",
+        "Upgrade pathways to extend system life and reduce downtime"
+      ],
+      "confidence": "medium",
+      "sources": [
+        {
+          "url": "https://www.usa.philips.com/healthcare/modality-services/mri-services",
+          "note": "Service-led MRI offerings and e-alert."
+        },
+        {
+          "url": "https://www.usa.philips.com/healthcare/refurbished-systems/refurbished-mri-systems",
+          "note": "Refurbished/circular-edition MRI positioning."
+        },
+        {
+          "url": "https://www.siemens-healthineers.com/en-us/education/personalized-education-by-solution/solution/imaging-and-therapy/magnetic-resonance-imaging/e-learning",
+          "note": "Lifecycle education and onsite training emphasis."
+        },
+        {
+          "url": "https://www.usa.philips.com/healthcare/diagnostic-imaging/magnetic-resonance-imaging/mri-upgrades",
+          "note": "Upgrade and downtime-reduction positioning."
+        }
+      ]
     },
-    "red_flags": [],
+    "red_flags": [
+      "Very high advance payment exposure without visible bank guarantee, retention, or performance security.",
+      "Warranty start tied to delivery rather than commissioning/acceptance in some quotes, which can burn warranty time before the MRI is usable.",
+      "Installation responsibility ambiguity or buyer-side installation assignment despite incomplete site readiness.",
+      "Training omitted or only vaguely described for a complex MRI system.",
+      "Service SLA missing resolution time, spare parts, preventive maintenance, exclusions, or remedies.",
+      "Commercial inconsistencies across quote fields and raw text, especially on advance payment and warranty start.",
+      "Potential lifecycle-cost omissions: service, software, upgrades, and training refreshers not clearly priced."
+    ],
     "limitations": [
-      "MARKET_RESEARCH_ENABLED is not set to 1."
+      "Public web sources did not provide a reliable current market price list for a like-for-like new MRI system in this exact configuration.",
+      "Most benchmark signals come from OEM service/training pages and are not direct procurement award comparables.",
+      "The bid quotes themselves are the strongest commercial evidence here; web research is only contextual benchmark support.",
+      "India-specific regulatory approval requirements for this exact MRI configuration were not fully verified from authoritative local sources in this pass.",
+      "No debarment, litigation, or adverse-news screening was completed for the named bid vendors because the vendor names in the provided quotes are blank or synthetic placeholders in several cases."
     ]
   }
 }

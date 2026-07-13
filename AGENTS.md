@@ -237,6 +237,9 @@ frontend/backend workflows, check and keep these in sync:
 - `README.md`: setup, Docker, local run, test, and demo commands.
 - `files/Research/High_level_Agent_architecture_v3.md`: architecture, agent
   responsibilities, memory/database design, and future TODOs.
+- `files/Research/Final_presentationp_plan.md`: selected pitch, KPI
+  positioning, comparison framing, and technical considerations for the final
+  proposal.
 - `backend/agent_profiles/*.md` and `backend/agent_profiles/*/`: agent
   profiles, policies, patterns, guardrails, and memory assumptions.
 - `.env.example` and `docker-compose.yml`: environment variables and runtime
@@ -246,6 +249,20 @@ When implementation differs from the design, update the design or clearly mark
 the gap as a TODO/current implementation note. Do not leave code, README,
 architecture, and agent profiles saying different things about the same agent or
 workflow.
+
+Use `files/Research/Final_presentationp_plan.md` as the north-star document for
+feature positioning. New features should align with the selected direction:
+
+- autonomous agentic expert team with human touch
+- cross-domain procurement risk reasoning
+- customer-specific knowledge, OKF/RAG, and policy adaptation
+- audit-ready evidence, benchmarking, and quality evaluation
+- lifecycle compliance and leakage monitoring
+
+Technical design should also preserve the chosen memory direction: OKF memory can
+grow into an agent capability layer for context, skills, MCP connectors, and A2A
+contracts; keep the embedding layer centrally managed for now while allowing
+agent-specific chunking schemas, metadata filters, and retrieval policies.
 
 ## Project Learnings To Preserve
 

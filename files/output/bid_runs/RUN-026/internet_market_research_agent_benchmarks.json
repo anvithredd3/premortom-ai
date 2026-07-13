@@ -2,37 +2,155 @@
   "run_id": "RUN-026",
   "market_research": {
     "provider": "openai_web_search",
-    "status": "skipped",
-    "retrieved_at": "2026-07-09T15:09:33.883535+00:00",
-    "equipment_type": "",
+    "retrieved_at": "2026-07-09T16:24:01.834892+00:00",
+    "equipment_type": "MRI Machine",
     "market_price_range": {
-      "summary": "",
-      "confidence": "low",
-      "sources": []
+      "summary": "Public procurement references found in India show MRI system pricing can vary widely by configuration, warranty/CMC scope, and whether the item is new, refurbished, or bundled with turnkey installation. Recent tender examples include an MRI procurement at INR 17.02 Cr with 10% advance and another at INR 18.32 Cr with 50% advance; older public tenders also show 3T MRI packages with 2-year warranty plus long CMC periods. Based on these sources, a practical benchmark for a new MRI system in this bid context is roughly in the high single-digit to high teens crore INR range, but exact comparability is limited because field strength, accessories, turnkey scope, and service terms are not standardized across sources.",
+      "confidence": "medium",
+      "sources": [
+        {
+          "url": "https://www.mea.gov.in/Portal/Tender/1493_1/1_Bid_Document_MRI_Machine.pdf",
+          "note": "Public tender document with MRI supply, installation, commissioning, warranty servicing, and training terms."
+        },
+        {
+          "url": "https://www.wbmsc.gov.in/notice/wbmsc-notice-2450.pdf",
+          "note": "Public tender showing 3T MRI machine, warranty, CMC, and payment milestones."
+        },
+        {
+          "url": "https://tmc.gov.in/m_events/Events/TenderDetail?tendId=8648",
+          "note": "Public tender portal listing MRI-related procurement and training/installation expectations."
+        },
+        {
+          "url": "https://eoibahrain.gov.in/tender-14-09-2025-01.php",
+          "note": "Public notice referencing a 3T MRI machine procurement with 5-year warranty."
+        }
+      ]
     },
-    "typical_terms": {},
+    "typical_terms": {
+      "delivery_timeline": "Public tenders located show commissioning timelines around 90 days in one case, while other MRI procurements reference delivery/commissioning periods around 4.8 to 5.7 months. For this bid context, a benchmark of roughly 3 to 6 months for delivery plus installation/commissioning is consistent with the public record, but site readiness and regulatory approvals can extend this.",
+      "advance_payment": "Public tender examples show advance payment can range from 10% to 50% depending on buyer policy and contract structure; one MRI tender used 80% after delivery and 20% after installation/commissioning/training, while another referenced 50% advance. A 60% advance is materially high versus many public procurement structures and should usually be secured by bank guarantee or equivalent.",
+      "warranty_start": "Public procurement and manufacturer terms commonly tie warranty to satisfactory installation, commissioning, trial run, or handover rather than delivery. This is the strongest benchmark signal for this bid: warranty start at commissioning/acceptance is more buyer-protective than delivery-based warranty.",
+      "installation": "Public MRI tenders commonly place supply, installation, commissioning, and trial run on the supplier or authorized agent, with no extra installation charge. Buyer-only installation is less typical for complex MRI procurement and increases delay/dispute risk unless the contract clearly allocates site works, utilities, and acceptance responsibilities.",
+      "training": "Training is commonly included in MRI procurements, often for radiologists, technicians, and end users, and may be required onsite for a defined period. Public sources show training/hand-holding expectations ranging from initial end-user training to multi-month onsite support in some tenders.",
+      "service_sla": "Public sources commonly expect 24x7 service availability, rapid complaint attendance, and defined uptime or downtime remedies in warranty/CMC structures. A bare response target without resolution time, spare parts commitment, uptime, preventive maintenance, or remedies is weaker than typical public procurement practice."
+    },
     "regulatory_or_certification_expectations": {
-      "summary": "",
-      "confidence": "low",
-      "sources": []
+      "summary": "For MRI procurement in India, public tender and regulatory sources commonly expect compliance evidence such as IEC 60601 and ISO 13485, plus local regulatory approval where applicable. Acceptance testing, commissioning, and quality assurance are commonly required at installation. For x-ray equipment specifically, AERB guidance emphasizes supplier qualification/training and acceptance testing/QA at commissioning; while MRI is not the same modality, the broader procurement pattern still supports requiring documented installation, commissioning, and acceptance evidence.",
+      "confidence": "medium",
+      "sources": [
+        {
+          "url": "https://aerb.gov.in/english/regulatory-requirements-and-guidelines-for-suppliers-of-x-ray-equipment",
+          "note": "Regulatory guidance on supplier qualification, training, and acceptance testing/QA at commissioning for imaging equipment."
+        },
+        {
+          "url": "https://www.mea.gov.in/Portal/Tender/1493_1/1_Bid_Document_MRI_Machine.pdf",
+          "note": "MRI tender document referencing supply, installation, commissioning, warranty servicing, and training."
+        },
+        {
+          "url": "https://esic.gov.in/Tender/Bid_Doc_ESIC_23-RT2.pdf",
+          "note": "Tender document showing warranty from satisfactory installation/commissioning and service expectations."
+        }
+      ]
     },
-    "vendor_or_product_reputation_signals": [],
+    "vendor_or_product_reputation_signals": [
+      {
+        "vendor": "GE HealthCare",
+        "signal": "Official India pages emphasize service agreements, training access, and warranty exclusions that commonly leave consumables, site deficiencies, and some accessories outside standard warranty coverage.",
+        "source_url": "https://www.gehealthcare.com/en-in/about/terms-and-conditions-sale",
+        "confidence": "medium"
+      },
+      {
+        "vendor": "GE HealthCare",
+        "signal": "Service agreement pages highlight 24x7 access and single-provider service structures, which supports the benchmark expectation that MRI service contracts should specify response and support scope clearly.",
+        "source_url": "https://www.gehealthcare.com/en-in/services/service-agreements",
+        "confidence": "medium"
+      },
+      {
+        "vendor": "Siemens Healthineers India",
+        "signal": "Official India content frames MRI as a service-and-training-intensive business, reinforcing that training and operational planning are normal parts of MRI deployment.",
+        "source_url": "https://www.siemens-healthineers.com/en-in/magnetic-resonance-imaging/high-v-mri/start-your-mri-business-journey",
+        "confidence": "low"
+      },
+      {
+        "vendor": "Public procurement pattern",
+        "signal": "Multiple public tenders require installation, commissioning, training, and warranty/CMC coverage, suggesting these are standard reputation and performance expectations for MRI vendors in public-sector buying.",
+        "source_url": "https://www.wbmsc.gov.in/notice/wbmsc-notice-2450.pdf",
+        "confidence": "medium"
+      }
+    ],
     "consumables_and_lifecycle_costs": {
-      "summary": "",
-      "known_consumables": [],
-      "recurring_cost_risks": [],
-      "confidence": "low",
-      "sources": []
+      "summary": "MRI lifecycle cost risk is significant even when the headline purchase price looks acceptable. Public and manufacturer sources indicate that service contracts, software updates, site/environmental compliance, and some accessories or consumables may be excluded from base warranty. For MRI specifically, cryogen-related items, coils/accessories, UPS/chiller/environmental support, software updates, and long-term CMC/service coverage can materially affect total cost of ownership.",
+      "known_consumables": [
+        "Cryogen-related items where applicable",
+        "Coils and accessories where not bundled",
+        "UPS and power-conditioning support",
+        "Chillers or HVAC/environmental support",
+        "Software updates or subscription-like service items if not included",
+        "Preventive maintenance and long-term CMC/service coverage"
+      ],
+      "recurring_cost_risks": [
+        "Warranty exclusions for site deficiencies, power/grounding/environmental issues, or buyer-caused damage",
+        "Service contract costs after warranty",
+        "Software update and upgrade charges",
+        "Spare parts and downtime exposure if local parts support is weak",
+        "Long-term CMC costs after the base warranty period"
+      ],
+      "confidence": "medium",
+      "sources": [
+        {
+          "url": "https://www.gehealthcare.com/en-in/about/terms-and-conditions-sale",
+          "note": "Manufacturer terms listing warranty exclusions and items not included in standard coverage."
+        },
+        {
+          "url": "https://www.wbmsc.gov.in/notice/wbmsc-notice-2450.pdf",
+          "note": "Public tender showing warranty plus long CMC period, indicating lifecycle service cost is expected in MRI procurement."
+        },
+        {
+          "url": "https://www.esic.gov.in/Tender/Bid_Doc_ESIC_23-RT2.pdf",
+          "note": "Tender document showing software updates and uptime warranty expectations."
+        }
+      ]
     },
     "current_market_or_future_trends": {
-      "summary": "",
-      "signals": [],
-      "confidence": "low",
-      "sources": []
+      "summary": "Current public procurement signals point toward stronger emphasis on turnkey delivery, commissioning, initial end-user training, uptime/service commitments, and long warranty plus CMC structures. There is also a clear trend toward local service capability and explicit acceptance criteria. For this bid, the market signal is that buyers increasingly protect themselves by tying payment to delivery/commissioning/acceptance rather than paying large advances without security.",
+      "signals": [
+        "Turnkey supply-install-commission-training packages are common in public tenders",
+        "Warranty often starts at satisfactory installation/commissioning rather than delivery",
+        "Long CMC periods after warranty are common in public-sector MRI procurement",
+        "Service response and uptime commitments are increasingly explicit",
+        "Training and handover evidence are treated as standard deliverables"
+      ],
+      "confidence": "medium",
+      "sources": [
+        {
+          "url": "https://www.mea.gov.in/Portal/Tender/1493_1/1_Bid_Document_MRI_Machine.pdf",
+          "note": "Shows supply, installation, commissioning, warranty servicing, and training in one package."
+        },
+        {
+          "url": "https://www.wbmsc.gov.in/notice/wbmsc-notice-2450.pdf",
+          "note": "Shows payment after delivery and after installation/commissioning/training, plus long CMC."
+        },
+        {
+          "url": "https://esic.gov.in/Tender/Bid_Doc_ESIC_23-RT2.pdf",
+          "note": "Shows warranty from satisfactory installation/commissioning and uptime expectations."
+        }
+      ]
     },
-    "red_flags": [],
+    "red_flags": [
+      "Warranty starting on delivery instead of commissioning/acceptance.",
+      "Advance payment at 60% without visible bank guarantee, retention, or equivalent security.",
+      "Buyer-only installation responsibility for a complex MRI system when site readiness is incomplete.",
+      "Training excluded or inconsistently stated despite MRI complexity.",
+      "Service SLA missing resolution time, spare parts commitment, uptime, preventive maintenance, and remedies.",
+      "Conflicting commercial terms between fixed fields and vendor quote.",
+      "Potential mismatch between public procurement norms and the quoted advance/payment structure."
+    ],
     "limitations": [
-      "MARKET_RESEARCH_ENABLED is not set to 1."
+      "Public sources found are mostly Indian public tenders and manufacturer pages; they are useful benchmarks but not proof of the correct price for this specific bid.",
+      "MRI pricing is highly configuration-dependent; field strength, coils, turnkey works, warranty length, and CMC scope can change price materially.",
+      "Some sources are older tenders, so they are best used as directional context rather than exact current market truth.",
+      "Vendor reputation signals were limited to official product/service pages and public procurement patterns; no adverse-news or debarment search was completed in this pass.",
+      "No direct comparable quote database was available, so the price range is approximate and should be treated as benchmark context only."
     ]
   }
 }

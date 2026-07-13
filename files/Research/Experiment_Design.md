@@ -326,3 +326,30 @@ This balance gives enough variation to test the agentic workflow, while keeping 
 The 100 x 20 experiment is an ambitious but useful target. For a live hackathon demo, the team can show a smaller slice, such as 5 to 10 bidding processes with 5 to 10 quotes each.
 
 The full 100 x 20 design can be presented as the evaluation framework that proves the pipeline can scale beyond a single impressive demo case.
+
+## Current Docker Validation Slice
+
+For the current demo build, the minimum Docker validation should cover one quote
+end-to-end and then verify the newer agent artifacts and history tables.
+
+Recommended sequence:
+
+1. Start Docker services with the database and backend.
+2. Run one bid evaluation for `BID-001` with one quote.
+3. Confirm the run creates or updates a `RUN-*` folder.
+4. Confirm `vendor_proposal_agent_quote_intelligence.json` exists for the run.
+5. Call the RFQ / Negotiation Guidance API using that vendor proposal artifact.
+6. Confirm `decision_history` and `decision_history_chunks` increased.
+7. Confirm `agent_history` and `agent_history_chunks` include the expected
+   agents, including UI Guidance after the API/helper run.
+
+Minimum current agents to check in history:
+
+- `vendor_proposal_agent`
+- `contract_agent`
+- `internet_market_research_agent`
+- `bid_recommender_agent`
+- `ui_guidance_agent`
+
+The Invoice Monitoring and Contract Compliance Agent is design-stage only, so it
+should not be expected in Docker history tables until its implementation starts.

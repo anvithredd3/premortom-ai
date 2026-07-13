@@ -3,7 +3,7 @@
 This project currently uses local PostgreSQL with pgvector for OKF agent memory
 and bid decision history.
 
-Current implemented pgvector table:
+Current implemented pgvector tables:
 
 - `agent_memory_chunks`: stores OKF/agent memory chunks for retrieval.
 
@@ -11,6 +11,18 @@ Decision history tables:
 
 - `decision_history`
 - `decision_history_chunks`
+
+Agent-level history tables:
+
+- `agent_history`
+- `agent_history_chunks`
+
+The current design intentionally keeps these lanes separate:
+
+- OKF memory is agent profile and policy knowledge.
+- Decision history is run-level procurement outcome history.
+- Agent history is per-agent output history, so each agent can retrieve its own
+  prior reasoning and chunk it differently.
 
 ## Default Local Database
 
@@ -79,7 +91,8 @@ psql "postgresql://premortem:premortem@localhost:5432/premortem" -c "SELECT agen
 
 ## Check For History Tables
 
-Decision history is not expected to exist yet, but this command checks for any history-like table names:
+Decision and agent history should exist after the backend has initialized the
+pgvector schema. This command checks for any history-like table names:
 
 ```sql
 SELECT tablename
@@ -94,7 +107,7 @@ One-line shell version:
 psql "postgresql://premortem:premortem@localhost:5432/premortem" -c "SELECT tablename FROM pg_tables WHERE schemaname = 'public' AND tablename ILIKE '%history%';"
 ```
 
-## Planned Decision History Tables
+## Decision History Tables
 
 Decision history storage is separate from OKF memory:
 
@@ -115,7 +128,7 @@ One-line shell version:
 psql "postgresql://premortem:premortem@localhost:5432/premortem" -c "SELECT to_regclass('public.decision_history') AS decision_history, to_regclass('public.decision_history_chunks') AS decision_history_chunks;"
 ```
 
-Count decision history rows after storage is implemented:
+Count decision history rows:
 
 ```sql
 SELECT count(*) FROM decision_history;
@@ -129,7 +142,7 @@ psql "postgresql://premortem:premortem@localhost:5432/premortem" -c "SELECT coun
 psql "postgresql://premortem:premortem@localhost:5432/premortem" -c "SELECT count(*) AS decision_history_chunk_rows FROM decision_history_chunks;"
 ```
 
-Show recent decision snapshots after storage is implemented:
+Show recent decision snapshots:
 
 ```sql
 SELECT run_id, procurement_title, risk_level, risk_score, created_at
@@ -147,6 +160,54 @@ ORDER BY created_at DESC
 LIMIT 20;
 ```
 
+## Agent-Level History Tables
+
+Agent history stores the outputs of individual agents, separate from the final
+bid decision. This is important because Vendor Proposal, Contract Review,
+Internet / Market Research, Bid Recommender, and UI Guidance each need different
+chunking and retrieval strategies.
+
+Expected agent-level tables:
+
+```sql
+SELECT
+  to_regclass('public.agent_history') AS agent_history,
+  to_regclass('public.agent_history_chunks') AS agent_history_chunks;
+```
+
+One-line shell version:
+
+```bash
+psql "postgresql://premortem:premortem@localhost:5432/premortem" -c "SELECT to_regclass('public.agent_history') AS agent_history, to_regclass('public.agent_history_chunks') AS agent_history_chunks;"
+```
+
+Show agent-level history row counts:
+
+```sql
+SELECT agent_id, COUNT(*) AS rows
+FROM agent_history
+GROUP BY agent_id
+ORDER BY agent_id;
+```
+
+Show agent-level chunk counts:
+
+```sql
+SELECT agent_id, COUNT(*) AS chunks
+FROM agent_history_chunks
+GROUP BY agent_id
+ORDER BY agent_id;
+```
+
+Show chunk types by agent:
+
+```sql
+SELECT agent_id, chunk_type, COUNT(*) AS chunks
+FROM agent_history_chunks
+GROUP BY agent_id, chunk_type
+ORDER BY agent_id, chunk_type;
+```
+
 ## Backend Database Status API
 
 The backend exposes a read-only status endpoint:
@@ -160,10 +221,11 @@ It reports:
 - whether `DATABASE_URL` is configured
 - whether Postgres is reachable
 - whether pgvector is installed
-- whether `agent_memory_chunks`, `decision_history`, and `decision_history_chunks` exist
+- whether `agent_memory_chunks`, `decision_history`, `decision_history_chunks`,
+  `agent_history`, and `agent_history_chunks` exist
 - row counts for those tables
 - recent memory rows
-- recent decision-history rows, once implemented
+- recent decision-history and agent-history rows
 
 ## Frontend Database Page
 
@@ -179,6 +241,7 @@ Use this page to confirm:
 - pgvector availability
 - OKF memory row count
 - decision history table status
+- agent-level history table status
 - recent memory rows
 
 If these tables are missing, run a completed bid evaluation with the updated
@@ -290,4 +353,19 @@ And check memory rows:
 
 ```bash
 docker compose exec db psql -U premortem -d premortem -c "SELECT agent_id, source_path, memory_type, updated_at FROM agent_memory_chunks ORDER BY updated_at DESC LIMIT 20;"
+```
+
+Check decision history:
+
+```bash
+docker compose exec db psql -U premortem -d premortem -c "SELECT count(*) AS rows FROM decision_history;"
+docker compose exec db psql -U premortem -d premortem -c "SELECT count(*) AS chunks FROM decision_history_chunks;"
+```
+
+Check agent-level history:
+
+```bash
+docker compose exec db psql -U premortem -d premortem -c "SELECT agent_id, COUNT(*) AS rows FROM agent_history GROUP BY agent_id ORDER BY agent_id;"
+docker compose exec db psql -U premortem -d premortem -c "SELECT agent_id, COUNT(*) AS chunks FROM agent_history_chunks GROUP BY agent_id ORDER BY agent_id;"
+docker compose exec db psql -U premortem -d premortem -c "SELECT agent_id, chunk_type, COUNT(*) AS chunks FROM agent_history_chunks GROUP BY agent_id, chunk_type ORDER BY agent_id, chunk_type;"
 ```

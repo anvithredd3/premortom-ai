@@ -16,7 +16,7 @@ if load_dotenv is not None:
     load_dotenv(Path(__file__).resolve().parents[1] / ".env", override=False)
 
 API_BASE = os.getenv("PREMORTEM_API", "http://localhost:8000")
-TIMEOUT = 120
+TIMEOUT = 300
 
 
 def health() -> dict:
@@ -35,6 +35,28 @@ def sample_input() -> dict:
 
 def analyze(payload: dict) -> dict:
     r = requests.post(f"{API_BASE}/analyze", json=payload, timeout=TIMEOUT)
+    r.raise_for_status()
+    return r.json()
+
+
+def analyze_demo_run(payload: dict) -> dict:
+    r = requests.post(f"{API_BASE}/analyze/demo-run", json=payload, timeout=TIMEOUT)
+    r.raise_for_status()
+    return r.json()
+
+
+def ui_guidance(payload: dict) -> dict:
+    r = requests.post(
+        f"{API_BASE}/ui-guidance/rfq-negotiation",
+        json=payload,
+        timeout=TIMEOUT,
+    )
+    r.raise_for_status()
+    return r.json()
+
+
+def publish_rfq(payload: dict) -> dict:
+    r = requests.post(f"{API_BASE}/rfq/publish", json=payload, timeout=TIMEOUT)
     r.raise_for_status()
     return r.json()
 

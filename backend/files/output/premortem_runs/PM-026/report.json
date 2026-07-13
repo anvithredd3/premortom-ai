@@ -1,0 +1,299 @@
+{
+  "procurement_name": "AIIMS MRI Scanner",
+  "equipment_type": "MRI Machine",
+  "contract_value_cr": 18.0,
+  "overall_risk_score": 85.0,
+  "failure_probability_pct": 87.0,
+  "confidence_pct": 78.0,
+  "predicted_delay_months": 5.5,
+  "projected_financial_loss_cr": 0.77,
+  "predicted_failure_mode": "Equipment delivered before site readiness.",
+  "supporting_evidence": [
+    "Construction completion is at 60%, indicating significant site readiness work is still required.",
+    "Warranty starts on delivery, which is risky given the potential for site readiness delays and buyer responsibility for installation.",
+    "No technicians available for the MRI machine, but 6 are required.",
+    "\u20b910.8 Cr released as advance payment, which is 60% of the contract value.",
+    "Historical MRI procurements at AIIMS have faced significant delays due to infrastructure readiness issues."
+  ],
+  "predicted_outcomes": [
+    "Installation delay: 4.5-7.5 months",
+    "Projected financial loss: \u20b90.77 Cr",
+    "Idle asset exposure: \u20b91.44 Cr / year",
+    "Warranty loss: ~5 months of coverage consumed while idle",
+    "High probability of underutilisation"
+  ],
+  "recommended_decision": "NO-GO",
+  "conditions": [
+    "Facility readiness reaches 95%.",
+    "Electrical readiness completed and energised.",
+    "All regulatory/safety approvals completed.",
+    "Required technicians hired and certified.",
+    "Warranty revised to start at commissioning date.",
+    "Advance reduced to <=20% against a bank guarantee."
+  ],
+  "agent_results": [
+    {
+      "agent": "Contract Risk Agent",
+      "status": "completed",
+      "risk_score": 65.0,
+      "risk_level": "HIGH",
+      "findings": [
+        "Warranty starts on delivery, which is risky given the potential for site readiness delays and buyer responsibility for installation.",
+        "Advance payment is 60%, which is high and requires a bank guarantee to mitigate risk.",
+        "Installation responsibility is on the buyer, with no vendor penalty for delays.",
+        "Training is not included, which could impact operational readiness.",
+        "Electrical readiness and regulatory approvals are pending, which could delay installation and commissioning."
+      ],
+      "evidence": [
+        "Warranty start: 'On Delivery'",
+        "Advance payment: 60%",
+        "Installation responsibility: 'Buyer'",
+        "Training included: false",
+        "Electrical readiness: 'Pending'",
+        "Regulatory approval status: 'Pending'"
+      ],
+      "reasoning": "The warranty starting on delivery poses a significant risk because the buyer is responsible for installation, and site readiness is not yet confirmed. This could lead to a situation where the warranty period is consumed before the equipment is operational. The advance payment of 60% is high and should be secured with a bank guarantee to protect the buyer's interests. The lack of included training could hinder the buyer's ability to effectively use the equipment once installed. Additionally, pending electrical readiness and regulatory approvals could delay the project further, especially given the historical delays in similar projects.",
+      "recommendation": "Negotiate to have the warranty start upon commissioning rather than delivery. Require a bank guarantee for the advance payment. Ensure that the vendor provides training as part of the contract. Confirm site readiness and regulatory approvals before proceeding with delivery.",
+      "metrics": {
+        "advance_released_cr": 10.8,
+        "warranty_start": "On Delivery",
+        "vendor_emphasis": [
+          "Advance payment",
+          "Buyer installation responsibility"
+        ],
+        "missing_contract_information": [
+          "Bank guarantee for advance payment",
+          "Vendor penalties for installation delays"
+        ],
+        "extra_contract_information": [],
+        "unusual_terms": [
+          "Warranty starts on delivery",
+          "High advance payment without security"
+        ],
+        "evidence_quality": "medium",
+        "marketing_vs_specificity": "specific",
+        "implementation_specificity": "medium",
+        "follow_up_questions": [
+          "Will the vendor provide a bank guarantee for the advance payment?",
+          "Can the warranty start be negotiated to begin upon commissioning?",
+          "What are the vendor's obligations if site readiness is delayed?",
+          "Is there an option to include training in the contract?"
+        ]
+      },
+      "tokens_in": 3147,
+      "tokens_out": 512,
+      "time_ms": 7174.9,
+      "model": "gpt-4o-2024-08-06"
+    },
+    {
+      "agent": "Infrastructure Readiness Agent",
+      "status": "completed",
+      "risk_score": 95.0,
+      "risk_level": "CRITICAL",
+      "findings": [
+        "Construction completion is at 60%, indicating significant site readiness work is still required.",
+        "Electrical readiness is pending, which is critical for MRI machine operation.",
+        "Regulatory approval is pending, which is necessary for medical equipment installation and operation.",
+        "No technicians are currently available, but 6 are required for installation."
+      ],
+      "evidence": [
+        "construction_completion_pct: 60.0",
+        "electrical_readiness: Pending",
+        "regulatory_approval_status: Pending",
+        "technicians_available: 0",
+        "technicians_required: 6"
+      ],
+      "reasoning": "The MRI machine requires a highly controlled environment with specific electrical and regulatory standards. With construction only 60% complete and both electrical readiness and regulatory approvals pending, the site is not prepared for installation. The lack of available technicians further exacerbates the risk of delay. Historical delays in similar projects suggest a pattern of extended timelines.",
+      "recommendation": "Ensure construction completion reaches at least 90%, secure all necessary electrical and regulatory approvals, and hire the required technicians before accepting delivery.",
+      "metrics": {
+        "readiness_pct": 60,
+        "construction_pct": 60,
+        "predicted_delay_months": 5.5,
+        "delay_range": "4.5-7.5 months"
+      },
+      "tokens_in": 693,
+      "tokens_out": 295,
+      "time_ms": 5586.0,
+      "model": "gpt-4o-2024-08-06"
+    },
+    {
+      "agent": "Workforce Readiness Agent",
+      "status": "completed",
+      "risk_score": 90.0,
+      "risk_level": "CRITICAL",
+      "findings": [
+        "No technicians available for the MRI machine, but 6 are required.",
+        "Training is not included in the contract.",
+        "Electrical readiness is pending, which may delay installation.",
+        "Regulatory approval is pending, which could impact operational readiness."
+      ],
+      "evidence": [
+        "technicians_available: 0",
+        "technicians_required: 6",
+        "training_included: false",
+        "electrical_readiness: Pending",
+        "regulatory_approval_status: Pending"
+      ],
+      "reasoning": "The absence of available technicians for the MRI machine, combined with the lack of training included in the contract, presents a critical risk to operational readiness. The pending electrical readiness and regulatory approval further exacerbate the risk, as these factors could delay the installation and use of the equipment. Without trained personnel, the MRI machine cannot be operated safely or effectively upon arrival.",
+      "recommendation": "Immediately initiate the hiring of 6 certified MRI technicians and negotiate with the vendor to include training in the contract. Expedite electrical readiness and regulatory approval processes.",
+      "metrics": {
+        "staff_readiness_pct": 0,
+        "operator_gap": 6
+      },
+      "tokens_in": 602,
+      "tokens_out": 262,
+      "time_ms": 3694.7,
+      "model": "gpt-4o-2024-08-06"
+    },
+    {
+      "agent": "Financial Exposure Agent",
+      "status": "completed",
+      "risk_score": 85.0,
+      "risk_level": "CRITICAL",
+      "findings": [
+        "\u20b910.8 Cr released as advance payment, which is 60% of the contract value.",
+        "\u20b90.66 Cr projected idle cost due to a 5.5-month delay.",
+        "\u20b90.11 Cr potential warranty erosion if the warranty starts on delivery."
+      ],
+      "evidence": [
+        "advance_cr = 18.0 \u00d7 60.0 / 100 = 10.8",
+        "idle_cost_cr = 18.0 \u00d7 0.08 \u00d7 (5.5 / 12) = 0.66",
+        "warranty_loss_cr = 18.0 \u00d7 (5.5 / 36) \u00d7 0.04 = 0.11",
+        "projected_loss_cr = 0.66 + 0.11 = 0.77",
+        "annual_idle_cost_cr = 18.0 \u00d7 0.08 = 1.44"
+      ],
+      "reasoning": "The advance payment of \u20b910.8 Cr exposes significant funds before the MRI scanner is operational, especially given the predicted 5.5-month delay. The idle cost reflects the opportunity cost of having a non-operational MRI machine, which could otherwise generate revenue or provide critical healthcare services. Warranty erosion is a concern as it reduces the effective warranty period, potentially leading to higher maintenance costs post-warranty.",
+      "recommendation": "Consider securing a performance bond or bank guarantee to mitigate advance payment risk. Implement escrow arrangements to ensure funds are released only upon meeting specific milestones. Expedite regulatory approvals and ensure technician availability to minimize delays.",
+      "metrics": {
+        "advance_cr": 10.8,
+        "idle_cost_cr": 0.66,
+        "warranty_loss_cr": 0.11,
+        "projected_loss_cr": 0.77,
+        "annual_idle_cost_cr": 1.44
+      },
+      "tokens_in": 596,
+      "tokens_out": 409,
+      "time_ms": 2991.0,
+      "model": "gpt-4o-2024-08-06"
+    },
+    {
+      "agent": "Historical Intelligence Agent",
+      "status": "completed",
+      "risk_score": 85.0,
+      "risk_level": "CRITICAL",
+      "findings": [
+        "Historical MRI procurements at AIIMS have faced significant delays due to infrastructure readiness issues.",
+        "High advance payment percentage without readiness checks correlates with increased risk of idle equipment.",
+        "Pending regulatory approvals and lack of trained technicians are common failure points in similar procurements."
+      ],
+      "evidence": [
+        "AIIMS-MRI-2019: Equipment idle 9 months, warranty partially lost.",
+        "AIIMS-MRI-72CR-2017: Asset unused; landmark procurement failure.",
+        "STATE-CT-2020: 7-month delay, underutilised for first year."
+      ],
+      "reasoning": "The current procurement of the MRI scanner for AIIMS is at high risk of delay and failure due to several factors that align with historical patterns. Previous MRI procurements at AIIMS, such as AIIMS-MRI-2019 and AIIMS-MRI-72CR-2017, experienced significant delays because the infrastructure was not ready, regulatory approvals were pending, and there was a lack of trained technicians. These projects resulted in idle equipment and partial loss of warranty. The current project shows similar risks with only 60% construction completion, pending electrical readiness, and no available technicians. Additionally, the high advance payment percentage without readiness checks increases the likelihood of financial and operational inefficiencies.",
+      "recommendation": "Ensure that infrastructure is fully completed and regulatory approvals are obtained before delivery. Implement a readiness check before making advance payments. Hire and train the required number of technicians prior to equipment arrival to avoid idle time.",
+      "metrics": {
+        "avg_delay_months": 8.33,
+        "failure_probability_pct": 90,
+        "delay_probability_pct": 95,
+        "benchmark_ids": [
+          "AIIMS-MRI-2019",
+          "AIIMS-MRI-72CR-2017",
+          "STATE-CT-2020"
+        ]
+      },
+      "tokens_in": 884,
+      "tokens_out": 408,
+      "time_ms": 4523.8,
+      "model": "gpt-4o-2024-08-06"
+    }
+  ],
+  "debate": [
+    {
+      "agent": "Infrastructure Agent",
+      "statements": [
+        "Facility readiness is only 60%.",
+        "Installation is impossible until civil and electrical works close.",
+        "Predicted installation delay: 4.5-7.5 months."
+      ]
+    },
+    {
+      "agent": "Contract Agent",
+      "statements": [
+        "Warranty begins at On Delivery.",
+        "Coverage loss is expected while the asset sits idle."
+      ]
+    },
+    {
+      "agent": "Financial Agent",
+      "statements": [
+        "\u20b910.80 Crore released before a usable asset exists.",
+        "Projected loss of \u20b90.77 Crore."
+      ]
+    },
+    {
+      "agent": "Workforce Agent",
+      "statements": [
+        "6 operators short - no one to run the equipment.",
+        "Equipment likely idle even after installation."
+      ]
+    },
+    {
+      "agent": "Historical Agent",
+      "statements": [
+        "Comparable projects averaged 8.33 months of delay.",
+        "Failure probability from precedent: 90%."
+      ]
+    }
+  ],
+  "scenarios": [
+    {
+      "name": "Best Case",
+      "timeline_months": 2.2,
+      "financial_impact_cr": 0.26,
+      "operational_impact": "Fast-tracked readiness; limited idle period and high eventual utilisation.",
+      "probability_pct": 5.0
+    },
+    {
+      "name": "Expected Case",
+      "timeline_months": 5.5,
+      "financial_impact_cr": 0.66,
+      "operational_impact": "Installation delayed pending civil, electrical and regulatory closure; asset idle through the gap.",
+      "probability_pct": 87.0
+    },
+    {
+      "name": "Worst Case",
+      "timeline_months": 8.8,
+      "financial_impact_cr": 1.06,
+      "operational_impact": "Prolonged idleness, warranty expiry before go-live and chronic underutilisation of the asset.",
+      "probability_pct": 62.0
+    }
+  ],
+  "generated_at": "2026-07-13T01:16:15.723086+00:00",
+  "run_id": "PM-026",
+  "created_at": "2026-07-13T01:16:15.729493+00:00",
+  "input": {
+    "procurement_name": "AIIMS MRI Scanner",
+    "equipment_type": "MRI Machine",
+    "contract_value_cr": 18.0,
+    "advance_payment_pct": 60.0,
+    "delivery_timeline_months": 4.0,
+    "warranty_start": "On Delivery",
+    "installation_responsibility": "Buyer",
+    "training_included": false,
+    "construction_completion_pct": 60.0,
+    "electrical_readiness": "Pending",
+    "regulatory_approval_status": "Pending",
+    "technicians_available": 0,
+    "technicians_required": 6,
+    "historical_delays_months": [
+      8.0,
+      11.0,
+      7.0
+    ],
+    "category": "general",
+    "item_research_context": null,
+    "extra_fields": {}
+  }
+}

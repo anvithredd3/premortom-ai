@@ -21,6 +21,7 @@ post-award agents.
 - Vendor differentiator identification
 - Commercial and operational term extraction
 - Proposal quality assessment
+- Published RFQ requirement coverage mapping
 - Follow-up question generation
 
 ## Memory
@@ -38,6 +39,7 @@ post-award agents.
 
 - PDF/document parser
 - Bid and quote registry
+- Published RFQ store: `rfq_sessions` and `rfq_requirements`
 - Run artifact store
 - Vendor registry, future
 - Market and web research, future
@@ -50,6 +52,7 @@ post-award agents.
 - `fixed_features`
 - `proposal_text`
 - `proposal_intelligence`
+- `rfq_requirement_coverage`
 - `raw_text_reference`
 
 ## Output Shape
@@ -87,6 +90,22 @@ The agent should produce one proposal record per quote.
     "unusual_terms": [],
     "proposal_quality": {},
     "follow_up_questions": []
+  },
+  "rfq_requirement_coverage": {
+    "rfq_id": "...",
+    "requirements": [
+      {
+        "requirement_id": "REQ-001",
+        "perspective_role": "doctor",
+        "requirement": "AI-based organ marking",
+        "value_pct": 20.0,
+        "coverage": "met|partial|missing|unclear",
+        "evidence": "...",
+        "gap": "..."
+      }
+    ],
+    "weighted_value_covered_pct": 0.0,
+    "mandatory_gaps": []
   },
   "raw_text_reference": {
     "pdf_path": "...",
@@ -139,6 +158,21 @@ static field:
 - whether the proposal includes differentiators that may reduce or increase risk
 - what questions should be asked before award or negotiation
 
+## Published RFQ Requirement Coverage
+
+When a published RFQ is available, the agent should map vendor proposal evidence
+to every accepted RFQ requirement.
+
+- Use `rfq_requirements` as the buyer-approved source of truth.
+- Mark each requirement as `met`, `partial`, `missing`, or `unclear`.
+- Preserve evidence snippets from the proposal for `met` and `partial`
+  coverage.
+- Treat missing or unclear high-value requirements as downstream recommendation
+  signals.
+- Do not give credit for vendor features that are attractive but unrelated to
+  accepted RFQ value.
+- Do not infer coverage from marketing language without specific evidence.
+
 ## Evidence Rules
 
 - Separate explicitly stated facts from inferred observations.
@@ -159,6 +193,8 @@ static field:
 - Do not decide the bid winner; pass structured proposal intelligence to the Bid
   Recommendation Agent.
 - Do not treat internet or market research as vendor-submitted evidence.
+- Do not treat a vendor differentiator as buyer value unless it maps to an
+  accepted RFQ requirement or is explicitly added by the user later.
 - Do not make fraud accusations; route suspicious anomalies to future
   compliance or invoice-monitoring agents.
 
@@ -167,7 +203,8 @@ static field:
 - Contract Review Agent uses proposal text, fixed features, omissions, unusual
   terms, and evidence snippets.
 - Bid Recommendation Agent uses comparable fields, proposal quality, vendor
-  differentiators, and follow-up questions.
+  differentiators, RFQ requirement coverage, weighted value covered, and
+  follow-up questions.
 - RFQ Intake and Negotiation UI Guidance Agent uses omissions, negotiation gaps,
   lifecycle-cost items, and draft follow-up questions.
 - Internet / Market Research Agent can use equipment type, vendor/product names,

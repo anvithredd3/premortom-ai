@@ -2,37 +2,275 @@
   "run_id": "RUN-025",
   "market_research": {
     "provider": "openai_web_search",
-    "status": "skipped",
-    "retrieved_at": "2026-07-09T00:30:23.990958+00:00",
-    "equipment_type": "",
+    "retrieved_at": "2026-07-09T16:23:10.656411+00:00",
+    "equipment_type": "MRI Machine",
     "market_price_range": {
-      "summary": "",
+      "summary": "Public web sources found are not a clean apples-to-apples benchmark for a new MRI system price in this bid\u2019s exact configuration, but they do support that MRI ownership has substantial lifecycle cost beyond purchase price, including service contracts, helium/cryogen management for conventional systems, and software/support costs. Manufacturer service terms also show that warranty/service packages may include helium replenishment and that warranty/service coverage is often tied to delivery or installation terms depending on the contract. Because the bid appears to be for a high-value MRI system in India, the most reliable benchmark from this search is that commercial terms and lifecycle costs are material and should be compared against OEM service structures rather than only headline capex.",
       "confidence": "low",
-      "sources": []
+      "sources": [
+        {
+          "url": "https://www.usa.philips.com/healthcare/support/terms-and-conditions",
+          "note": "Philips service terms index showing MRI service/warranty documents and clinical education training addenda."
+        },
+        {
+          "url": "https://www.documents.philips.com/assets/20260409/24287995689c4be2b4c9b42700cb9f90.pdf",
+          "note": "Philips MRI product warranty terms showing 12-month system warranty and helium replenishment provisions."
+        },
+        {
+          "url": "https://www.siemens-healthineers.com/en-us/services/lp/magnet-pm",
+          "note": "Siemens MRI magnet preventive maintenance page indicating specialized PM and service pricing context."
+        },
+        {
+          "url": "https://www.elesonicgroup.com/blog/mri-maintenance-cost-guide",
+          "note": "Industry summary of MRI maintenance cost drivers; useful only as secondary context, not a procurement benchmark."
+        }
+      ]
     },
-    "typical_terms": {},
+    "typical_terms": {
+      "delivery_timeline": {
+        "summary": "For MRI systems, public vendor and service materials indicate delivery/installation/commissioning are distinct phases, and warranty/service terms may start at delivery, installation, or commissioning depending on the contract. The bid\u2019s 3.7-5.7 month delivery windows are plausible for a complex MRI project, but site readiness and regulatory approvals can materially extend usable handover time.",
+        "confidence": "medium",
+        "sources": [
+          {
+            "url": "https://www.documents.philips.com/assets/20260409/24287995689c4be2b4c9b42700cb9f90.pdf",
+            "note": "Warranty terms reference delivery-based timing for software and warranty coverage."
+          },
+          {
+            "url": "https://www.gehealthcare.com/",
+            "note": "General OEM context for MRI systems and service, though no specific delivery SLA was extracted in this search."
+          }
+        ]
+      },
+      "advance_payment": {
+        "summary": "Publicly accessible OEM materials did not provide a universal advance-payment norm for MRI procurement. In practice, high advance payments are a negotiation and risk-allocation issue rather than a fixed market standard. For a capital medical device of this type, buyer protections such as bank guarantee, retention, or milestone-linked payments are commonly sought when advance is requested, but this search did not find a single authoritative benchmark percentage.",
+        "confidence": "low",
+        "sources": [
+          {
+            "url": "https://assets-bg.gem.gov.in/resources/upload/shared_doc/gtc/general-te-1675401798.pdf",
+            "note": "GeM general terms and conditions provide procurement framework context, but not an MRI-specific advance norm."
+          },
+          {
+            "url": "https://www.documents.philips.com/assets/20260409/24287995689c4be2b4c9b42700cb9f90.pdf",
+            "note": "Shows OEM warranty/service structure, useful for milestone and acceptance discussions."
+          }
+        ]
+      },
+      "warranty_start": {
+        "summary": "For MRI systems, warranty start is commonly tied to delivery, installation, or commissioning depending on the OEM and contract. Manufacturer documents found here show warranty/service language that can begin from delivery and that some service obligations are tied to the end of system warranty; this makes warranty-start wording a critical commercial term to reconcile before award.",
+        "confidence": "high",
+        "sources": [
+          {
+            "url": "https://www.documents.philips.com/assets/20260409/24287995689c4be2b4c9b42700cb9f90.pdf",
+            "note": "Philips MRI product warranty terms."
+          },
+          {
+            "url": "https://www.usa.philips.com/healthcare/support/terms-and-conditions",
+            "note": "Philips service terms index showing separate warranty and service documents."
+          },
+          {
+            "url": "https://www.gehealthcare.com/",
+            "note": "General OEM context; no specific warranty-start benchmark extracted."
+          }
+        ]
+      },
+      "installation": {
+        "summary": "Installation and commissioning responsibility should be explicitly assigned in the contract. OEM materials and procurement practice indicate that MRI systems require site readiness, power, cooling, shielding, and acceptance steps; therefore, buyer-only installation responsibility is risky unless the buyer is clearly equipped to perform it. Vendor installation plus commissioning is the safer benchmark when the buyer lacks technical readiness.",
+        "confidence": "medium",
+        "sources": [
+          {
+            "url": "https://www.siemens-healthineers.com/en-us/services/lp/magnet-pm",
+            "note": "Highlights specialized MRI maintenance and magnet/cold-head expertise."
+          },
+          {
+            "url": "https://www.cdsco.gov.in/opencms/opencms/en/Medical-Device-Diagnostics/Medical-Device-Diagnostics/",
+            "note": "India medical device regulatory context relevant to MRI equipment compliance and licensing."
+          }
+        ]
+      },
+      "training": {
+        "summary": "Training is commonly expected for MRI systems and is often bundled or separately specified in OEM service/education offerings. Siemens and Philips both publish training/education offerings for imaging equipment, supporting training as a normal expectation rather than an optional extra.",
+        "confidence": "high",
+        "sources": [
+          {
+            "url": "https://www.siemens-healthineers.com/en-us/equipment-services/shared-services/technical-training",
+            "note": "OEM technical training offering."
+          },
+          {
+            "url": "https://www.siemens-healthineers.com/en-us/equipment-services/shared-services/technical-training/first-level-support",
+            "note": "OEM first-level support education for preventive and corrective maintenance."
+          },
+          {
+            "url": "https://www.usa.philips.com/healthcare/support/terms-and-conditions",
+            "note": "Philips service terms index includes clinical education training addendum."
+          }
+        ]
+      },
+      "service_sla": {
+        "summary": "MRI service contracts commonly include preventive maintenance, emergency response, remote support, parts coverage, and sometimes uptime or magnet-specific coverage. Public OEM materials show that service terms can include response obligations, remote monitoring, helium replenishment, and planned maintenance; however, exact response and resolution times vary by contract and were not found as a universal benchmark in this search.",
+        "confidence": "high",
+        "sources": [
+          {
+            "url": "https://www.usa.philips.com/c-dam/b2bhc/us/terms-conditions/philips-service-agreement-terms-and-conditions-092021.pdf",
+            "note": "Philips service agreement terms referencing corrective/planned maintenance and helium replenishment obligations."
+          },
+          {
+            "url": "https://www.documents.philips.com/assets/20250519/3083cd14bdd2471f8f3eb2e200b3d965.pdf",
+            "note": "Philips MR system coverage terms including helium refill and maintenance coverage."
+          },
+          {
+            "url": "https://www.siemens-healthineers.com/en-us/services/lp/magnet-pm",
+            "note": "Siemens magnet preventive maintenance and service context."
+          },
+          {
+            "url": "https://www.siemens-healthineers.com/en-us/equipment-services/shared-services/technical-training",
+            "note": "Training and support context for service capability."
+          }
+        ]
+      }
+    },
     "regulatory_or_certification_expectations": {
-      "summary": "",
-      "confidence": "low",
-      "sources": []
+      "summary": "In India, MRI equipment is regulated as a medical device under CDSCO/MDR-2017 framework, and the CDSCO site specifically notes MRI equipment among devices brought under regulation effective April 1, 2021. BIS references show IEC 60601-1-2 equivalence in Indian standards listings, supporting the expectation that electrical safety and EMC compliance claims should be documented. Vendor claims of IEC 60601, ISO 13485, and local regulatory approval should therefore be verified with certificates, import/manufacturing licenses, and device-specific approvals rather than accepted at face value.",
+      "confidence": "high",
+      "sources": [
+        {
+          "url": "https://www.cdsco.gov.in/opencms/opencms/en/Medical-Device-Diagnostics/Medical-Device-Diagnostics/",
+          "note": "CDSCO medical device page noting MRI equipment regulation under MDR framework."
+        },
+        {
+          "url": "https://cdsco.gov.in/opencms/resources/UploadCDSCOWeb/2018/UploadGazette_NotificationsFiles/Gsr102eRegistration%20of%20certain%20medical%20devices.pdf",
+          "note": "Gazette notification showing MRI equipment included in regulated medical devices."
+        },
+        {
+          "url": "https://www.cdsco.gov.in/opencms/opencms/en/Notifications/Public-Notices",
+          "note": "CDSCO notices and medical device regulatory references."
+        },
+        {
+          "url": "https://services.bis.gov.in/php/BIS_2.0/bisconnect/standard_review/Standard_review/Isdetails?ID=MzA5MTg%3D",
+          "note": "BIS listing showing IEC 60601-1-2 equivalence in Indian standards context."
+        }
+      ]
     },
-    "vendor_or_product_reputation_signals": [],
+    "vendor_or_product_reputation_signals": [
+      {
+        "vendor": "Philips",
+        "signal": "Strong OEM documentation footprint for MRI warranty, helium coverage, and service terms; indicates mature support structure.",
+        "confidence": "high",
+        "sources": [
+          {
+            "url": "https://www.usa.philips.com/healthcare/support/terms-and-conditions",
+            "note": "Service terms index."
+          },
+          {
+            "url": "https://www.documents.philips.com/assets/20260409/24287995689c4be2b4c9b42700cb9f90.pdf",
+            "note": "MRI product warranty terms."
+          },
+          {
+            "url": "https://www.usa.philips.com/healthcare/diagnostic-imaging/magnetic-resonance-imaging/mri-systems",
+            "note": "MRI product portfolio page."
+          }
+        ]
+      },
+      {
+        "vendor": "Siemens Healthineers",
+        "signal": "Public service/training materials emphasize preventive maintenance, technical training, and magnet-specific support, which is a positive support-capability signal.",
+        "confidence": "high",
+        "sources": [
+          {
+            "url": "https://www.siemens-healthineers.com/en-us/services/lp/magnet-pm",
+            "note": "Magnet preventive maintenance page."
+          },
+          {
+            "url": "https://www.siemens-healthineers.com/en-us/equipment-services/shared-services/technical-training",
+            "note": "Technical training page."
+          },
+          {
+            "url": "https://www.siemens-healthineers.com/en-us/equipment-services/shared-services/technical-training/first-level-support",
+            "note": "First-level support education page."
+          }
+        ]
+      }
+    ],
     "consumables_and_lifecycle_costs": {
-      "summary": "",
-      "known_consumables": [],
-      "recurring_cost_risks": [],
-      "confidence": "low",
-      "sources": []
+      "summary": "MRI lifecycle costs can be significant and often include service contracts, cryogen/helium management for conventional systems, cold-head or magnet maintenance, software updates, and spare parts. Manufacturer documents show helium replenishment and magnet coverage can be part of warranty or service packages, while industry sources indicate helium and cryogenic maintenance are recurring cost drivers. This means a low purchase price can be misleading if service and cryogen costs are not included.",
+      "known_consumables": [
+        "Liquid helium or helium replenishment for conventional superconducting MRI systems",
+        "Cold-head / cryogenic system maintenance items",
+        "Coils and accessories subject to separate coverage terms",
+        "Software updates and service documentation where not bundled"
+      ],
+      "recurring_cost_risks": [
+        "Helium refill or replenishment costs",
+        "Preventive maintenance and emergency repair contracts",
+        "Parts exclusions or capped coverage",
+        "Downtime costs if response/resolution SLAs are weak",
+        "Older or non-OEM-supported systems may have higher maintenance burden"
+      ],
+      "confidence": "high",
+      "sources": [
+        {
+          "url": "https://www.documents.philips.com/assets/20250519/3083cd14bdd2471f8f3eb2e200b3d965.pdf",
+          "note": "Philips MR system coverage terms including helium refill service."
+        },
+        {
+          "url": "https://www.documents.philips.com/assets/20260409/24287995689c4be2b4c9b42700cb9f90.pdf",
+          "note": "Philips warranty terms including helium replenishment and software update coverage."
+        },
+        {
+          "url": "https://www.siemens-healthineers.com/en-us/services/lp/magnet-pm",
+          "note": "Service/PM context for magnet and cold-head maintenance."
+        },
+        {
+          "url": "https://www.usa.philips.com/healthcare/support/terms-and-conditions",
+          "note": "Service terms index showing MRI service and education documents."
+        },
+        {
+          "url": "https://www.elesonicgroup.com/blog/mri-maintenance-cost-guide",
+          "note": "Secondary industry cost summary; use cautiously."
+        }
+      ]
     },
     "current_market_or_future_trends": {
-      "summary": "",
-      "signals": [],
-      "confidence": "low",
-      "sources": []
+      "summary": "The market is moving toward lower-cryogen or helium-free MRI designs, stronger service digitization, and more explicit lifecycle/service packaging. Philips publicly markets helium-free MRI systems, and service pages from major OEMs emphasize remote support, training, and preventive maintenance. For procurement, this means buyers should compare not only capex but also helium dependence, service inclusions, and long-term supportability.",
+      "signals": [
+        "Helium-free MRI systems are being actively marketed by major OEMs.",
+        "Service contracts increasingly bundle remote support, training, and preventive maintenance.",
+        "Lifecycle cost and supportability are becoming more important than headline purchase price alone."
+      ],
+      "confidence": "high",
+      "sources": [
+        {
+          "url": "https://www.usa.philips.com/healthcare/diagnostic-imaging/magnetic-resonance-imaging/mri-systems",
+          "note": "Philips MRI portfolio includes helium-free systems."
+        },
+        {
+          "url": "https://www.usa.philips.com/healthcare/service/mri-subscription-services",
+          "note": "Philips MRI subscription/service offering."
+        },
+        {
+          "url": "https://www.siemens-healthineers.com/en-us/equipment-services/shared-services/technical-training",
+          "note": "Training and support digitization context."
+        },
+        {
+          "url": "https://www.siemens-healthineers.com/en-us/services/lp/magnet-pm",
+          "note": "Preventive maintenance and service packaging context."
+        }
+      ]
     },
-    "red_flags": [],
+    "red_flags": [
+      "Advance payment above normal commercial comfort without bank guarantee or retention.",
+      "Warranty starting on delivery when site readiness, commissioning, or acceptance may lag.",
+      "Training excluded for a complex MRI system.",
+      "Installation responsibility unclear or assigned to a party without site readiness.",
+      "Service SLA missing resolution time, spare parts, preventive maintenance, or remedies.",
+      "Compliance claims stated without documentary evidence.",
+      "Potential mismatch between quoted terms and buyer-side readiness for power, construction, and regulatory approval."
+    ],
     "limitations": [
-      "MARKET_RESEARCH_ENABLED is not set to 1."
+      "No authoritative public source found that gives a single universal market price for the exact MRI configuration in this bid.",
+      "Public sources vary by region, OEM, and contract structure; they are benchmark context only, not proof of fair price.",
+      "Advance-payment norms are highly contract-specific and were not found as a reliable universal percentage for MRI systems.",
+      "Some secondary sources on maintenance cost are vendor/industry summaries and should be treated cautiously.",
+      "This research does not verify the specific vendors in the bid or their quoted claims; it only provides market/specification context."
     ]
   }
 }

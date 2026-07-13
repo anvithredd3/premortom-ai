@@ -13,7 +13,28 @@ The backend should support a demo-safe workflow where the UI can:
 5. Poll run status for realtime-style UI updates.
 6. Fetch the final recommendation, analysis outputs, telemetry, and report artifacts.
 
-The first implementation should avoid a database and use CSV/JSON files for demo persistence.
+The first implementation uses CSV/JSON files for bid input/output persistence.
+PostgreSQL with pgvector is now used for OKF memory, decision history, and
+agent-level history. The database should improve retrieval and auditability, but
+the demo path should still fail gracefully when the database is unavailable.
+
+## Current Implementation Alignment
+
+The latest high-level architecture adds several backend capabilities that should
+be treated as part of the current design, not future-only ideas:
+
+- Vendor Proposal Agent reads a quote PDF and writes
+  `vendor_proposal_agent_quote_intelligence.json`.
+- Contract Review Agent consumes fixed features, learned proposal intelligence,
+  OKF memory, and bounded decision history.
+- Internet / Market Research Agent can provide structured market context when
+  enabled.
+- Bid Recommender Agent ranks quotes using contract review, vendor proposal,
+  market research, management criteria, and minimum cutoff evidence.
+- RFQ Intake and Negotiation UI Guidance Agent is exposed through a backend API
+  before the Streamlit page is built.
+- pgvector stores `agent_memory_chunks`, `decision_history`,
+  `decision_history_chunks`, `agent_history`, and `agent_history_chunks`.
 
 ## Process Boundaries
 
@@ -365,6 +386,90 @@ Response:
   "new_quotes": 20
 }
 ```
+
+## RFQ And Negotiation Guidance API
+
+This API supports the RFQ Intake and Negotiation UI Guidance Agent. It should be
+used by the new Streamlit page for RFQ creation and final vendor negotiation
+preparation.
+
+Endpoint:
+
+```text
+POST /ui-guidance/rfq-negotiation
+```
+
+Request shape:
+
+```json
+{
+  "mode": "rfq_intake",
+  "role": "management",
+  "bid_id": "BID-001",
+  "quote_id": "BID-001-Q01",
+  "free_text": "We need strong uptime and local service within budget.",
+  "static_inputs": {
+    "equipment_type": "MRI machine",
+    "budget_limit_cr": 16.0,
+    "budget_tolerance_pct": 5.0,
+    "warranty_months": 60,
+    "service_response_hours": 24
+  },
+  "feature_weights": {
+    "clinical_fit": 0.25,
+    "total_cost": 0.25,
+    "service_readiness": 0.25,
+    "compliance": 0.25
+  },
+  "vendor_proposal_intelligence": {}
+}
+```
+
+Response shape:
+
+```json
+{
+  "mode": "rfq_intake",
+  "role": "management",
+  "summary": "",
+  "rfq_recommendations": [],
+  "missing_inputs": [],
+  "negotiation_guidance": {
+    "negotiation_questions": [],
+    "tradeoffs": [],
+    "draft_vendor_message": ""
+  },
+  "source_context": {
+    "bid_id": "BID-001",
+    "quote_id": "BID-001-Q01"
+  }
+}
+```
+
+The first API test can load
+`vendor_proposal_agent_quote_intelligence.json`, map fixed features into
+`static_inputs`, pass proposal intelligence as context, and call this endpoint.
+The endpoint should persist UI Guidance output to `agent_history` and
+`agent_history_chunks` unless explicitly disabled by the test/client.
+
+### UI Guidance API Responsibilities
+
+- Convert frontend role, static inputs, feature weights, and free text into
+  structured guidance context.
+- Use Vendor Proposal Agent intelligence when negotiation mode has a quote
+  artifact available.
+- Return RFQ criteria recommendations, missing input questions, negotiation
+  questions, tradeoffs, and a draft vendor message.
+- Keep accepted state changes outside the agent. The frontend/backend workflow
+  should decide what is saved as final RFQ criteria.
+
+### UI Guidance API Non-Goals
+
+- It should not upload PDFs.
+- It should not directly mutate existing bid criteria without an explicit user
+  accept action.
+- It should not replace Bid Recommender ranking.
+- It should not treat market research as proof; market context remains advisory.
 
 ## Evaluation APIs
 
@@ -750,6 +855,16 @@ This section captures information that humans naturally use when judging proposa
 - whether differentiators are relevant
 - whether the vendor seems mature or vague
 - what must be clarified before award
+
+Current minimum implementation:
+
+- Input: quote PDF path.
+- Output: fixed comparable fields plus proposal intelligence.
+- Test/demo artifact:
+  `files/output/bid_runs/{RUN-ID}/vendor_proposal_agent_quote_intelligence.json`.
+- This artifact is the preferred input for the first UI Guidance API test,
+  because it already contains the static fields and learned proposal intelligence
+  needed for RFQ and negotiation guidance.
 
 ### raw_text_reference
 

@@ -26,6 +26,22 @@ Place this markdown beside Diagram.jpg and use:
 
 ## Major Components
 
+Current implementation alignment:
+
+- RFQ Intake and Negotiation UI Guidance Agent supports RFQ creation and vendor
+  negotiation preparation.
+- Vendor Proposal Agent reads quote PDFs and produces reusable fixed features
+  and proposal intelligence.
+- Contract Review Agent uses static inputs, learned proposal intelligence, OKF
+  memory, and bounded decision history.
+- Internet / Market Research Agent can add current market context when enabled.
+- Bid Recommendation Agent compares vendor outputs and applies ranking,
+  minimum cutoffs, and negotiable exceptions.
+- Invoice Monitoring and Contract Compliance Agent is planned as a post-award
+  agent for periodic invoice/service compliance and fraud-drift detection.
+- pgvector memory is split into OKF memory, run-level decision history, and
+  agent-level history.
+
 ### UI Agent
 - Captures requirements
 - Displays workflow progress

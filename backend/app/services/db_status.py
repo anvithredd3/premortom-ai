@@ -13,6 +13,8 @@ TABLES = [
     "decision_history_chunks",
     "agent_history",
     "agent_history_chunks",
+    "rfq_sessions",
+    "rfq_requirements",
 ]
 
 

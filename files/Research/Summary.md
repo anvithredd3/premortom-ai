@@ -66,6 +66,28 @@ Existing procurement platforms focus on automating sourcing, supplier management
 ## Proposed Solution
 An Agentic Vendor Cost Intelligence Platform that continuously analyzes contracts, invoices, vendor performance, and historical negotiations to identify cost leakage, explain anomalies, and recommend actionable savings opportunities.
 
+## Current Product Direction
+
+The latest implementation direction starts with MRI procurement but keeps the
+platform extensible:
+
+- Vendor Proposal Agent extracts fixed quote fields and proposal intelligence
+  from uploaded PDFs.
+- Contract Review Agent evaluates risk using quote inputs, OKF memory, and
+  bounded historical decision context.
+- Internet / Market Research Agent adds current market and vendor context when
+  enabled.
+- Bid Recommendation Agent ranks quotes using management criteria, minimum
+  cutoffs, negotiable exceptions, and evidence from other agents.
+- RFQ Intake and Negotiation UI Guidance Agent helps create realistic RFQ
+  requirements and draft vendor negotiation questions.
+- Invoice Monitoring and Contract Compliance Agent is the planned post-award
+  extension for contract-to-invoice matching, periodic service/supply tracking,
+  and fraud or drift detection.
+
+Memory is split into OKF profile memory, run-level decision history, and
+agent-level history so each agent can retrieve the context that matches its job.
+
 ## Potential Gaps
 
 1. **Contract Drift Detection**

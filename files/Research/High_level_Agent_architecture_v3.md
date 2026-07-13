@@ -192,32 +192,46 @@ should own the actual state changes, saved RFQ data, and accepted criteria.
 
 The RFQ Intake and Negotiation UI Guidance Agent has two components:
 
-#### Static Role-Based Intake Component
+#### Chat-First RFQ Value Design Component
 
-The static component is similar to the current first frontend screen, but it is
-intended for management, doctors, technicians, biomedical engineering teams, and
+The first implemented RFQ component should be treated as a chat-first RFQ value
+design workspace rather than a large static form. It is intended for
+management, doctors, biomedical engineering/service teams, finance, and
 procurement users before vendor proposals are submitted.
 
 Instead of capturing vendor proposal values, it captures the organization's
 expectations and constraints.
 
-The static intake should allow the user to:
+The RFQ value design workspace should allow the user to:
 
-- Select role, such as management, doctor, technician, biomedical engineer, or
-  procurement officer.
-- Choose expectation profile, such as premium clinical capability, balanced
-  cost and service, lowest total lifecycle cost, fastest deployment, or strict
-  compliance.
-- Enter budget and allowed tolerance, such as budget plus or minus a percentage.
-- Enter mandatory minimum criteria and negotiable criteria.
-- Enter desired values for technical, operational, service, training, warranty,
-  delivery, installation, and lifecycle-cost expectations.
-- Mark which features are hard cutoffs, negotiable gaps, or scoring preferences.
-- Capture local context such as hospital size, expected patient volume,
-  clinical department needs, existing infrastructure, and staffing readiness.
+- Select the active chat role, such as management, doctor, biomedical engineer,
+  finance, or procurement officer.
+- Add requirements through chat rather than a large form.
+- Enter a requirement from any role while assigning it to the correct
+  stakeholder perspective. For example, management may enter a doctor/clinical
+  requirement.
+- Map known requirements to predefined role templates when possible.
+- Allow custom requirements only when priority, value percentage, and cost or
+  unknown-cost status are supplied.
+- Confirm every proposed requirement before adding it to the accepted RFQ table.
+- Edit accepted requirements in a role-grouped table.
+- Visualize stakeholder value as a role polygon where max value is the full
+  outer polygon and current value is the area of the accepted-requirement
+  polygon.
+- Visualize cost with a cost meter where max is proposed procurement/device
+  cost and actual is currently costed accepted requirements.
+- Publish the accepted RFQ requirement snapshot for the later vendor input and
+  proposal review flow.
+- Publish the accepted RFQ package to vendors through a dedicated vendor
+  publication page. For the demo, this can generate a vendor-facing RFQ package,
+  select target vendors, and track draft/sent status without requiring real
+  email or portal integration.
+- Treat social-media publication channels such as X or Facebook as future
+  optional distribution connectors. They should not be part of the core demo
+  flow and should require explicit human approval, compliance review, and
+  organization policy checks before posting.
 
-This static component produces structured management criteria that downstream
-agents can use:
+This component produces structured RFQ criteria that downstream agents can use:
 
 ```text
 management expectation profile
@@ -225,8 +239,85 @@ management expectation profile
   -> weighted preferences
   -> budget and tolerance
   -> negotiable feature ranges
-	  -> RFQ draft inputs
-	```
+  -> chat-proposed requirements
+  -> accepted role/perspective requirement records
+  -> RFQ draft inputs
+  -> vendor-facing RFQ publication package
+  -> quote-comparison criteria for recommendation
+```
+
+#### Vendor RFQ Publication Component
+
+After an RFQ is published to the database, the next screen should package the
+accepted requirements for vendor distribution. This is separate from database
+publish: database publish freezes the buyer-approved RFQ state, while vendor
+publication sends or prepares that state for vendors.
+
+Immediate demo requirements:
+
+- Load the latest published RFQ from `rfq_sessions` and `rfq_requirements`.
+- Show a vendor-facing summary grouped by role/perspective, including mandatory
+  requirements, value-weighted preferences, budget, delivery assumptions, and
+  missing-cost flags.
+- Let the user select or enter vendors for distribution.
+- Generate a draft vendor message and attachment-style RFQ text for review.
+- Track publication status such as `draft`, `ready`, `sent manually`, or
+  `cancelled`.
+- Require explicit user approval before marking anything as vendor-published.
+
+Future connector requirements:
+
+- Email or procurement-portal publication.
+- Vendor acknowledgement tracking.
+- Addendum and RFQ version distribution history.
+- Optional social-media publication through X, Facebook, or similar channels
+  only when procurement policy allows public posting. These channels must be
+  human-approved and should never post automatically from an agent.
+
+#### RFQ-Driven Quote Comparison
+
+The accepted RFQ requirements and their values should become a first-class input
+to vendor proposal review and bid recommendation.
+
+The comparison flow should evolve as follows:
+
+```text
+Published RFQ requirements
+  -> Vendor Proposal Agent maps quote evidence to each requirement
+  -> Contract/Risk agents identify gaps, risks, and ambiguous vendor claims
+  -> Bid Recommender applies minimum criteria, role value weights, cost, and
+     risk guardrails
+  -> Recommendation explains which quote best satisfies the buyer-defined RFQ
+```
+
+Recommendation should use the RFQ requirement values as the buyer-defined value
+model. A quote should not win only because it is low risk or low cost if it does
+not satisfy high-value core requirements. Likewise, an expensive feature should
+not be rewarded unless it maps to accepted RFQ value.
+
+Current demo note:
+
+For the hackathon submission, the UI may present the full loop while the
+existing recommendation output remains the displayed recommendation. Dynamic
+RFQ-specific ground-truth validation is deferred. The correct future evaluation
+method is to use versioned RFQ snapshots, scenario-specific quote sets, and
+rubric/metamorphic tests instead of reusing a static winner label after the RFQ
+requirements change.
+
+Important data model distinction:
+
+```text
+entered_by_role != perspective_role
+```
+
+`entered_by_role` is the user role currently speaking in chat. `perspective_role`
+is the stakeholder perspective that owns the requirement. Management can enter
+requirements on behalf of doctors, finance, biomedical engineering, procurement,
+or management.
+
+Accepted RFQ requirements should carry requirement text, entered-by role,
+perspective role, priority rank, perspective value percentage, estimated cost in
+crore, cost confidence, cost source, and draft/accepted status.
 
 #### Backend and Frontend API Requirement
 
@@ -1888,3 +1979,86 @@ An Agentic AI platform demonstrates additional value through:
 - Workflow governance
 
 The goal of the architecture is not merely to generate recommendations, but to simulate a structured business review process.
+
+---
+
+## 15. Research Document Sync Gaps / Tonight TODO
+
+The supporting research documents have now been partially synchronized with this
+latest high-level architecture. The remaining gaps below should be addressed
+tonight or explicitly moved to later.
+
+### Documentation Gaps
+
+1. Binary artifacts are stale.
+   `Agentic_Vendor_Cost_Intelligence_Research.pdf`, related PPTX files, and
+   `Diagram.jpg` may not reflect the latest UI Guidance, Vendor Proposal,
+   Internet / Market Research, Invoice Monitoring, and pgvector memory design.
+
+2. Some older notes still use generic labels.
+   Older docs refer to UI Agent, Research Agent, Vendor Intelligence Agent, and
+   Recommendation Agent in broad terms. The current working names should be:
+   RFQ Intake and Negotiation UI Guidance Agent, Vendor Proposal Agent,
+   Internet / Market Research Agent, Bid Recommender Agent, and Invoice
+   Monitoring and Contract Compliance Agent.
+
+3. Agent profile folders should remain exact and complete.
+   Expected profile folders are:
+   `contract_agent_profile`, `bid_recommender_agent_profile`,
+   `internet_market_research_agent_profile`, `ui_guidance_agent_profile`, and
+   `vendor_proposal_agent_profile`.
+
+4. API documentation needs to stay synchronized with implementation.
+   `Backend_Design.md` now includes `POST /ui-guidance/rfq-negotiation`, but
+   README and frontend docs should be checked after the API stabilizes.
+
+5. UI documentation still describes several future dashboard views.
+   The immediate frontend implementation should focus only on the new RFQ /
+   Negotiation Guidance page and its API integration.
+
+### Implementation Gaps
+
+1. Vendor RFQ publication page is the next demo-facing gap.
+   The RFQ design page and database publish flow exist, but the next page should
+   package the published RFQ for vendors and track draft/ready/sent-manually
+   status.
+
+2. Dynamic RFQ-ground-truth validation is deferred.
+   Because user-defined RFQ requirements can change the correct recommendation,
+   the old static sample winner should not be treated as universal ground truth.
+   Later evaluation should use versioned RFQ snapshots, scenario golden sets,
+   rubric checks, and metamorphic tests.
+
+3. Recommender use of agent-level history should become explicit.
+   The database can store per-agent history now, but recommender retrieval
+   policy should define which agent-history chunks it reads and why.
+
+4. OKF pgvector indexing should be checked for all agent profile folders.
+   Earlier checks showed only contract-agent OKF memory in
+   `agent_memory_chunks`; the newer profiles should be indexed consistently.
+
+5. Internet / Market Research output is currently advisory context.
+   The recommender should use it as current market evidence, but should continue
+   separating quote evidence from web evidence and preserving confidence/source
+   quality.
+
+6. Invoice Monitoring and Contract Compliance Agent is design-stage only.
+   It needs synthetic invoice/service trail generation, post-award input schema,
+   contract-to-invoice matching logic, periodic transaction simulation, and
+   fraud/drift detection policy before implementation.
+
+7. Agent decentralization is deferred.
+   For now, the backend orchestrator and shared pgvector database are acceptable
+   for the demo. Later, agents and data stores can be decentralized after
+   artifact contracts, history schemas, and retrieval policies are stable.
+
+### Test And Demo Gaps
+
+1. Docker test run should verify both file artifacts and pgvector rows.
+2. A run-level artifact should prove Vendor Proposal -> Contract Review ->
+   Market Research -> Bid Recommender -> UI Guidance handoff.
+3. The demo should show low-confidence internet research separately from quote
+   evidence, so the audience does not mistake sparse web evidence for a final
+   recommendation.
+4. UI output should clearly distinguish recommendation, cutoff failure,
+   negotiable exception, and missing-information follow-up.

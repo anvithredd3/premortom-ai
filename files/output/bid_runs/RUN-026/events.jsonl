@@ -1,34 +1,44 @@
-{"id": 1, "timestamp": "2026-07-09T15:07:15.514807+00:00", "type": "run_queued", "bid_id": "BID-001"}
-{"id": 2, "timestamp": "2026-07-09T15:07:15.518431+00:00", "type": "run_started", "bid_id": "BID-001"}
-{"id": 3, "timestamp": "2026-07-09T15:07:15.519228+00:00", "type": "agent_status", "agent": "bid_recommender", "status": "running"}
-{"id": 4, "timestamp": "2026-07-09T15:07:15.520285+00:00", "type": "quote_running", "quote_id": "BID-001-Q01"}
-{"id": 5, "timestamp": "2026-07-09T15:07:15.521025+00:00", "type": "agent_status", "agent": "vendor_proposal", "status": "running"}
-{"id": 6, "timestamp": "2026-07-09T15:07:15.521648+00:00", "type": "agent_status", "agent": "contract_review", "status": "running"}
-{"id": 7, "timestamp": "2026-07-09T15:07:36.922687+00:00", "type": "agent_status", "agent": "vendor_proposal", "status": "completed"}
-{"id": 8, "timestamp": "2026-07-09T15:07:45.749399+00:00", "type": "quote_completed", "quote_id": "BID-001-Q01", "vendor_name": "", "risk_score": 75.0}
-{"id": 9, "timestamp": "2026-07-09T15:07:45.750757+00:00", "type": "quote_running", "quote_id": "BID-001-Q02"}
-{"id": 10, "timestamp": "2026-07-09T15:07:45.751900+00:00", "type": "agent_status", "agent": "vendor_proposal", "status": "running"}
-{"id": 11, "timestamp": "2026-07-09T15:07:45.753032+00:00", "type": "agent_status", "agent": "contract_review", "status": "running"}
-{"id": 12, "timestamp": "2026-07-09T15:08:04.499423+00:00", "type": "agent_status", "agent": "vendor_proposal", "status": "completed"}
-{"id": 13, "timestamp": "2026-07-09T15:08:15.662176+00:00", "type": "quote_completed", "quote_id": "BID-001-Q02", "vendor_name": "", "risk_score": 85.0}
-{"id": 14, "timestamp": "2026-07-09T15:08:15.663135+00:00", "type": "quote_running", "quote_id": "BID-001-Q03"}
-{"id": 15, "timestamp": "2026-07-09T15:08:15.663856+00:00", "type": "agent_status", "agent": "vendor_proposal", "status": "running"}
-{"id": 16, "timestamp": "2026-07-09T15:08:15.664555+00:00", "type": "agent_status", "agent": "contract_review", "status": "running"}
-{"id": 17, "timestamp": "2026-07-09T15:08:30.398803+00:00", "type": "agent_status", "agent": "vendor_proposal", "status": "completed"}
-{"id": 18, "timestamp": "2026-07-09T15:08:38.170745+00:00", "type": "quote_completed", "quote_id": "BID-001-Q03", "vendor_name": "", "risk_score": 75.0}
-{"id": 19, "timestamp": "2026-07-09T15:08:38.172135+00:00", "type": "quote_running", "quote_id": "BID-001-Q04"}
-{"id": 20, "timestamp": "2026-07-09T15:08:38.173311+00:00", "type": "agent_status", "agent": "vendor_proposal", "status": "running"}
-{"id": 21, "timestamp": "2026-07-09T15:08:38.174478+00:00", "type": "agent_status", "agent": "contract_review", "status": "running"}
-{"id": 22, "timestamp": "2026-07-09T15:08:55.183163+00:00", "type": "agent_status", "agent": "vendor_proposal", "status": "completed"}
-{"id": 23, "timestamp": "2026-07-09T15:09:02.464218+00:00", "type": "quote_completed", "quote_id": "BID-001-Q04", "vendor_name": "", "risk_score": 75.0}
-{"id": 24, "timestamp": "2026-07-09T15:09:02.465862+00:00", "type": "quote_running", "quote_id": "BID-001-Q05"}
-{"id": 25, "timestamp": "2026-07-09T15:09:02.467169+00:00", "type": "agent_status", "agent": "vendor_proposal", "status": "running"}
-{"id": 26, "timestamp": "2026-07-09T15:09:02.468383+00:00", "type": "agent_status", "agent": "contract_review", "status": "running"}
-{"id": 27, "timestamp": "2026-07-09T15:09:20.989132+00:00", "type": "agent_status", "agent": "vendor_proposal", "status": "completed"}
-{"id": 28, "timestamp": "2026-07-09T15:09:33.881838+00:00", "type": "quote_completed", "quote_id": "BID-001-Q05", "vendor_name": "", "risk_score": 75.0}
-{"id": 29, "timestamp": "2026-07-09T15:09:33.883223+00:00", "type": "agent_status", "agent": "bid_recommender", "status": "running"}
-{"id": 30, "timestamp": "2026-07-09T15:09:33.885306+00:00", "type": "agent_status", "agent": "market_research", "status": "completed"}
-{"id": 31, "timestamp": "2026-07-09T15:09:33.886433+00:00", "type": "agent_status", "agent": "bid_recommender", "status": "running"}
-{"id": 32, "timestamp": "2026-07-09T15:09:38.701535+00:00", "type": "agent_status", "agent": "decision_logic", "status": "completed"}
-{"id": 33, "timestamp": "2026-07-09T15:09:38.706519+00:00", "type": "run_completed", "winner": {"quote_id": "BID-001-Q01", "vendor_name": "", "risk_score": 75.0, "risk_level": "HIGH", "findings": ["Warranty starts on delivery in fixed fields but on commissioning in raw document text, creating a conflict.", "Advance payment is 60% with no mention of a bank guarantee, increasing financial exposure.", "Installation responsibility is on the buyer, with no vendor penalty for delays.", "Training is not included, which may affect operational readiness.", "Electrical readiness and regulatory approvals are pending, which could delay installation and commissioning.", "Technicians required for installation are not available, posing a risk to timely commissioning."], "recommendation": "Clarify the warranty start terms to resolve the conflict. Negotiate a bank guarantee or reduce the advance payment to mitigate financial risk. Ensure installation readiness and regulatory approvals are secured before delivery. Include training obligations to ensure operational readiness. Verify vendor claims during technical evaluation."}}
-{"id": 34, "timestamp": "2026-07-09T15:09:38.709925+00:00", "type": "decision_history_skipped", "message": "connection to server at \"localhost\" (::1), port 5432 failed: Connection refused\n\tIs the server running on that host and accepting TCP/IP connections?\nconnection to server at \"localhost\" (127.0.0.1), port 5432 failed: Connection refused\n\tIs the server running on that host and accepting TCP/IP connections?\n"}
+{"id": 1, "timestamp": "2026-07-09T16:21:23.628009+00:00", "type": "run_queued", "bid_id": "BID-001"}
+{"id": 2, "timestamp": "2026-07-09T16:21:23.635606+00:00", "type": "run_started", "bid_id": "BID-001"}
+{"id": 3, "timestamp": "2026-07-09T16:21:23.636553+00:00", "type": "agent_status", "agent": "bid_recommender", "status": "running"}
+{"id": 4, "timestamp": "2026-07-09T16:21:23.637742+00:00", "type": "quote_running", "quote_id": "BID-001-Q01"}
+{"id": 5, "timestamp": "2026-07-09T16:21:23.638724+00:00", "type": "agent_status", "agent": "vendor_proposal", "status": "running"}
+{"id": 6, "timestamp": "2026-07-09T16:21:23.639545+00:00", "type": "agent_status", "agent": "contract_review", "status": "running"}
+{"id": 7, "timestamp": "2026-07-09T16:21:34.680851+00:00", "type": "agent_status", "agent": "vendor_proposal", "status": "completed"}
+{"id": 8, "timestamp": "2026-07-09T16:21:44.407294+00:00", "type": "quote_completed", "quote_id": "BID-001-Q01", "vendor_name": "", "risk_score": 88.0}
+{"id": 9, "timestamp": "2026-07-09T16:21:44.407972+00:00", "type": "quote_running", "quote_id": "BID-001-Q02"}
+{"id": 10, "timestamp": "2026-07-09T16:21:44.408530+00:00", "type": "agent_status", "agent": "vendor_proposal", "status": "running"}
+{"id": 11, "timestamp": "2026-07-09T16:21:44.409019+00:00", "type": "agent_status", "agent": "contract_review", "status": "running"}
+{"id": 12, "timestamp": "2026-07-09T16:21:54.545478+00:00", "type": "agent_status", "agent": "vendor_proposal", "status": "completed"}
+{"id": 13, "timestamp": "2026-07-09T16:22:03.059440+00:00", "type": "quote_completed", "quote_id": "BID-001-Q02", "vendor_name": "", "risk_score": 48.0}
+{"id": 14, "timestamp": "2026-07-09T16:22:03.061426+00:00", "type": "quote_running", "quote_id": "BID-001-Q03"}
+{"id": 15, "timestamp": "2026-07-09T16:22:03.063326+00:00", "type": "agent_status", "agent": "vendor_proposal", "status": "running"}
+{"id": 16, "timestamp": "2026-07-09T16:22:03.065266+00:00", "type": "agent_status", "agent": "contract_review", "status": "running"}
+{"id": 17, "timestamp": "2026-07-09T16:22:15.535390+00:00", "type": "agent_status", "agent": "vendor_proposal", "status": "completed"}
+{"id": 18, "timestamp": "2026-07-09T16:22:26.596080+00:00", "type": "quote_completed", "quote_id": "BID-001-Q03", "vendor_name": "", "risk_score": 68.0}
+{"id": 19, "timestamp": "2026-07-09T16:22:26.596578+00:00", "type": "quote_running", "quote_id": "BID-001-Q04"}
+{"id": 20, "timestamp": "2026-07-09T16:22:26.597061+00:00", "type": "agent_status", "agent": "vendor_proposal", "status": "running"}
+{"id": 21, "timestamp": "2026-07-09T16:22:26.597600+00:00", "type": "agent_status", "agent": "contract_review", "status": "running"}
+{"id": 22, "timestamp": "2026-07-09T16:22:36.127117+00:00", "type": "agent_status", "agent": "vendor_proposal", "status": "completed"}
+{"id": 23, "timestamp": "2026-07-09T16:22:47.482435+00:00", "type": "quote_completed", "quote_id": "BID-001-Q04", "vendor_name": "", "risk_score": 82.0}
+{"id": 24, "timestamp": "2026-07-09T16:22:47.483094+00:00", "type": "quote_running", "quote_id": "BID-001-Q05"}
+{"id": 25, "timestamp": "2026-07-09T16:22:47.483781+00:00", "type": "agent_status", "agent": "vendor_proposal", "status": "running"}
+{"id": 26, "timestamp": "2026-07-09T16:22:47.484421+00:00", "type": "agent_status", "agent": "contract_review", "status": "running"}
+{"id": 27, "timestamp": "2026-07-09T16:22:56.099852+00:00", "type": "agent_status", "agent": "vendor_proposal", "status": "completed"}
+{"id": 28, "timestamp": "2026-07-09T16:23:09.937788+00:00", "type": "quote_completed", "quote_id": "BID-001-Q05", "vendor_name": "", "risk_score": 78.0}
+{"id": 29, "timestamp": "2026-07-09T16:23:09.941122+00:00", "type": "quote_running", "quote_id": "BID-001-Q06"}
+{"id": 30, "timestamp": "2026-07-09T16:23:09.944226+00:00", "type": "agent_status", "agent": "vendor_proposal", "status": "running"}
+{"id": 31, "timestamp": "2026-07-09T16:23:09.947772+00:00", "type": "agent_status", "agent": "contract_review", "status": "running"}
+{"id": 32, "timestamp": "2026-07-09T16:23:18.414305+00:00", "type": "agent_status", "agent": "vendor_proposal", "status": "completed"}
+{"id": 33, "timestamp": "2026-07-09T16:23:29.471841+00:00", "type": "quote_completed", "quote_id": "BID-001-Q06", "vendor_name": "Current Screen 1 Input", "risk_score": 92.0}
+{"id": 34, "timestamp": "2026-07-09T16:23:29.472408+00:00", "type": "quote_running", "quote_id": "BID-001-Q07"}
+{"id": 35, "timestamp": "2026-07-09T16:23:29.472961+00:00", "type": "agent_status", "agent": "vendor_proposal", "status": "running"}
+{"id": 36, "timestamp": "2026-07-09T16:23:29.473507+00:00", "type": "agent_status", "agent": "contract_review", "status": "running"}
+{"id": 37, "timestamp": "2026-07-09T16:23:37.589040+00:00", "type": "agent_status", "agent": "vendor_proposal", "status": "completed"}
+{"id": 38, "timestamp": "2026-07-09T16:23:45.036258+00:00", "type": "quote_completed", "quote_id": "BID-001-Q07", "vendor_name": "Current Screen 1 Input", "risk_score": 92.0}
+{"id": 39, "timestamp": "2026-07-09T16:23:45.036922+00:00", "type": "agent_status", "agent": "bid_recommender", "status": "running"}
+{"id": 40, "timestamp": "2026-07-09T16:24:01.840597+00:00", "type": "agent_status", "agent": "market_research", "status": "completed"}
+{"id": 41, "timestamp": "2026-07-09T16:24:01.842524+00:00", "type": "agent_status", "agent": "bid_recommender", "status": "running"}
+{"id": 42, "timestamp": "2026-07-09T16:24:05.007947+00:00", "type": "agent_status", "agent": "decision_logic", "status": "completed"}
+{"id": 43, "timestamp": "2026-07-09T16:24:05.018129+00:00", "type": "run_completed", "winner": {"quote_id": "BID-001-Q02", "vendor_name": "", "risk_score": 48.0, "risk_level": "MODERATE", "findings": ["Warranty starts on delivery, which is risky because site readiness and commissioning may lag; this can burn warranty time before the buyer can use the MRI.", "There is a direct conflict between the fixed fields and the vendor quote on advance payment: fixed field says 60% advance, while the quote says 50% advance.", "There is a direct conflict between the fixed fields and the vendor quote on installation responsibility: fixed field says buyer, while the quote says vendor.", "The quote is materially stronger than the fixed fields on training and service because it explicitly includes training and a 48-hour response target, but it does not state resolution time, uptime SLA, spare parts commitment, or remedies.", "The quote includes compliance and reference claims, but some are explicitly flagged as needing verification, so the evidence is only partially backed.", "The procurement context still shows execution risk: construction completion is only 60%, electrical readiness is pending, regulatory approval is pending, and no technicians are available against 6 required, which makes delivery-before-readiness and commissioning delay likely."], "recommendation": "Do not award until the vendor issues a revised, internally consistent offer that confirms: warranty starts at commissioning or acceptance, advance payment is secured by bank guarantee or equivalent, installation/commissioning responsibilities are fully defined, training scope and completion evidence are specified, and service SLA includes response, resolution, spare parts, and remedies. Resolve the advance-payment and installation conflicts between the fixed fields and the quote before contract signature."}}
+{"id": 44, "timestamp": "2026-07-09T16:24:05.088810+00:00", "type": "decision_history_stored", "table": "decision_history"}

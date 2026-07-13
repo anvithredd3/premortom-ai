@@ -35,20 +35,46 @@ def _run_parallel(data: ProcurementInput) -> List[AgentResult]:
         f_infra = ex.submit(infrastructure_agent.analyze, data)
         f_workforce = ex.submit(workforce_agent.analyze, data)
         f_historical = ex.submit(historical_agent.analyze, data)
-        infra_result = f_infra.result()
+        infra_result = _safe_agent_result(infrastructure_agent, f_infra)
         predicted_delay = infra_result.metrics.get("predicted_delay_months", 8.0)
         # Financial agent depends on infra's delay prediction.
         f_financial = ex.submit(
             financial_agent.analyze, data, predicted_delay
         )
         results = [
-            f_contract.result(),
+            _safe_agent_result(contract_agent, f_contract),
             infra_result,
-            f_workforce.result(),
-            f_financial.result(),
-            f_historical.result(),
+            _safe_agent_result(workforce_agent, f_workforce),
+            _safe_agent_result(financial_agent, f_financial),
+            _safe_agent_result(historical_agent, f_historical),
         ]
     return results
+
+
+def _safe_agent_result(agent_module, future) -> AgentResult:
+    try:
+        return future.result()
+    except Exception as exc:
+        fallback = getattr(agent_module, "_offline_result", None)
+        if not callable(fallback):
+            raise
+        result = fallback()
+        result.status = "offline"
+        result.findings = [
+            *result.findings,
+            "Non-agentic fallback output used for now because live LLM analysis failed.",
+            f"Failure reason: {exc}",
+        ]
+        result.reasoning = (
+            f"{result.reasoning}\n\n"
+            "This is deterministic fallback output, not live agentic LLM output."
+        ).strip()
+        result.metrics = {
+            **result.metrics,
+            "fallback_reason": str(exc),
+            "agentic_output": False,
+        }
+        return result
 
 
 def run_premortem(data: ProcurementInput) -> PreMortemReport:

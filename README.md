@@ -1,20 +1,126 @@
-# 🛡️ PreMortem AI
+# PreMortem AI
 
-### Predicting Public Procurement Failures Before They Happen
+## PreMortem: the AI that stress-tests decisions before you make them
 
-> *"Don't analyze failures after they happen. Predict them before approval."*
+chinmaey> Taglines are useful for slides, 
 
-PreMortem AI is a full-stack **Agentic AI** platform that predicts procurement
-and project failures **before approval** by simulating a structured AI
-PreMortem review. Multiple specialist agents analyse the contract,
-infrastructure readiness, workforce readiness, financial exposure and
-historical outcomes, debate their findings, and a Decision Board Agent issues a
-**GO / GO WITH CONDITIONS / NO-GO** recommendation.
+Every failed project, bad vendor contract, cost overrun, and procurement
+disaster had one thing in common:
 
-The flagship demo recreates the **AIIMS MRI procurement failure** — where ₹72 Cr
-of equipment sat unused because infrastructure, installation planning, operators
-and warranty timing were never aligned — and shows that AI could have flagged a
-**NO-GO before public funds were committed**.
+The warning signs existed before the decision was made.
+Someone noticed them.
+Nobody acted on them.
+
+Organizations lose billions every year not because they lack data, but because
+they make critical decisions under time pressure, hierarchy, optimism bias, and
+incomplete information.
+
+PreMortem AI is an **AI decision auditor** that challenges high-stakes decisions
+before they happen.
+
+Instead of asking, "Why did this project fail?" six months later, PreMortem
+asks:
+
+> "Imagine it's six months from now and this decision has failed
+> catastrophically. What went wrong?"
+
+Then it finds the answers automatically.
+
+## How It Works
+
+A procurement team uploads a vendor proposal, purchase order, contract, or
+project plan.
+
+Within minutes, PreMortem:
+
+- Identifies hidden contract risks
+- Detects unusual payment terms
+- Compares pricing against market benchmarks
+- Pulls live vendor intelligence from public sources
+- Cross-references similar decisions from company history
+- Predicts likely failure modes and financial impact
+- Generates a Go / No-Go recommendation
+
+## Why This Is Different From ChatGPT
+
+ChatGPT reads the document.
+
+PreMortem reads:
+
+- The document
+- Your company's procurement history
+- Previous project outcomes
+- Vendor performance records
+- Market data
+- Public litigation and risk signals
+
+It doesn't give generic advice.
+
+It tells you:
+
+- "The last three projects using vendors with these payment terms averaged 34%
+  cost overruns."
+- "This vendor has ongoing litigation that may impact delivery."
+- "The warranty excludes the most common failure mode for this equipment
+  category."
+- "Expected financial exposure: ₹2.4 Crore."
+
+chinmaey> Competitive claims should stay cautious unless we have strong evidence
+or validated technical differentiation.
+
+chinmaey> Approval-gate failure prevention is a strong positioning, while
+existing procurement platforms can be described as primarily workflow focused.
+
+## The Holy-Shit Moment
+
+A hospital procurement team uploads a ₹20 Crore medical equipment proposal.
+
+Thirty seconds later:
+
+**Risk Score: 73/100**
+
+**Top Findings**
+
+- 70% upfront payment requested (industry average: 30%)
+- Warranty excludes electrical failures
+- Vendor involved in recent supply-chain disruption
+- Similar contracts historically produced 28-42% budget overruns
+
+**Recommendation:** Renegotiate before approval.
+
+One upload. One report. Potentially millions saved.
+
+## Why It Matters
+
+Most AI tools help people work faster. PreMortem helps organizations avoid
+making the wrong decision in the first place.
+
+The cost of one bad decision often exceeds the cost of thousands of good ones.
+
+We are building the AI that sits in the room and asks the question nobody else
+is willing to ask.
+
+Before you sign. Before you approve. Before you commit.
+
+PreMortem tells you what future-you wishes someone had said.
+
+chinmaey> The "human touch" positioning should remain. Human involvement should
+feel like governance and judgment, not a dependency or limitation.
+
+## Which Industry Should I have Resonating Focus on?
+
+> "We evaluated 4 industries across 5 parameters. Construction has the biggest
+> market but decisions take months and involve politicians — an AI agent can't
+> intercept that cleanly. Corporate is too diffuse. Pharma is regulated but
+> complex to deploy in a hackathon. Hospital procurement scores 44/50 — and
+> here's why it wins: the error is not just expensive, it's fatal. India records
+> 5.2 million medical errors a year. The procurement decision that ordered the
+> wrong equipment or skipped a contract clause is the upstream cause. The
+> decision moment is a single purchase order — discrete, documented, and
+> requiring sign-off. That's exactly where PreMortem sits."
+
+chinmaey> Audience-specific framing is useful. Judges, investors, and government
+RFP reviewers may each need a different version of the same story.
 
 ---
 
@@ -31,6 +137,11 @@ Streamlit UI  ──HTTP──►  FastAPI backend  ──►  Agent Orchestrato
                                                   └─ Decision Board Agent (consolidator)
 ```
 
+chinmaey> A fixed number of agents should not become the main claim. The stronger
+agentic idea is configurable agent selection and future agent discovery.
+
+chinmaey> Decision Board consolidation is an important proof point.
+
 | Layer       | Technology |
 |-------------|------------|
 | Frontend    | **Streamlit** (Python UI), Plotly |
@@ -43,20 +154,29 @@ Streamlit UI  ──HTTP──►  FastAPI backend  ──►  Agent Orchestrato
 | Database    | **PostgreSQL** (via docker-compose) |
 | Deployment  | **Docker + Docker Compose** |
 
+chinmaey> OpenAI Agents SDK is useful implementation context, but we should be
+clear about what it proves beyond framework usage.
+
 > 💡 **No API key? No problem.** Every agent has a rule-based engine, so the
 > full demo runs offline and deterministically. Add `OPENAI_API_KEY` to switch
 > to LLM-authored agentic reasoning automatically.
+
+chinmaey> Docker and offline mode are useful for demo reproducibility, but they
+should not be treated as the main differentiator.
 
 ---
 
 ## Screens
 
-1. **Procurement Input** — enter data or upload a document (auto-fills fields).
-2. **Agent Investigation Board** — live agent cards with status, risk score, evidence, reasoning.
-3. **Agent Debate Room** — simulated multi-agent debate + consensus.
-4. **Executive Dashboard** — risk gauge, heatmap, radar, agent contributions, scenario timeline.
-5. **PreMortem Report** — executive report with PDF / Word / JSON export.
-6. **★ Bonus Lab** — Digital Twin What-If simulator & failure-loss sensitivity curve.
+1. **RFQ Intake** — chat-first requirement design with role perspectives, value map, cost meter, and publish action.
+2. **Vendor Procurement Input** — enter vendor proposal data or upload a document.
+3. **Agent Investigation Board** — live agent cards with status, risk score, evidence, reasoning.
+4. **Agent Debate Room** — simulated multi-agent debate + consensus.
+5. **Procurement Risk Analysis** — risk gauge, heatmap, radar, agent contributions, scenario timeline.
+6. **PreMortem Report** — executive report with PDF / Word / JSON export.
+7. **Database / Memory** — local pgvector memory and decision-history status.
+8. **Market Research** — latest market-research artifact for a bid run.
+9. **★ Bonus Lab** — Digital Twin What-If simulator & failure-loss sensitivity curve.
 
 ---
 
@@ -67,7 +187,8 @@ Streamlit UI  ──HTTP──►  FastAPI backend  ──►  Agent Orchestrato
 ```bash
 cd premortem-ai
 cp .env.example .env          # optionally add OPENAI_API_KEY
-docker compose up --build
+docker compose build backend frontend
+docker compose up db backend frontend
 ```
 
 - UI:      http://localhost:8501
@@ -230,6 +351,9 @@ available. `OKF_USE_PGVECTOR_RETRIEVAL=1` retrieves OKF prompt memory from that
 table, with rule-based retrieval as a fallback. If these values are omitted, the
 app still runs with the normal offline/LLM fallback behavior.
 
+chinmaey> pgvector memory is useful, but memory alone is not enough. A Quality
+Evaluation Agent should help show that memory improves evidence and decisions.
+
 Open http://localhost:8501, click **Load AIIMS MRI demo**, then **Run PreMortem**.
 
 ---
@@ -242,6 +366,10 @@ Open http://localhost:8501, click **Load AIIMS MRI demo**, then **Run PreMortem*
 | Failure Probability | ~91% |
 | Predicted Failure Mode | Equipment delivered before site readiness |
 | Recommended Decision | **NO-GO** |
+
+chinmaey> Concrete demo metrics are useful. The AIIMS MRI case, risk score,
+failure probability, ₹72 Cr context, and NO-GO recommendation make the story
+easier to understand.
 
 **Conditions for approval:** facility readiness ≥95%, approvals completed,
 technicians hired, warranty revised to commissioning date.

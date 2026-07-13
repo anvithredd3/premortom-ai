@@ -29,6 +29,7 @@ Recommended first navigation:
 3. Bid Analysis Monitor
 4. Bid Results
 5. Quote Detail
+6. RFQ / Negotiation Guidance
 
 The current individual quote/procurement analysis implementation remains useful. The new UI should add higher-level bid and quote-batch screens, then allow the user to drill down into an individual quote using the existing analysis style.
 
@@ -126,6 +127,55 @@ The UI should show:
 - Number of new quotes discovered.
 
 This keeps the manually uploaded data path and generated data path aligned through the same `bids_database.csv` registry.
+
+### RFQ / Negotiation Guidance Page
+
+This new page supports the RFQ Intake and Negotiation UI Guidance Agent. It is
+part of the frontend experience, not a replacement for the Streamlit UI itself.
+It should sit beside the current `Screen 1 - Procurement Input` rather than
+modify that screen immediately.
+
+Primary modes:
+
+1. RFQ intake.
+   Help management, doctors, technicians, or procurement users define realistic
+   requirements before vendor quotes are submitted.
+
+2. Vendor negotiation.
+   Use ranked recommendations, Vendor Proposal Agent intelligence, and user
+   priorities to prepare negotiation questions and a draft vendor message.
+
+Inputs:
+
+- User role, such as management, doctor, technician, procurement, or finance.
+- Static expectation fields similar to the existing procurement input screen,
+  but representing buyer expectations instead of vendor proposal values.
+- Budget limit and budget tolerance.
+- Feature weights for clinical fit, total cost, service readiness, compliance,
+  implementation readiness, and strategic value.
+- Minimum cutoff criteria and negotiable criteria.
+- Free-text requirement, concern, or negotiation question.
+- Optional `bid_id` and `quote_id` so negotiation mode can load a Vendor
+  Proposal Agent artifact.
+
+Frontend API call:
+
+```text
+POST /ui-guidance/rfq-negotiation
+```
+
+The UI should display:
+
+- RFQ recommendations.
+- Missing or unclear inputs.
+- Suggested changes to static expectation values.
+- Tradeoffs between budget, features, service, and compliance.
+- Negotiation questions for the vendor.
+- Draft vendor clarification or negotiation message.
+- Source context showing which bid, quote, and proposal artifact were used.
+
+The UI should not silently change saved RFQ values. It should let the user review
+and accept recommendations before saving final criteria.
 
 ### Bid Run Screen
 

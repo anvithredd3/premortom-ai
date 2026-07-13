@@ -10,7 +10,7 @@
     },
     "contract_review": {
       "status": "completed",
-      "message": "Reviewing BID-001-Q05"
+      "message": "Reviewing BID-001-Q08"
     },
     "decision_logic": {
       "status": "completed",
@@ -18,11 +18,11 @@
     },
     "market_research": {
       "status": "completed",
-      "message": "Market research skipped"
+      "message": "Market benchmarks prepared"
     },
     "vendor_proposal": {
       "status": "completed",
-      "message": "Proposal text extracted for BID-001-Q05"
+      "message": "Proposal text extracted for BID-001-Q08"
     }
   },
   "quotes": [
@@ -30,31 +30,49 @@
       "quote_id": "BID-001-Q01",
       "status": "completed",
       "vendor_name": "",
-      "risk_score": 80.0
+      "risk_score": 88.0
     },
     {
       "quote_id": "BID-001-Q02",
       "status": "completed",
       "vendor_name": "",
-      "risk_score": 75.0
+      "risk_score": 52.0
     },
     {
       "quote_id": "BID-001-Q03",
       "status": "completed",
       "vendor_name": "",
-      "risk_score": 65.0
+      "risk_score": 78.0
     },
     {
       "quote_id": "BID-001-Q04",
       "status": "completed",
       "vendor_name": "",
-      "risk_score": 75.0
+      "risk_score": 78.0
     },
     {
       "quote_id": "BID-001-Q05",
       "status": "completed",
       "vendor_name": "",
-      "risk_score": 75.0
+      "risk_score": 61.0
+    },
+    {
+      "quote_id": "BID-001-Q06",
+      "status": "completed",
+      "vendor_name": "Current Screen 1 Input",
+      "risk_score": 92.0
+    },
+    {
+      "quote_id": "BID-001-Q07",
+      "status": "completed",
+      "vendor_name": "Current Screen 1 Input",
+      "risk_score": 92.0
+    },
+    {
+      "quote_id": "BID-001-Q08",
+      "status": "completed",
+      "vendor_name": "Current Screen 1 Input",
+      "risk_score": 88.0
     }
   ],
   "graph": {

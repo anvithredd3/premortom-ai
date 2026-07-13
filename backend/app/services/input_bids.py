@@ -131,6 +131,68 @@ def save_quote(
     }
 
 
+def save_procurement_input_sample(
+    bid_id: str,
+    payload: Dict[str, object],
+    vendor_name: str = "Current Screen 1 Input",
+) -> Dict[str, str]:
+    """Register a Screen 1 structured input as an additional bid sample.
+
+    The bid evaluator already reads quote files through the document parser.
+    For structured form input, a text artifact is enough and avoids creating a
+    fake PDF for the demo path.
+    """
+    if not BID_RE.match(bid_id):
+        raise ValueError(f"Invalid bid_id: {bid_id}")
+
+    rows = read_rows()
+    kept_rows = []
+    for row in rows:
+        if row.get("bid_id") == bid_id and row.get("source") == "screen_1_input":
+            stored_path = row.get("pdf_path")
+            if stored_path:
+                try:
+                    (SAMPLES_DIR / stored_path).unlink(missing_ok=True)
+                except OSError:
+                    pass
+            continue
+        kept_rows.append(row)
+    rows = kept_rows
+    quote_id = _next_quote_id(rows, bid_id)
+    bid_dir = BIDS_DIR / bid_id
+    bid_dir.mkdir(parents=True, exist_ok=True)
+    sample_file = bid_dir / f"{quote_id}.txt"
+    sample_file.write_text(_format_procurement_sample(payload), encoding="utf-8")
+
+    bid_meta = next((row for row in rows if row["bid_id"] == bid_id), {})
+    pdf_path = sample_file.relative_to(SAMPLES_DIR).as_posix()
+    now = _now()
+    rows.append(
+        _row(
+            bid_id=bid_id,
+            quote_id=quote_id,
+            vendor_name=vendor_name,
+            equipment_type=str(payload.get("equipment_type") or bid_meta.get("equipment_type", "")),
+            procurement_name=str(payload.get("procurement_name") or bid_meta.get("procurement_name", "")),
+            source="screen_1_input",
+            status="uploaded",
+            pdf_path=pdf_path,
+            original_filename=sample_file.name,
+            created_at=now,
+            updated_at=now,
+        )
+    )
+    write_rows(rows)
+    return {
+        "bid_id": bid_id,
+        "quote_id": quote_id,
+        "sample_id": quote_id,
+        "vendor_name": vendor_name,
+        "pdf_path": pdf_path,
+        "status": "uploaded",
+    }
+
+
 def list_quotes(bid_id: str) -> Dict[str, object]:
     quotes = [
         row
@@ -245,3 +307,31 @@ def _normalize(row: Dict[str, str]) -> Dict[str, str]:
 
 def _now() -> str:
     return datetime.now(timezone.utc).isoformat()
+
+
+def _format_procurement_sample(payload: Dict[str, object]) -> str:
+    lines = [
+        "PreMortem Screen 1 structured procurement sample",
+        "",
+    ]
+    for key in (
+        "procurement_name",
+        "equipment_type",
+        "contract_value_cr",
+        "advance_payment_pct",
+        "delivery_timeline_months",
+        "warranty_start",
+        "installation_responsibility",
+        "training_included",
+        "construction_completion_pct",
+        "electrical_readiness",
+        "regulatory_approval_status",
+        "technicians_available",
+        "technicians_required",
+        "historical_delays_months",
+    ):
+        lines.append(f"{key}: {payload.get(key, '')}")
+    raw_text = payload.get("raw_document_text")
+    if raw_text:
+        lines.extend(["", "raw_document_text:", str(raw_text)])
+    return "\n".join(lines)
